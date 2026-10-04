@@ -312,6 +312,17 @@
       z-index: 10;
     }
 
+    .audio-notice-box {
+      background: #fff3cd;
+      color: #856404;
+      border: 1px solid #ffeeba;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
     @media (max-width: 380px) {
       .site-title-top {
         font-size: 1.05rem;
@@ -355,6 +366,11 @@
       <div class="section-intro">
         <strong>ゼロから、少しだけ日常会話へ。</strong><br>
         ペラペラを目指す必要はありません。街や家で「意思伝達ができる」ようになるための南部ベトナム語超入門サイトです。
+      </div>
+
+      <div class="audio-notice-box">
+        💡 <strong>iPhoneをご利用の方へ：</strong><br>
+        音声が鳴らない場合は、iPhoneの「設定 ➔ アクセシビリティ ➔ 読み上げコンテンツ ➔ 声 ➔ ベトナム語」で声をダウンロード（無料）していただくと、確実に高音質で再生できます。
       </div>
 
       <h2>学習ステップ</h2>
@@ -658,7 +674,7 @@
     const vowelsData = [
       { char: "a", vi: "ba", ja: "お父さん／3", note: "日本語の「あ」に一番近い音" },
       { char: "ă", vi: "ăn", ja: "食べる", note: "口を大きく開けて短く「ア」" },
-      { char: "â", vi: "chân", ja: "足", note: "口をあまり開けず、のどの奥から短く「ア」" },
+      { char: "â", vi: "chân", ja: "足", note: "口をあまり開けず、のどもの奥から短く「ア」" },
       { char: "e", vi: "xe", ja: "車", note: "口を横に大きく広げて「エ」" },
       { char: "ê", vi: "dê", ja: "ヤギ", note: "口をあまり開けずに「エ」" },
       { char: "i", vi: "đi", ja: "行く", note: "日本語の「い」と同じ" },
@@ -758,133 +774,93 @@
 
 
     // ==============================
-    // AUDIO SYSTEM
-    // iPhone / iOS対応
+    // AUDIO SYSTEM (iPhone Safari 確実対応版)
     // ==============================
 
     let availableVoices = [];
-    let currentAudio = null;
 
-    function loadVoices() {
-      if (!('speechSynthesis' in window)) {
-        return;
+    // 音声リストの初期化
+    function initVoices() {
+      if ('speechSynthesis' in window) {
+        availableVoices = window.speechSynthesis.getVoices() || [];
       }
-
-      availableVoices = window.speechSynthesis.getVoices() || [];
     }
 
     if ('speechSynthesis' in window) {
-      loadVoices();
-
-      window.speechSynthesis.onvoiceschanged = function() {
-        loadVoices();
-      };
+      initVoices();
+      window.speechSynthesis.onvoiceschanged = initVoices;
     }
 
-
-    function getVietnameseVoice() {
+    // iPhone/ブラウザでベトナム語音声を探す関数
+    function findVietnameseVoice() {
       if (!availableVoices.length && 'speechSynthesis' in window) {
         availableVoices = window.speechSynthesis.getVoices() || [];
       }
 
-      let voice = availableVoices.find(v => {
-        const lang = (v.lang || '').toLowerCase();
-        return lang === 'vi-vn';
-      });
-
+      // 1. 完全一致 (vi-VN)
+      let voice = availableVoices.find(v => v.lang === 'vi-VN' || v.lang === 'vi_VN');
+      // 2. 前方一致 (vi)
       if (!voice) {
-        voice = availableVoices.find(v => {
-          const lang = (v.lang || '').toLowerCase();
-          return lang.startsWith('vi');
-        });
+        voice = availableVoices.find(v => (v.lang || '').toLowerCase().startsWith('vi'));
       }
 
       return voice || null;
     }
 
+    // 音声再生メイン処理（ボタンタップのユーザー操作の直下で実行）
+    function playAudio(text, btnElement) {
+      if (!text) return;
 
-    // Google音声
-    function getTTSUrl(text) {
-      return 'https://translate.google.com/translate_tts?ie=UTF-8&tl=vi&client=tw-ob&q='
-        + encodeURIComponent(text);
-    }
+      // ボタンのスタイルを変更して「視覚的」フィードバックを与える
+      const allBtns = document.querySelectorAll('.audio-btn');
+      allBtns.forEach(b => b.classList.remove('playing'));
+      if (btnElement) btnElement.classList.add('playing');
 
-
-    function playGoogleAudio(text) {
-
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-
-      currentAudio = new Audio(getTTSUrl(text));
-
-      currentAudio.preload = 'auto';
-
-      // この関数は「音声ボタンを押した瞬間」に呼ばれるため、
-      // iPhoneのユーザー操作による再生として処理されやすい
-      const playPromise = currentAudio.play();
-
-      if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(function() {
-          // エラー表示はしない
-        });
-      }
-    }
-
-
-    function playSpeechSynthesis(text, voice) {
-
-      try {
-
-        window.speechSynthesis.cancel();
+      // 1. Web Speech API (端末内音声合成) を第一優先
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // 重複再生を防ぐ
 
         const utter = new SpeechSynthesisUtterance(text);
+        const voice = findVietnameseVoice();
 
-        utter.lang = voice ? voice.lang : 'vi-VN';
-        utter.voice = voice || null;
-        utter.rate = 0.85;
+        utter.lang = 'vi-VN';
+        if (voice) {
+          utter.voice = voice;
+        }
+
+        utter.rate = 0.85; // 初心者向けに少しゆっくり
         utter.pitch = 1.0;
-        utter.volume = 1.0;
 
-        window.speechSynthesis.resume();
+        utter.onend = function() {
+          if (btnElement) btnElement.classList.remove('playing');
+        };
 
-        utter.onerror = function() {
-          // ネイティブ音声が失敗した場合
-          // Google音声を試す
-          playGoogleAudio(text);
+        utter.onerror = function(e) {
+          if (btnElement) btnElement.classList.remove('playing');
+          showAudioErrorNotice("ベトナム語音声の再生中にエラーが発生しました。");
         };
 
         window.speechSynthesis.speak(utter);
 
-      } catch (e) {
-        playGoogleAudio(text);
+        // iOS特有の動作検知：発声が始まらなかった場合のフォールバック案内
+        setTimeout(() => {
+          if (!window.speechSynthesis.speaking && !voice) {
+            showAudioErrorNotice(
+              "【iOS設定のご確認】\n" +
+              "iPhoneの「設定 ➔ アクセシビリティ ➔ 読み上げコンテンツ ➔ 声 ➔ ベトナム語」で声をダウンロード設定（無料）していただくと、確実に高音質で再生できます。"
+            );
+          }
+        }, 200);
+
+      } else {
+        if (btnElement) btnElement.classList.remove('playing');
+        showAudioErrorNotice("お使いのブラウザは音声再生（Web Speech API）に対応していません。Safari最新版をご利用ください。");
       }
     }
 
-
-    function playAudio(text) {
-
-      if (!text) {
-        return;
-      }
-
-      // まずiPhone / Safariのベトナム語音声を探す
-      if ('speechSynthesis' in window) {
-
-        loadVoices();
-
-        const voice = getVietnameseVoice();
-
-        if (voice) {
-          playSpeechSynthesis(text, voice);
-          return;
-        }
-      }
-
-      // ベトナム語音声がiPhoneにない場合は
-      // ボタンを押した瞬間にGoogle音声を再生
-      playGoogleAudio(text);
+    // 原因がわかる詳細ダイアログ表示
+    function showAudioErrorNotice(message) {
+      alert(message);
     }
 
 
@@ -907,7 +883,7 @@
         </div>
 
         <div class="audio-btn-group">
-          <button class="audio-btn" onclick="playAudio('${v.char}')">
+          <button class="audio-btn" onclick="playAudio('${v.char}', this)">
             🔊 母音「${v.char}」を聴く
           </button>
         </div>
@@ -921,7 +897,7 @@
           <div class="example-ja">${v.ja}</div>
 
           <div class="audio-btn-group">
-            <button class="audio-btn" onclick="playAudio('${v.vi}')">
+            <button class="audio-btn" onclick="playAudio('${v.vi}', this)">
               🔊 単語「${v.vi}」を聴く
             </button>
           </div>
@@ -960,7 +936,7 @@
         </p>
 
         <div class="audio-btn-group">
-          <button class="audio-btn" onclick="playAudio('${v.vi}')">
+          <button class="audio-btn" onclick="playAudio('${v.vi}', this)">
             🔊 単語を再生
           </button>
         </div>
@@ -970,7 +946,7 @@
           <div class="example-ja">${v.exJa}</div>
 
           <div class="audio-btn-group">
-            <button class="audio-btn" onclick="playAudio('${v.exVi}')">
+            <button class="audio-btn" onclick="playAudio('${v.exVi}', this)">
               🔊 例文を再生
             </button>
           </div>
@@ -1009,7 +985,7 @@
         </p>
 
         <div class="audio-btn-group">
-          <button class="audio-btn" onclick="playAudio('${n.vi}')">
+          <button class="audio-btn" onclick="playAudio('${n.vi}', this)">
             🔊 単語を再生
           </button>
         </div>
@@ -1019,7 +995,7 @@
           <div class="example-ja">${n.exJa}</div>
 
           <div class="audio-btn-group">
-            <button class="audio-btn" onclick="playAudio('${n.exVi}')">
+            <button class="audio-btn" onclick="playAudio('${n.exVi}', this)">
               🔊 例文を再生
             </button>
           </div>
@@ -1066,7 +1042,7 @@
 
           <div class="audio-btn-group">
             <button class="audio-btn"
-                    onclick="playAudio('${c.vi}')">
+                    onclick="playAudio('${c.vi}', this)">
               🔊 会話を再生
             </button>
           </div>
