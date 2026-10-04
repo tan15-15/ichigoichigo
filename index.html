@@ -159,6 +159,7 @@ display: flex;
 align-items: center;
 justify-content: center;
 gap: 4px;
+-webkit-tap-highlight-color: transparent;
 }
 .audio-btn:hover {
 background-color: #ffb3c1;
@@ -225,71 +226,71 @@ color: #888;
 <section id="vowels">
 <h2>🍓 母音 (Nguyên âm)</h2>
 <div class="grid-container">
-<div class="card"><div class="vi-text">a</div><div class="ja-text">a</div><button class="audio-btn" onclick="speakVi('a')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">á</div><div class="ja-text">á (上がる)</div><button class="audio-btn" onclick="speakVi('á')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">à</div><div class="ja-text">à (下がる)</div><button class="audio-btn" onclick="speakVi('à')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ả</div><div class="ja-text">ả (問う)</div><button class="audio-btn" onclick="speakVi('ả')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ã</div><div class="ja-text">ã (波)</div><button class="audio-btn" onclick="speakVi('ã')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ạ</div><div class="ja-text">ạ (重い)</div><button class="audio-btn" onclick="speakVi('ạ')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ă</div><div class="ja-text">ă (短いa)</div><button class="audio-btn" onclick="speakVi('ă')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">â</div><div class="ja-text">â (こもるa)</div><button class="audio-btn" onclick="speakVi('â')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">e</div><div class="ja-text">e</div><button class="audio-btn" onclick="speakVi('e')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ê</div><div class="ja-text">ê</div><button class="audio-btn" onclick="speakVi('ê')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">i</div><div class="ja-text">i</div><button class="audio-btn" onclick="speakVi('i')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">o</div><div class="ja-text">o</div><button class="audio-btn" onclick="speakVi('o')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ô</div><div class="ja-text">ô</div><button class="audio-btn" onclick="speakVi('ô')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ơ</div><div class="ja-text">ơ</div><button class="audio-btn" onclick="speakVi('ơ')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">u</div><div class="ja-text">u</div><button class="audio-btn" onclick="speakVi('u')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">ư</div><div class="ja-text">ư</div><button class="audio-btn" onclick="speakVi('ư')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">a</div><div class="ja-text">a</div><button class="audio-btn" onclick="playVietnamese('a', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">á</div><div class="ja-text">á (上がる)</div><button class="audio-btn" onclick="playVietnamese('á', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">à</div><div class="ja-text">à (下がる)</div><button class="audio-btn" onclick="playVietnamese('à', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ả</div><div class="ja-text">ả (問う)</div><button class="audio-btn" onclick="playVietnamese('ả', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ã</div><div class="ja-text">ã (波)</div><button class="audio-btn" onclick="playVietnamese('ã', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ạ</div><div class="ja-text">ạ (重い)</div><button class="audio-btn" onclick="playVietnamese('ạ', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ă</div><div class="ja-text">ă (短いa)</div><button class="audio-btn" onclick="playVietnamese('ă', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">â</div><div class="ja-text">â (こもるa)</div><button class="audio-btn" onclick="playVietnamese('â', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">e</div><div class="ja-text">e</div><button class="audio-btn" onclick="playVietnamese('e', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ê</div><div class="ja-text">ê</div><button class="audio-btn" onclick="playVietnamese('ê', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">i</div><div class="ja-text">i</div><button class="audio-btn" onclick="playVietnamese('i', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">o</div><div class="ja-text">o</div><button class="audio-btn" onclick="playVietnamese('o', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ô</div><div class="ja-text">ô</div><button class="audio-btn" onclick="playVietnamese('ô', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ơ</div><div class="ja-text">ơ</div><button class="audio-btn" onclick="playVietnamese('ơ', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">u</div><div class="ja-text">u</div><button class="audio-btn" onclick="playVietnamese('u', 'vowels')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ư</div><div class="ja-text">ư</div><button class="audio-btn" onclick="playVietnamese('ư', 'vowels')">🔊 聞く</button></div>
 </div>
 </section>
 <!-- 子音セクション -->
 <section id="consonants">
 <h2>🍓 子音 (Phụ âm)</h2>
 <div class="grid-container">
-<div class="card"><div class="vi-text">b</div><div class="ja-text">b (bê)</div><button class="audio-btn" onclick="speakVi('ba')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">c</div><div class="ja-text">c (xê)</div><button class="audio-btn" onclick="speakVi('ca')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">d</div><div class="ja-text">d (dê)</div><button class="audio-btn" onclick="speakVi('da')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">đ</div><div class="ja-text">đ (đê)</div><button class="audio-btn" onclick="speakVi('đang')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">g</div><div class="ja-text">g (gờ)</div><button class="audio-btn" onclick="speakVi('ga')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">h</div><div class="ja-text">h (hát)</div><button class="audio-btn" onclick="speakVi('ha')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">k</div><div class="ja-text">k (ca)</div><button class="audio-btn" onclick="speakVi('ka')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">l</div><div class="ja-text">l (e-lờ)</div><button class="audio-btn" onclick="speakVi('la')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">m</div><div class="ja-text">m (em-mờ)</div><button class="audio-btn" onclick="speakVi('ma')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">n</div><div class="ja-text">n (en-nờ)</div><button class="audio-btn" onclick="speakVi('na')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">p</div><div class="ja-text">p (pê)</div><button class="audio-btn" onclick="speakVi('pa')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">q</div><div class="ja-text">q (quy)</div><button class="audio-btn" onclick="speakVi('qua')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">r</div><div class="ja-text">r (e-rờ)</div><button class="audio-btn" onclick="speakVi('ra')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">s</div><div class="ja-text">s (ét-sờ)</div><button class="audio-btn" onclick="speakVi('sa')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">t</div><div class="ja-text">t (tê)</div><button class="audio-btn" onclick="speakVi('ta')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">v</div><div class="ja-text">v (vê)</div><button class="audio-btn" onclick="speakVi('va')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">x</div><div class="ja-text">x (xích-ma)</div><button class="audio-btn" onclick="speakVi('xa')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">b</div><div class="ja-text">b (bê)</div><button class="audio-btn" onclick="playVietnamese('bê', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">c</div><div class="ja-text">c (xê)</div><button class="audio-btn" onclick="playVietnamese('cờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">d</div><div class="ja-text">d (dê)</div><button class="audio-btn" onclick="playVietnamese('dê', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">đ</div><div class="ja-text">đ (đê)</div><button class="audio-btn" onclick="playVietnamese('đê', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">g</div><div class="ja-text">g (gờ)</div><button class="audio-btn" onclick="playVietnamese('gờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">h</div><div class="ja-text">h (hát)</div><button class="audio-btn" onclick="playVietnamese('hát', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">k</div><div class="ja-text">k (ca)</div><button class="audio-btn" onclick="playVietnamese('ca', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">l</div><div class="ja-text">l (e-lờ)</div><button class="audio-btn" onclick="playVietnamese('lờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">m</div><div class="ja-text">m (em-mờ)</div><button class="audio-btn" onclick="playVietnamese('mờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">n</div><div class="ja-text">n (en-nờ)</div><button class="audio-btn" onclick="playVietnamese('nờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">p</div><div class="ja-text">p (pê)</div><button class="audio-btn" onclick="playVietnamese('pê', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">q</div><div class="ja-text">q (quy)</div><button class="audio-btn" onclick="playVietnamese('quy', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">r</div><div class="ja-text">r (e-rờ)</div><button class="audio-btn" onclick="playVietnamese('rờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">s</div><div class="ja-text">s (ét-sờ)</div><button class="audio-btn" onclick="playVietnamese('sờ', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">t</div><div class="ja-text">t (tê)</div><button class="audio-btn" onclick="playVietnamese('tê', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">v</div><div class="ja-text">v (vê)</div><button class="audio-btn" onclick="playVietnamese('vê', 'consonants')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">x</div><div class="ja-text">x (xích-ma)</div><button class="audio-btn" onclick="playVietnamese('xờ', 'consonants')">🔊 聞く</button></div>
 </div>
 </section>
 <!-- 動詞セクション -->
 <section id="verbs">
 <h2>🍓 動詞 (Động từ)</h2>
 <div class="grid-container">
-<div class="card"><div class="vi-text">ăn</div><div class="ja-text">食べる</div><button class="audio-btn" onclick="speakVi('ăn')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">đi</div><div class="ja-text">行く</div><button class="audio-btn" onclick="speakVi('đi')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">uống</div><div class="ja-text">飲む</div><button class="audio-btn" onclick="speakVi('uống')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">mở</div><div class="ja-text">開ける</div><button class="audio-btn" onclick="speakVi('mở')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">đóng</div><div class="ja-text">閉める</div><button class="audio-btn" onclick="speakVi('đóng')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">mua</div><div class="ja-text">買う</div><button class="audio-btn" onclick="speakVi('mua')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">xem</div><div class="ja-text">見る</div><button class="audio-btn" onclick="speakVi('xem')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">làm</div><div class="ja-text">する・作る</div><button class="audio-btn" onclick="speakVi('làm')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">ăn</div><div class="ja-text">食べる</div><button class="audio-btn" onclick="playVietnamese('ăn')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">đi</div><div class="ja-text">行く</div><button class="audio-btn" onclick="playVietnamese('đi')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">uống</div><div class="ja-text">飲む</div><button class="audio-btn" onclick="playVietnamese('uống')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">mở</div><div class="ja-text">開ける</div><button class="audio-btn" onclick="playVietnamese('mở')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">đóng</div><div class="ja-text">閉める</div><button class="audio-btn" onclick="playVietnamese('đóng')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">mua</div><div class="ja-text">買う</div><button class="audio-btn" onclick="playVietnamese('mua')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">xem</div><div class="ja-text">見る</div><button class="audio-btn" onclick="playVietnamese('xem')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">làm</div><div class="ja-text">する・作る</div><button class="audio-btn" onclick="playVietnamese('làm')">🔊 聞く</button></div>
 </div>
 </section>
 <!-- 単語セクション -->
 <section id="vocab">
 <h2>🍓 日常単語 (Từ vựng)</h2>
 <div class="grid-container">
-<div class="card"><div class="vi-text">cơm</div><div class="ja-text">ご飯</div><button class="audio-btn" onclick="speakVi('cơm')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">nước</div><div class="ja-text">水</div><button class="audio-btn" onclick="speakVi('nước')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">trà</div><div class="ja-text">お茶</div><button class="audio-btn" onclick="speakVi('trà')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">cà phê</div><div class="ja-text">コーヒー</div><button class="audio-btn" onclick="speakVi('cà phê')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">chợ</div><div class="ja-text">市場</div><button class="audio-btn" onclick="speakVi('chợ')">🔊 聞く</button></div>
-<div class="card"><div class="vi-text">nhà</div><div class="ja-text">家</div><button class="audio-btn" onclick="speakVi('nhà')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">cơm</div><div class="ja-text">ご飯</div><button class="audio-btn" onclick="playVietnamese('cơm')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">nước</div><div class="ja-text">水</div><button class="audio-btn" onclick="playVietnamese('nước')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">trà</div><div class="ja-text">お茶</div><button class="audio-btn" onclick="playVietnamese('trà')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">cà phê</div><div class="ja-text">コーヒー</div><button class="audio-btn" onclick="playVietnamese('cà phê')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">chợ</div><div class="ja-text">市場</div><button class="audio-btn" onclick="playVietnamese('chợ')">🔊 聞く</button></div>
+<div class="card"><div class="vi-text">nhà</div><div class="ja-text">家</div><button class="audio-btn" onclick="playVietnamese('nhà')">🔊 聞く</button></div>
 </div>
 </section>
 <!-- 例文セクション -->
@@ -301,102 +302,115 @@ color: #888;
 <div class="sentence-vi">Min ăn cơm chưa?</div>
 <div class="sentence-ja">Minちゃん、もうご飯食べた？</div>
 </div>
-<button class="audio-btn sentence-btn" onclick="speakVi('Min ăn cơm chưa?')">🔊 聞く</button>
+<button class="audio-btn sentence-btn" onclick="playVietnamese('Min ăn cơm chưa?')">🔊 聞く</button>
 </div>
 <div class="sentence-item">
 <div class="sentence-content">
 <div class="sentence-vi">Min đi đâu đấy?</div>
 <div class="sentence-ja">Minちゃん、どこ行くの？</div>
 </div>
-<button class="audio-btn sentence-btn" onclick="speakVi('Min đi đâu đấy?')">🔊 聞く</button>
+<button class="audio-btn sentence-btn" onclick="playVietnamese('Min đi đâu đấy?')">🔊 聞く</button>
 </div>
 <div class="sentence-item">
 <div class="sentence-content">
 <div class="sentence-vi">Tôi muốn uống cà phê.</div>
 <div class="sentence-ja">私はコーヒーが飲みたいです。</div>
 </div>
-<button class="audio-btn sentence-btn" onclick="speakVi('Tôi muốn uống cà phê.')">🔊 聞く</button>
+<button class="audio-btn sentence-btn" onclick="playVietnamese('Tôi muốn uống cà phê.')">🔊 聞く</button>
 </div>
 <div class="sentence-item">
 <div class="sentence-content">
 <div class="sentence-vi">Cái này bao nhiêu tiền?</div>
 <div class="sentence-ja">これはいくらですか？</div>
 </div>
-<button class="audio-btn sentence-btn" onclick="speakVi('Cái này bao nhiêu tiền?')">🔊 聞く</button>
+<button class="audio-btn sentence-btn" onclick="playVietnamese('Cái này bao nhiêu tiền?')">🔊 聞く</button>
 </div>
 <div class="sentence-item">
 <div class="sentence-content">
 <div class="sentence-vi">Cảm ơn bạn nhiều.</div>
 <div class="sentence-ja">本当にありがとうございます。</div>
 </div>
-<button class="audio-btn sentence-btn" onclick="speakVi('Cảm ơn bạn nhiều.')">🔊 聞く</button>
+<button class="audio-btn sentence-btn" onclick="playVietnamese('Cảm ơn bạn nhiều.')">🔊 聞く</button>
 </div>
 </div>
 </section>
 <footer>
 <p>© 一期一語 - 南部ベトナム語学習</p>
 </footer>
+<!-- iPhone Safari 消音モード（サイレントスイッチ）回避用 無音ダミーオーディオ -->
+<audio id="silent-unlocker" src="data:audio/wav;base64,UklGRigAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQQAAAAAAA==" preload="auto"></audio>
 <script>
-// Web Audio API によるサイレントオーディオ設定（iOS消音モード対策）
-let audioCtx = null;
-function initAudioContext() {
-if (!audioCtx) {
-const AudioContext = window.AudioContext || window.webkitAudioContext;
-if (AudioContext) {
-audioCtx = new AudioContext();
+// --- 1. iOS Safari スピーカーアンロック処理 (消音スイッチ回避) ---
+let audioUnlocked = false;
+const silentAudio = document.getElementById('silent-unlocker');
+function unlockIosAudio() {
+if (!audioUnlocked && silentAudio) {
+silentAudio.play().then(() => {
+silentAudio.pause();
+audioUnlocked = true;
+}).catch(() => {});
 }
 }
-if (audioCtx && audioCtx.state === 'suspended') {
-audioCtx.resume();
-}
-}
-// ユーザーインタラクションのたびにAudioContextをアクティブ化
-document.addEventListener('touchstart', initAudioContext, { passive: true });
-document.addEventListener('click', initAudioContext, { passive: true });
-// 音声リスト読み込み（iOS/Safari対応）
+// ユーザーが最初に画面上のどこかをタッチ/クリックした瞬間にアンロック
+document.addEventListener('touchstart', unlockIosAudio, { once: true, passive: true });
+document.addEventListener('click', unlockIosAudio, { once: true, passive: true });
+// --- 2. ボイスの初期化 (iOS対応) ---
 let voices = [];
-function loadVoices() {
+function updateVoices() {
 if ('speechSynthesis' in window) {
 voices = window.speechSynthesis.getVoices();
 }
 }
-loadVoices();
+updateVoices();
 if ('speechSynthesis' in window && window.speechSynthesis.onvoiceschanged !== undefined) {
-window.speechSynthesis.onvoiceschanged = loadVoices;
+window.speechSynthesis.onvoiceschanged = updateVoices;
 }
-// ベトナム語音声再生用メイン関数
-function speakVi(text) {
-initAudioContext();
+// --- 3. 音声再生メイン関数 ---
+function playVietnamese(text, type = 'general') {
+// 即座に無音再生を実行してオーディオチャンネルを「メディア」に昇格させる（直接イベント内でのみ動く）
+unlockIosAudio();
 if (!('speechSynthesis' in window)) {
-alert('お使いのブラウザは音声再生に対応していません。');
+alert('お使いのブラウザは音声読み上げに対応していません。');
 return;
 }
-// 二重再生防止のため既存発話をキャンセル
+// 進行中の音声をキャンセル（二重再生防止）
 window.speechSynthesis.cancel();
-const uttr = new SpeechSynthesisUtterance(text);
-uttr.lang = 'vi-VN';
-uttr.rate = 0.85; // 少しゆっくりめの自然な速度
-// vi-VN のボイスが存在する場合は選択
+// 単一の母音や記号が正確に発音されるようテキストを補正
+let speakText = text;
+if (type === 'vowels') {
+// 声調・母音の記号単体だとWeb Speech APIが正しく声調を発声しないため読みを調整
+const vowelMap = {
+'a': 'a',
+'á': 'á',
+'à': 'à',
+'ả': 'ả',
+'ã': 'ã',
+'ạ': 'ạ',
+'ă': 'ă',
+'â': 'â'
+};
+speakText = vowelMap[text] || text;
+}
+const utterance = new SpeechSynthesisUtterance(speakText);
+utterance.lang = 'vi-VN';
+utterance.rate = 0.85; // 初心者向けに聞き取りやすい速度
+utterance.pitch = 1.0;
+// ベトナム語ボイスを取得 (南部優先、または標準vi-VN)
 if (voices.length === 0) {
 voices = window.speechSynthesis.getVoices();
 }
-const viVoice = voices.find(v => v.lang === 'vi-VN' || v.lang === 'vi_VN' || v.lang.startsWith('vi'));
+// 南部ベトナム語(Siri Voice / vi-VN)を自動検知
+const viVoice = voices.find(v => (v.lang === 'vi-VN' || v.lang === 'vi_VN' || v.lang.startsWith('vi')) && v.name.includes('Southern')) ||
+voices.find(v => v.lang === 'vi-VN' || v.lang === 'vi_VN' || v.lang.startsWith('vi'));
 if (viVoice) {
-uttr.voice = viVoice;
+utterance.voice = viVoice;
 }
-// iOS Safari向けの小さなダミー再生処理（確実に本体スピーカーを起動）
-if (audioCtx) {
-const osc = audioCtx.createOscillator();
-const gain = audioCtx.createGain();
-gain.gain.value = 0.001; // ほぼ無音
-osc.connect(gain);
-gain.connect(audioCtx.destination);
-osc.start();
-osc.stop(audioCtx.currentTime + 0.01);
+// 安定再生のための小さなタイマー設定
+setTimeout(() => {
+window.speechSynthesis.speak(utterance);
+}, 50);
 }
-window.speechSynthesis.speak(uttr);
-}
-// 今後動的に要素が追加された際に自動的に「聞く」ボタンを付与できるスクリプト構造（DOM自動スキャン）
+// --- 4. 今後の自動追加ルール（[data-vi]要素があれば自動で音声ボタン生成） ---
 document.addEventListener('DOMContentLoaded', () => {
 const autoElements = document.querySelectorAll('[data-vi]');
 autoElements.forEach(el => {
@@ -405,7 +419,7 @@ const viText = el.getAttribute('data-vi');
 const btn = document.createElement('button');
 btn.className = 'audio-btn';
 btn.innerHTML = '🔊 聞く';
-btn.onclick = () => speakVi(viText);
+btn.onclick = () => playVietnamese(viText);
 el.appendChild(btn);
 }
 });
