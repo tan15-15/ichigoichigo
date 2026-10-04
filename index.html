@@ -36,7 +36,7 @@
 
     header {
       background: linear-gradient(135deg, #ffb3c1, #ffccd5);
-      padding: 24px 16px;
+      padding: 18px 12px;
       text-align: center;
       border-bottom-left-radius: 24px;
       border-bottom-right-radius: 24px;
@@ -44,42 +44,35 @@
     }
 
     .site-title-top {
-      font-size: 1.35rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #9d0208;
-      margin-bottom: 8px;
-      letter-spacing: 0.03em;
-      line-height: 1.3;
+      margin-bottom: 5px;
+      letter-spacing: 0.02em;
+      line-height: 1.25;
     }
 
     .site-title-sub {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-weight: 900;
       color: var(--primary);
       margin-top: 2px;
-      line-height: 1.2;
+      line-height: 1.15;
       white-space: nowrap;
-      letter-spacing: 0.02em;
+      letter-spacing: 0.01em;
       text-shadow: 0 1px 0 rgba(255,255,255,0.7);
     }
 
-    .site-title-reading {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #6a040f;
-      margin-top: 4px;
-      line-height: 1.2;
-      white-space: nowrap;
-    }
-
     .hero-desc {
-      margin-top: 12px;
-      font-size: 0.88rem;
+      margin-top: 9px;
+      font-size: 0.76rem;
       color: #590d22;
       background: rgba(255, 255, 255, 0.6);
       display: inline-block;
-      padding: 6px 14px;
+      padding: 5px 10px;
       border-radius: 20px;
+      white-space: nowrap;
+      max-width: 100%;
     }
 
     nav {
@@ -321,15 +314,16 @@
 
     @media (max-width: 380px) {
       .site-title-top {
-        font-size: 1.2rem;
+        font-size: 1.05rem;
       }
 
       .site-title-sub {
-        font-size: 1.45rem;
+        font-size: 1.35rem;
       }
 
-      .site-title-reading {
-        font-size: 0.95rem;
+      .hero-desc {
+        font-size: 0.7rem;
+        padding: 4px 8px;
       }
     }
   </style>
@@ -339,8 +333,7 @@
 
   <header>
     <div class="site-title-top">ベトナム暮らし、ベトナム語は今日も</div>
-    <div class="site-title-sub">🍓一期一語🍓</div>
-    <div class="site-title-reading">【いちごいちご】</div>
+    <div class="site-title-sub">🍓一期一語🍓【いちごいちご】</div>
     <div class="hero-desc">南部ベトナムで暮らしながら、今日覚えた一語を大切に。</div>
   </header>
 
@@ -766,10 +759,11 @@
 
     // ==============================
     // AUDIO SYSTEM
-    // iPhone / iOS対応強化
+    // iPhone / iOS対応
     // ==============================
 
     let availableVoices = [];
+    let currentAudio = null;
 
     function loadVoices() {
       if (!('speechSynthesis' in window)) {
@@ -782,13 +776,9 @@
     if ('speechSynthesis' in window) {
       loadVoices();
 
-      if ('onvoiceschanged' in window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = loadVoices;
-      }
-
-      // iPhoneでは音声一覧の取得が遅れる場合があるため再確認
-      setTimeout(loadVoices, 300);
-      setTimeout(loadVoices, 1000);
+      window.speechSynthesis.onvoiceschanged = function() {
+        loadVoices();
+      };
     }
 
 
@@ -797,13 +787,11 @@
         availableVoices = window.speechSynthesis.getVoices() || [];
       }
 
-      // ベトナム語を最優先
       let voice = availableVoices.find(v => {
         const lang = (v.lang || '').toLowerCase();
         return lang === 'vi-vn';
       });
 
-      // vi-VNが見つからない場合、viで始まる音声
       if (!voice) {
         voice = availableVoices.find(v => {
           const lang = (v.lang || '').toLowerCase();
@@ -815,6 +803,7 @@
     }
 
 
+    // Google音声
     function getTTSUrl(text) {
       return 'https://translate.google.com/translate_tts?ie=UTF-8&tl=vi&client=tw-ob&q='
         + encodeURIComponent(text);
@@ -822,27 +811,32 @@
 
 
     function playGoogleAudio(text) {
-      try {
-        const audio = new Audio();
 
-        audio.preload = 'auto';
-        audio.src = getTTSUrl(text);
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
 
-        const playPromise = audio.play();
+      currentAudio = new Audio(getTTSUrl(text));
 
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            alert("音声を再生できませんでした。もう一度ボタンを押してください。");
-          });
-        }
-      } catch (e) {
-        alert("音声を再生できませんでした。");
+      currentAudio.preload = 'auto';
+
+      // この関数は「音声ボタンを押した瞬間」に呼ばれるため、
+      // iPhoneのユーザー操作による再生として処理されやすい
+      const playPromise = currentAudio.play();
+
+      if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(function() {
+          // エラー表示はしない
+        });
       }
     }
 
 
     function playSpeechSynthesis(text, voice) {
+
       try {
+
         window.speechSynthesis.cancel();
 
         const utter = new SpeechSynthesisUtterance(text);
@@ -853,19 +847,15 @@
         utter.pitch = 1.0;
         utter.volume = 1.0;
 
+        window.speechSynthesis.resume();
+
         utter.onerror = function() {
-          // iPhone側の音声で失敗した場合はGoogle TTSへ
+          // ネイティブ音声が失敗した場合
+          // Google音声を試す
           playGoogleAudio(text);
         };
 
         window.speechSynthesis.speak(utter);
-
-        // iOSで発話が開始されないケースへの保険
-        setTimeout(function() {
-          if (window.speechSynthesis.speaking) {
-            return;
-          }
-        }, 500);
 
       } catch (e) {
         playGoogleAudio(text);
@@ -874,11 +864,12 @@
 
 
     function playAudio(text) {
+
       if (!text) {
         return;
       }
 
-      // まずiPhone / ブラウザ内のベトナム語音声を探す
+      // まずiPhone / Safariのベトナム語音声を探す
       if ('speechSynthesis' in window) {
 
         loadVoices();
@@ -889,25 +880,10 @@
           playSpeechSynthesis(text, voice);
           return;
         }
-
-        // 音声一覧の読み込みがまだ終わっていない可能性
-        setTimeout(function() {
-          loadVoices();
-
-          const delayedVoice = getVietnameseVoice();
-
-          if (delayedVoice) {
-            playSpeechSynthesis(text, delayedVoice);
-          } else {
-            // ベトナム語音声が本当にない場合
-            playGoogleAudio(text);
-          }
-        }, 500);
-
-        return;
       }
 
-      // speechSynthesis非対応ブラウザ
+      // ベトナム語音声がiPhoneにない場合は
+      // ボタンを押した瞬間にGoogle音声を再生
       playGoogleAudio(text);
     }
 
