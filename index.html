@@ -1,193 +1,831 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一期一語 (Ichigo Ichigo) - 南部ベトナム語学習ポータル</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        strawberry: {
-                            50: '#fff1f2',
-                            100: '#ffe4e6',
-                            200: '#fecdd3',
-                            500: '#f43f5e',
-                            600: '#e11d48',
-                            700: '#be123c',
-                        },
-                        matcha: {
-                            500: '#10b981',
-                            600: '#059669',
-                        },
-                        cream: '#fffdfa'
-                    },
-                    fontFamily: {
-                        sans: ['"Zen Maru Gothic"', '"Plus Jakarta Sans"', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <style>
-        .gradient-bg {
-            background: linear-gradient(135deg, #fff1f2 0%, #fffdfa 50%, #f0fdf4 100%);
-        }
-        .hero-shadow {
-            filter: drop-shadow(0 20px 30px rgba(225, 29, 72, 0.15));
-        }
-        .bounce-gentle {
-            animation: bounceGentle 3s ease-in-out infinite;
-        }
-        @keyframes bounceGentle {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ベトナム暮らし、ベトナム語は今日も🍓一期一語🍓</title>
+
+<style>
+
+/* =========================
+   全体
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    "Noto Sans JP",
+    sans-serif;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff8fb 0%,
+      #fffdf8 45%,
+      #f5fbff 100%
+    );
+
+  color: #594d4d;
+  line-height: 1.8;
+}
+
+.page {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px 15px 60px;
+}
+
+
+/* =========================
+   🍓 ヘッダー
+========================= */
+
+.header {
+  text-align: center;
+  padding: 18px 10px 15px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(20px, 4vw, 30px);
+  line-height: 1.35;
+  font-weight: 800;
+  color: #604b4b;
+}
+
+.header h1 span {
+  color: #ed5470;
+}
+
+.header p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #8a7777;
+}
+
+
+/* =========================
+   🇻🇳 ベトナム語の旅
+========================= */
+
+.journey {
+  position: relative;
+  margin: 10px auto 22px;
+  padding: 22px 18px;
+  background: rgba(255,255,255,.8);
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(120,100,100,.07);
+}
+
+.journey-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.journey-title h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #5b8fbb;
+}
+
+.journey-intro {
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+
+.journey-intro strong {
+  color: #e85872;
+}
+
+
+/* =========================
+   今日のカード
+========================= */
+
+.today-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 28px 20px 35px;
+  margin-top: 25px;
+
+  box-shadow:
+    0 12px 35px rgba(100,80,80,.09);
+
+  overflow: hidden;
+}
+
+.today-card::before {
+  content: "🍓";
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  font-size: 42px;
+  opacity: .18;
+}
+
+.today-label {
+  display: inline-block;
+  background: #ffe1e8;
+  color: #e65470;
+  padding: 4px 13px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.today-card h2 {
+  margin: 12px 0 20px;
+  font-size: 25px;
+  color: #5b4b4b;
+}
+
+
+/* =========================
+   今日の出来事
+========================= */
+
+.scene {
+  background: #fff8f3;
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.scene-icon {
+  font-size: 38px;
+}
+
+.scene h3 {
+  margin: 4px 0 10px;
+  font-size: 19px;
+}
+
+.scene p {
+  margin: 8px 0;
+}
+
+.question {
+  color: #e0546e;
+  font-weight: bold;
+}
+
+
+/* =========================
+   ベトナム語カード
+========================= */
+
+.vietnamese-card {
+  background:
+    linear-gradient(
+      135deg,
+      #fff1f5,
+      #fffaf0
+    );
+
+  border: 2px solid #ffd8e1;
+  border-radius: 25px;
+  padding: 23px 18px;
+  text-align: center;
+}
+
+.vietnamese-label {
+  font-size: 13px;
+  color: #d35b72;
+  font-weight: bold;
+}
+
+.vietnamese {
+  margin: 15px 0;
+  font-size: clamp(22px, 5vw, 32px);
+  line-height: 1.5;
+  font-weight: 800;
+  color: #4d6f91;
+}
+
+
+/* =========================
+   音声ボタン
+========================= */
+
+.voice-button {
+  border: none;
+  background: #ed607a;
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  padding: 12px 25px;
+  border-radius: 50px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 12px rgba(220,80,110,.25);
+
+  transition: .2s;
+}
+
+.voice-button:hover {
+  transform: translateY(-2px);
+}
+
+.voice-button:active {
+  transform: scale(.96);
+}
+
+.voice-note {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #998;
+}
+
+
+/* =========================
+   日本語
+========================= */
+
+.translation {
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px dashed #e9cbd2;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   単語分解
+========================= */
+
+.word-section {
+  margin-top: 25px;
+}
+
+.word-section h3 {
+  text-align: center;
+  font-size: 20px;
+}
+
+.word-list {
+  display: grid;
+  gap: 10px;
+}
+
+.word {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  background: #f8fbff;
+  border-radius: 17px;
+  padding: 12px 15px;
+}
+
+.word-vietnamese {
+  min-width: 100px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #578ab5;
+}
+
+.word-japanese {
+  font-size: 14px;
+}
+
+
+/* =========================
+   今日の一期一語
+========================= */
+
+.ichigo-word {
+  margin-top: 28px;
+  padding: 25px 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff0f4,
+      #fff8e9
+    );
+
+  border-radius: 25px;
+  text-align: center;
+}
+
+.ichigo-word .small {
+  font-size: 13px;
+  color: #bd6878;
+}
+
+.ichigo-word .main {
+  display: block;
+  margin: 4px 0;
+  font-size: 42px;
+  font-weight: 900;
+  color: #e4536d;
+}
+
+.ichigo-word .meaning {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   メニュー
+========================= */
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #5b5555;
+
+  background: white;
+  border-radius: 20px;
+  padding: 17px 8px;
+
+  text-align: center;
+
+  box-shadow:
+    0 5px 18px rgba(100,80,80,.06);
+
+  transition: .2s;
+}
+
+.menu a:hover {
+  transform: translateY(-3px);
+}
+
+.menu strong {
+  display: block;
+  color: #df5c73;
+  font-size: 14px;
+}
+
+.menu small {
+  font-size: 11px;
+  color: #999;
+}
+
+
+/* =========================
+   スマホ
+========================= */
+
+@media (max-width: 600px) {
+
+  .page {
+    padding: 10px 10px 40px;
+  }
+
+  .header {
+    padding-top: 12px;
+  }
+
+  .header p {
+    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .today-card {
+    padding: 23px 14px 28px;
+  }
+
+  .vietnamese {
+    font-size: 22px;
+  }
+
+  .word {
+    gap: 10px;
+  }
+
+  .word-vietnamese {
+    min-width: 80px;
+  }
+
+  .menu {
+    gap: 7px;
+  }
+
+  .menu a {
+    padding: 13px 4px;
+  }
+}
+
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col gradient-bg">
 
-    <!-- Navigation Header -->
-    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-rose-100 shadow-sm">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <span class="text-3xl">🍓</span>
-                <div>
-                    <h1 class="text-xl font-bold text-rose-600 leading-tight">一期一語</h1>
-                    <p class="text-[10px] text-slate-400 font-semibold tracking-wider">ICHIGO ICHIGO • SOUTHERN VIETNAMESE</p>
-                </div>
-            </div>
-            <nav class="hidden md:flex items-center gap-6 text-sm font-bold text-slate-600">
-                <a href="#about" class="hover:text-rose-500 transition-colors">Bé Dâuの紹介</a>
-                <a href="#lessons" class="hover:text-rose-500 transition-colors">学習コンテンツ</a>
-                <a href="#dictionary" class="hover:text-rose-500 transition-colors">南部弁ミニ辞典</a>
-                <a href="#community" class="hover:text-rose-500 transition-colors">コミュニティ</a>
-            </nav>
-            <button class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md shadow-rose-200 transition-all hover:scale-105 active:scale-95">
-                無料レッスン体験
-            </button>
+
+<body>
+
+<div class="page">
+
+
+  <!-- =========================
+       🍓 タイトル
+  ========================== -->
+
+  <header class="header">
+
+    <h1>
+      ベトナム暮らし、ベトナム語は今日も<br>
+      <span>🍓一期一語🍓</span>【いちごいちご】
+    </h1>
+
+    <p>
+      南部ベトナムで暮らしながら、今日覚えた一語を大切に。
+    </p>
+
+  </header>
+
+
+  <!-- =========================
+       🇻🇳 ベトナム語の旅
+  ========================== -->
+
+  <section class="journey">
+
+    <div class="journey-title">
+      <span>🇻🇳</span>
+
+      <h2>ベトナム語の旅</h2>
+
+      <span>🍓</span>
+    </div>
+
+    <div class="journey-intro">
+
+      <strong>ゼロから、少しだけ日常会話へ。</strong><br>
+
+      ペラペラを目指す必要はありません。<br>
+
+      街や家で「意思伝達」ができるようになるための<br>
+
+      南部ベトナム語超入門サイトです。
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================
+       🍓 今日覚えた
+  ========================== -->
+
+  <article class="today-card">
+
+    <div class="today-label">
+      🍓 TODAY
+    </div>
+
+    <h2>
+      今日は、これ覚えた。
+    </h2>
+
+
+    <!-- 今日の出来事 -->
+
+    <section class="scene">
+
+      <div class="scene-icon">
+        👶
+      </div>
+
+      <h3>
+        今日の出来事
+      </h3>
+
+      <p>
+        Miiを義理のお母さんに<br>
+        抱っこしてもらいたい。
+      </p>
+
+      <p>
+        「お母さん、Miiを抱っこしてもらえますか？」
+      </p>
+
+      <p class="question">
+        ……でも、<br>
+        ベトナム語でどう言えばいいの？😂
+      </p>
+
+    </section>
+
+
+
+    <!-- ベトナム語 -->
+
+    <section class="vietnamese-card">
+
+      <div class="vietnamese-label">
+        🇻🇳 南部ベトナム語
+      </div>
+
+      <div class="vietnamese">
+        Má ơi, má ẵm Mii giùm con được không?
+      </div>
+
+
+      <button
+        class="voice-button"
+        onclick="speakVietnamese()">
+
+        🔊 発音を聞く
+
+      </button>
+
+      <div class="voice-note">
+        ※端末のベトナム語音声を使用します
+      </div>
+
+
+      <div class="translation">
+
+        お母さん、Miiを抱っこしてもらえますか？
+
+      </div>
+
+    </section>
+
+
+
+    <!-- 単語 -->
+
+    <section class="word-section">
+
+      <h3>
+        🔎 ひとつずつ見てみる
+      </h3>
+
+
+      <div class="word-list">
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            má
+          </div>
+
+          <div class="word-japanese">
+            お母さん
+          </div>
+
         </div>
-    </header>
 
-    <!-- Main Hero Section -->
-    <main class="flex-grow">
-        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                
-                <!-- Mascot Artwork Column -->
-                <div class="lg:col-span-7 flex flex-col items-center">
-                    <div class="relative w-full max-w-lg">
-                        <!-- Background Glow Decoration -->
-                        <div class="absolute inset-0 bg-rose-200/50 rounded-full filter blur-3xl -z-10 scale-90"></div>
-                        
-                        <!-- Official Mascot Image (High Speed & Denim Shorts) -->
-                        <img src="watermarked_img_18421922750633263819.jpg" 
-                             alt="一期一語 公式マスコット Bé Dâu (ベ・ザウ) - デニムショートパンツで疾走するスーパーカブ姿" 
-                             class="w-full h-auto rounded-3xl hero-shadow bounce-gentle object-contain"
-                             onerror="this.onerror=null; this.src='https://placehold.co/800x600/ffe4e6/be123c?text=B%C3%A9+D%C3%A2u+Mascot';">
-                    </div>
-                </div>
 
-                <!-- Text Content Column -->
-                <div class="lg:col-span-5 flex flex-col gap-5 text-center lg:text-left">
-                    <div class="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-xs font-bold w-fit mx-auto lg:mx-0">
-                        <span>🇻🇳 南部ベトナム語 (Tiếng Miền Nam) 専門</span>
-                    </div>
-                    
-                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-800 leading-tight">
-                        いちごちゃんと楽しむ<br>
-                        <span class="text-rose-600">生きたベトナム語</span>の旅！
-                    </h2>
-                    
-                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
-                        公式マスコット「<strong class="text-rose-600">Bé Dâu（ベ・ザウ）</strong>」と一緒に、ホーチミンをはじめとする南部ベトナムのリアルな言葉と文化を楽しく学びましょう！風を切ってスーパーカブで駆け巡りながら、美味しい食文化と優しい言葉を届けます。
-                    </p>
+        <div class="word">
 
-                    <!-- Feature Tags -->
-                    <div class="grid grid-cols-2 gap-3 pt-2 text-left">
-                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
-                            <span class="text-xl">🛵</span>
-                            <span class="text-xs font-bold text-slate-700">爽快スピード感あふれるガイド</span>
-                        </div>
-                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
-                            <span class="text-xl">🩳</span>
-                            <span class="text-xs font-bold text-slate-700">デニムショートパンツスタイル</span>
-                        </div>
-                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
-                            <span class="text-xl">🥖</span>
-                            <span class="text-xs font-bold text-slate-700">バインミー＆南国の果物いっぱい</span>
-                        </div>
-                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
-                            <span class="text-xl">🌸</span>
-                            <span class="text-xs font-bold text-slate-700">日越文化のかけはし</span>
-                        </div>
-                    </div>
+          <div class="word-vietnamese">
+            ơi
+          </div>
 
-                    <!-- Call To Actions -->
-                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
-                        <a href="#lessons" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-rose-200 transition-all text-center flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                            今すぐレッスンを始める
-                        </a>
-                        <a href="#about" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold py-3.5 px-6 rounded-2xl transition-all text-center">
-                            Bé Dâuのプロフィール
-                        </a>
-                    </div>
-                </div>
+          <div class="word-japanese">
+            呼びかける言葉
+          </div>
 
-            </div>
-        </section>
-
-        <!-- Mascot Profile Section -->
-        <section id="about" class="bg-white py-12 border-t border-rose-100">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6">
-                <div class="text-center mb-8">
-                    <span class="text-xs font-bold tracking-widest text-rose-500 uppercase">CHARACTER PROFILE</span>
-                    <h3 class="text-2xl font-bold text-slate-800 mt-1">マスコットキャラクター「Bé Dâu」</h3>
-                </div>
-
-                <div class="bg-rose-50/60 rounded-3xl p-6 sm:p-8 border border-rose-100 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                    <div class="md:col-span-1 text-center">
-                        <div class="bg-white p-4 rounded-2xl shadow-md inline-block">
-                            <img src="watermarked_img_18421922750633263819.jpg" alt="Bé Dâu Character" class="w-48 h-auto mx-auto rounded-lg">
-                        </div>
-                    </div>
-                    <div class="md:col-span-2 flex flex-col gap-3">
-                        <div class="flex items-center gap-2">
-                            <h4 class="text-xl font-bold text-rose-600">Bé Dâu（ベ・ザウ / いちごちゃん）</h4>
-                            <span class="bg-rose-200 text-rose-800 text-xs px-2 py-0.5 rounded-full font-bold">公式案内役</span>
-                        </div>
-                        <p class="text-sm text-slate-600 leading-relaxed">
-                            頭っでっかちでキュートな大きな顔と、くりっとした瞳がチャームポイント！デニムのショートパンツを履き、スーパーカブで風を切って疾走する元気いっぱいな女の子です。
-                        </p>
-                        <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700 pt-2">
-                            <div class="bg-white p-2 rounded-lg">🍓 <strong>チャームポイント:</strong> 大きなお顔＆デニムショートパンツ</div>
-                            <div class="bg-white p-2 rounded-lg">🛵 <strong>スタイル:</strong> 風を切るスーパーカブ疾走モード</div>
-                            <div class="bg-white p-2 rounded-lg">🥖 <strong>好物:</strong> 特製バインミー & フォー</div>
-                            <div class="bg-white p-2 rounded-lg">🌸 <strong>夢:</strong> 日本とベトナムを笑顔でつなぐこと</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col items-center gap-3">
-            <div class="flex items-center gap-2 text-white font-bold text-base">
-                <span>🍓 一期一語 (Ichigo Ichigo)</span>
-            </div>
-            <p>© 2026 Ichigo Ichigo - Southern Vietnamese Learning World. All rights reserved.</p>
         </div>
-    </footer>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            ẵm
+          </div>
+
+          <div class="word-japanese">
+            赤ちゃんを抱っこする
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            Mii
+          </div>
+
+          <div class="word-japanese">
+            みい
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            giùm
+          </div>
+
+          <div class="word-japanese">
+            ～してもらう・～してあげる
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            con
+          </div>
+
+          <div class="word-japanese">
+            年上の家族に対して自分を指す言葉
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            được không?
+          </div>
+
+          <div class="word-japanese">
+            ～してもらえる？
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- 今日の一期一語 -->
+
+    <section class="ichigo-word">
+
+      <div class="small">
+        🍓 今日の一期一語
+      </div>
+
+      <span class="main">
+        ẵm
+      </span>
+
+      <div class="meaning">
+        赤ちゃんを抱っこする
+      </div>
+
+    </section>
+
+  </article>
+
+
+
+  <!-- =========================
+       メニュー
+  ========================== -->
+
+  <nav class="menu">
+
+    <a href="#today">
+
+      🍓
+
+      <strong>
+        今日覚えた
+      </strong>
+
+      <small>
+        今日のベトナム語
+      </small>
+
+    </a>
+
+
+    <a href="#words">
+
+      📚
+
+      <strong>
+        これまでの一語
+      </strong>
+
+      <small>
+        復習しよう
+      </small>
+
+    </a>
+
+
+    <a href="#basic">
+
+      🌱
+
+      <strong>
+        ベトナム語の基礎
+      </strong>
+
+      <small>
+        母音・子音・声調
+      </small>
+
+    </a>
+
+  </nav>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================
+   🇻🇳 ベトナム語音声
+========================= */
+
+function speakVietnamese() {
+
+  const text =
+    "Má ơi, má ẵm Mii giùm con được không?";
+
+  if (!("speechSynthesis" in window)) {
+
+    alert(
+      "この端末では音声読み上げに対応していません。"
+    );
+
+    return;
+  }
+
+
+  window.speechSynthesis.cancel();
+
+
+  const speech =
+    new SpeechSynthesisUtterance(text);
+
+
+  speech.lang = "vi-VN";
+
+  speech.rate = 0.78;
+
+  speech.pitch = 1.0;
+
+
+  /*
+    ベトナム語音声が複数ある場合、
+    vi-VN を優先します。
+  */
+
+  const voices =
+    window.speechSynthesis.getVoices();
+
+
+  const vietnameseVoice =
+    voices.find(
+      voice =>
+        voice.lang &&
+        voice.lang.toLowerCase().startsWith("vi")
+    );
+
+
+  if (vietnameseVoice) {
+
+    speech.voice =
+      vietnameseVoice;
+
+  }
+
+
+  window.speechSynthesis.speak(
+    speech
+  );
+
+}
+
+</script>
+
 
 </body>
 </html>
