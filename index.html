@@ -1,39 +1,193 @@
-<div class="vietnamese-sounds">
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一期一語 (Ichigo Ichigo) - 南部ベトナム語学習ポータル</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        strawberry: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            200: '#fecdd3',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                        },
+                        matcha: {
+                            500: '#10b981',
+                            600: '#059669',
+                        },
+                        cream: '#fffdfa'
+                    },
+                    fontFamily: {
+                        sans: ['"Zen Maru Gothic"', '"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #fff1f2 0%, #fffdfa 50%, #f0fdf4 100%);
+        }
+        .hero-shadow {
+            filter: drop-shadow(0 20px 30px rgba(225, 29, 72, 0.15));
+        }
+        .bounce-gentle {
+            animation: bounceGentle 3s ease-in-out infinite;
+        }
+        @keyframes bounceGentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col gradient-bg">
 
-  <div class="sound-box vowel-box">
-    <div class="sound-title">🌸 母音</div>
-    <div class="sound-list">
-      <span>a</span>
-      <span>ă</span>
-      <span>â</span>
-      <span>e</span>
-      <span>ê</span>
-      <span>i</span>
-      <span>o</span>
-      <span>ô</span>
-      <span>ơ</span>
-      <span>u</span>
-      <span>ư</span>
-      <span>y</span>
-    </div>
-  </div>
+    <!-- Navigation Header -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-rose-100 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🍓</span>
+                <div>
+                    <h1 class="text-xl font-bold text-rose-600 leading-tight">一期一語</h1>
+                    <p class="text-[10px] text-slate-400 font-semibold tracking-wider">ICHIGO ICHIGO • SOUTHERN VIETNAMESE</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center gap-6 text-sm font-bold text-slate-600">
+                <a href="#about" class="hover:text-rose-500 transition-colors">Bé Dâuの紹介</a>
+                <a href="#lessons" class="hover:text-rose-500 transition-colors">学習コンテンツ</a>
+                <a href="#dictionary" class="hover:text-rose-500 transition-colors">南部弁ミニ辞典</a>
+                <a href="#community" class="hover:text-rose-500 transition-colors">コミュニティ</a>
+            </nav>
+            <button class="bg-rose-500 hover:bg-rose-600 text-white px-4 py-2 rounded-full font-bold text-sm shadow-md shadow-rose-200 transition-all hover:scale-105 active:scale-95">
+                無料レッスン体験
+            </button>
+        </div>
+    </header>
 
-  <div class="sound-box consonant-box">
-    <div class="sound-title">💙 子音</div>
-    <div class="sound-list">
-      <span>b</span>
-      <span>c</span>
-      <span>d</span>
-      <span>đ</span>
-      <span>g</span>
-      <span>h</span>
-      <span>k</span>
-      <span>m</span>
-      <span>n</span>
-      <span>ng</span>
-      <span>nh</span>
-      <span>ph</span>
-    </div>
-  </div>
+    <!-- Main Hero Section -->
+    <main class="flex-grow">
+        <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Mascot Artwork Column -->
+                <div class="lg:col-span-7 flex flex-col items-center">
+                    <div class="relative w-full max-w-lg">
+                        <!-- Background Glow Decoration -->
+                        <div class="absolute inset-0 bg-rose-200/50 rounded-full filter blur-3xl -z-10 scale-90"></div>
+                        
+                        <!-- Official Mascot Image (High Speed & Denim Shorts) -->
+                        <img src="watermarked_img_18421922750633263819.jpg" 
+                             alt="一期一語 公式マスコット Bé Dâu (ベ・ザウ) - デニムショートパンツで疾走するスーパーカブ姿" 
+                             class="w-full h-auto rounded-3xl hero-shadow bounce-gentle object-contain"
+                             onerror="this.onerror=null; this.src='https://placehold.co/800x600/ffe4e6/be123c?text=B%C3%A9+D%C3%A2u+Mascot';">
+                    </div>
+                </div>
 
-</div>
+                <!-- Text Content Column -->
+                <div class="lg:col-span-5 flex flex-col gap-5 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 bg-rose-100 text-rose-700 px-3 py-1 rounded-full text-xs font-bold w-fit mx-auto lg:mx-0">
+                        <span>🇻🇳 南部ベトナム語 (Tiếng Miền Nam) 専門</span>
+                    </div>
+                    
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-800 leading-tight">
+                        いちごちゃんと楽しむ<br>
+                        <span class="text-rose-600">生きたベトナム語</span>の旅！
+                    </h2>
+                    
+                    <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+                        公式マスコット「<strong class="text-rose-600">Bé Dâu（ベ・ザウ）</strong>」と一緒に、ホーチミンをはじめとする南部ベトナムのリアルな言葉と文化を楽しく学びましょう！風を切ってスーパーカブで駆け巡りながら、美味しい食文化と優しい言葉を届けます。
+                    </p>
+
+                    <!-- Feature Tags -->
+                    <div class="grid grid-cols-2 gap-3 pt-2 text-left">
+                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
+                            <span class="text-xl">🛵</span>
+                            <span class="text-xs font-bold text-slate-700">爽快スピード感あふれるガイド</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
+                            <span class="text-xl">🩳</span>
+                            <span class="text-xs font-bold text-slate-700">デニムショートパンツスタイル</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
+                            <span class="text-xl">🥖</span>
+                            <span class="text-xs font-bold text-slate-700">バインミー＆南国の果物いっぱい</span>
+                        </div>
+                        <div class="bg-white p-3 rounded-xl border border-rose-100 shadow-sm flex items-center gap-2">
+                            <span class="text-xl">🌸</span>
+                            <span class="text-xs font-bold text-slate-700">日越文化のかけはし</span>
+                        </div>
+                    </div>
+
+                    <!-- Call To Actions -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-4">
+                        <a href="#lessons" class="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg shadow-rose-200 transition-all text-center flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            今すぐレッスンを始める
+                        </a>
+                        <a href="#about" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 font-bold py-3.5 px-6 rounded-2xl transition-all text-center">
+                            Bé Dâuのプロフィール
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Mascot Profile Section -->
+        <section id="about" class="bg-white py-12 border-t border-rose-100">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6">
+                <div class="text-center mb-8">
+                    <span class="text-xs font-bold tracking-widest text-rose-500 uppercase">CHARACTER PROFILE</span>
+                    <h3 class="text-2xl font-bold text-slate-800 mt-1">マスコットキャラクター「Bé Dâu」</h3>
+                </div>
+
+                <div class="bg-rose-50/60 rounded-3xl p-6 sm:p-8 border border-rose-100 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div class="md:col-span-1 text-center">
+                        <div class="bg-white p-4 rounded-2xl shadow-md inline-block">
+                            <img src="watermarked_img_18421922750633263819.jpg" alt="Bé Dâu Character" class="w-48 h-auto mx-auto rounded-lg">
+                        </div>
+                    </div>
+                    <div class="md:col-span-2 flex flex-col gap-3">
+                        <div class="flex items-center gap-2">
+                            <h4 class="text-xl font-bold text-rose-600">Bé Dâu（ベ・ザウ / いちごちゃん）</h4>
+                            <span class="bg-rose-200 text-rose-800 text-xs px-2 py-0.5 rounded-full font-bold">公式案内役</span>
+                        </div>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            頭っでっかちでキュートな大きな顔と、くりっとした瞳がチャームポイント！デニムのショートパンツを履き、スーパーカブで風を切って疾走する元気いっぱいな女の子です。
+                        </p>
+                        <div class="grid grid-cols-2 gap-2 text-xs font-semibold text-slate-700 pt-2">
+                            <div class="bg-white p-2 rounded-lg">🍓 <strong>チャームポイント:</strong> 大きなお顔＆デニムショートパンツ</div>
+                            <div class="bg-white p-2 rounded-lg">🛵 <strong>スタイル:</strong> 風を切るスーパーカブ疾走モード</div>
+                            <div class="bg-white p-2 rounded-lg">🥖 <strong>好物:</strong> 特製バインミー & フォー</div>
+                            <div class="bg-white p-2 rounded-lg">🌸 <strong>夢:</strong> 日本とベトナムを笑顔でつなぐこと</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs">
+        <div class="max-w-6xl mx-auto px-4 flex flex-col items-center gap-3">
+            <div class="flex items-center gap-2 text-white font-bold text-base">
+                <span>🍓 一期一語 (Ichigo Ichigo)</span>
+            </div>
+            <p>© 2026 Ichigo Ichigo - Southern Vietnamese Learning World. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
