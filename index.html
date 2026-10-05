@@ -1,789 +1,831 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ベトナム暮らし、ベトナム語は今日も 🍓一期一語🍓【いちごいちご】</title>
-  <meta name="description" content="ベトナム在住の日本人が、南部ベトナム語を超初心者から楽しく学ぶためのサイトです。母音、子音、声調、単語、文法、日常会話を順番に学べます。">
-  <style>
-    :root {
-      --primary: #e63946;
-      --primary-light: #ffccd5;
-      --bg-color: #fffaf0;
-      --card-bg: #ffffff;
-      --text-dark: #2b2d42;
-      --text-muted: #6c757d;
-      --accent-green: #2a9d8f;
-      --border-radius: 16px;
-      --shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-dark);
-      line-height: 1.6;
-      padding-bottom: 80px;
-    }
-    header {
-      background: linear-gradient(135deg, #ffb3c1, #ffccd5);
-      padding: 24px 16px;
-      text-align: center;
-      border-bottom-left-radius: 24px;
-      border-bottom-right-radius: 24px;
-      box-shadow: 0 2px 10px rgba(230, 57, 70, 0.15);
-    }
-    .site-title-top {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: #9d0208;
-      margin-bottom: 4px;
-      letter-spacing: 0.02em;
-      line-height: 1.25;
-      white-space: nowrap;
-    }
-    .site-title-sub {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--primary);
-      margin-top: 0;
-      line-height: 1.2;
-      white-space: nowrap;
-    }
-    .site-title-reading {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #6a040f;
-      margin-top: 0;
-      display: inline;
-      margin-left: 4px;
-    }
-    .hero-desc {
-      margin-top: 7px;
-      font-size: 0.76rem;
-      color: #590d22;
-      background: rgba(255, 255, 255, 0.6);
-      display: inline-block;
-      padding: 5px 11px;
-      border-radius: 18px;
-      line-height: 1.35;
-      max-width: 100%;
-    }
-    nav {
-      display: flex;
-      justify-content: space-around;
-      background-color: #ffffff;
-      padding: 8px 4px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-      overflow-x: auto;
-      white-space: nowrap;
-    }
-    nav button {
-      background: none;
-      border: none;
-      padding: 8px 12px;
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text-muted);
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      transition: all 0.2s;
-    }
-    nav button.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-    .page { display: none; }
-    .page.active { display: block; }
-    h2 {
-      font-size: 1.3rem;
-      color: var(--primary);
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 2px solid var(--primary-light);
-      padding-bottom: 6px;
-    }
-    .section-intro {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-      margin-bottom: 16px;
-      background: #ffffff;
-      padding: 12px;
-      border-radius: 12px;
-      border-left: 4px solid var(--primary);
-    }
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .menu-card {
-      background: var(--card-bg);
-      padding: 16px 12px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--shadow);
-      text-align: center;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: transform 0.1s, border-color 0.2s;
-    }
-    .menu-card:active { transform: scale(0.98); }
-    .menu-card.highlight { border-color: var(--primary-light); }
-    .menu-card .num {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      background: var(--primary-light);
-      color: var(--primary);
-      border-radius: 50%;
-      font-size: 0.8rem;
-      font-weight: bold;
-      line-height: 24px;
-      margin-bottom: 4px;
-    }
-    .menu-card h3 {
-      font-size: 1.05rem;
-      color: var(--text-dark);
-      margin-bottom: 4px;
-    }
-    .menu-card p {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: var(--shadow);
-      position: relative;
-    }
-    .vowel-header {
-      display: flex;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-    .vowel-char {
-      font-size: 2.2rem;
-      font-weight: 800;
-      color: var(--primary);
-      line-height: 1;
-    }
-    .tag {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: bold;
-    }
-    .tag-verb { background: #e0f2fe; color: #0369a1; }
-    .tag-noun { background: #dcfce7; color: #15803d; }
-    .tag-south { background: #fef3c7; color: #b45309; }
-    .audio-btn-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 10px 0;
-    }
-    .audio-btn {
-      background: #f8f9fa;
-      border: 1.5px solid #e9ecef;
-      border-radius: 20px;
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      color: var(--text-dark);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      touch-action: manipulation;
-    }
-    .audio-btn:active {
-      background: var(--primary-light);
-      border-color: var(--primary);
-    }
-    .audio-url-link {
-      display: inline-block;
-      font-size: 0.75rem;
-      color: #0284c7;
-      text-decoration: none;
-      margin-top: 4px;
-    }
-    .audio-url-link:hover { text-decoration: underline; }
-    .example-box {
-      background: #f8f9fa;
-      padding: 10px;
-      border-radius: 8px;
-      margin-top: 8px;
-      border-left: 3px solid var(--accent-green);
-    }
-    .example-vi {
-      font-size: 1rem;
-      font-weight: bold;
-      color: var(--text-dark);
-    }
-    .example-ja {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-    .compare-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.85rem;
-    }
-    .compare-table th, .compare-table td {
-      border: 1px solid #e9ecef;
-      padding: 8px;
-      text-align: left;
-    }
-    .compare-table th {
-      background: #f1f5f9;
-      color: var(--text-dark);
-    }
-    footer {
-      text-align: center;
-      padding: 20px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: var(--primary);
-      background: #fff;
-      border-top: 1px solid #fee2e2;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      z-index: 10;
-    }
-    @media (max-width: 380px) {
-      .site-title-top { font-size: 0.92rem; }
-      .site-title-sub { font-size: 1.02rem; }
-      .site-title-reading { font-size: 0.72rem; }
-      .hero-desc { font-size: 0.70rem; padding: 5px 9px; }
-    }
-  .lesson-card{background:#fff;border:1px solid #eadfd3;border-radius:18px;padding:18px;margin:18px 0;box-shadow:0 3px 12px rgba(0,0,0,.04)}
-.lesson-card p{line-height:1.8;margin:14px 0}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>ベトナム暮らし、ベトナム語は今日も🍓一期一語🍓</title>
+
+<style>
+
+/* =========================
+   全体
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic",
+    "Noto Sans JP",
+    sans-serif;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff8fb 0%,
+      #fffdf8 45%,
+      #f5fbff 100%
+    );
+
+  color: #594d4d;
+  line-height: 1.8;
+}
+
+.page {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px 15px 60px;
+}
+
+
+/* =========================
+   🍓 ヘッダー
+========================= */
+
+.header {
+  text-align: center;
+  padding: 18px 10px 15px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(20px, 4vw, 30px);
+  line-height: 1.35;
+  font-weight: 800;
+  color: #604b4b;
+}
+
+.header h1 span {
+  color: #ed5470;
+}
+
+.header p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #8a7777;
+}
+
+
+/* =========================
+   🇻🇳 ベトナム語の旅
+========================= */
+
+.journey {
+  position: relative;
+  margin: 10px auto 22px;
+  padding: 22px 18px;
+  background: rgba(255,255,255,.8);
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(120,100,100,.07);
+}
+
+.journey-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.journey-title h2 {
+  margin: 0;
+  font-size: 26px;
+  color: #5b8fbb;
+}
+
+.journey-intro {
+  margin: 10px 0 0;
+  font-size: 14px;
+}
+
+.journey-intro strong {
+  color: #e85872;
+}
+
+
+/* =========================
+   今日のカード
+========================= */
+
+.today-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 28px 20px 35px;
+  margin-top: 25px;
+
+  box-shadow:
+    0 12px 35px rgba(100,80,80,.09);
+
+  overflow: hidden;
+}
+
+.today-card::before {
+  content: "🍓";
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  font-size: 42px;
+  opacity: .18;
+}
+
+.today-label {
+  display: inline-block;
+  background: #ffe1e8;
+  color: #e65470;
+  padding: 4px 13px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.today-card h2 {
+  margin: 12px 0 20px;
+  font-size: 25px;
+  color: #5b4b4b;
+}
+
+
+/* =========================
+   今日の出来事
+========================= */
+
+.scene {
+  background: #fff8f3;
+  border-radius: 22px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.scene-icon {
+  font-size: 38px;
+}
+
+.scene h3 {
+  margin: 4px 0 10px;
+  font-size: 19px;
+}
+
+.scene p {
+  margin: 8px 0;
+}
+
+.question {
+  color: #e0546e;
+  font-weight: bold;
+}
+
+
+/* =========================
+   ベトナム語カード
+========================= */
+
+.vietnamese-card {
+  background:
+    linear-gradient(
+      135deg,
+      #fff1f5,
+      #fffaf0
+    );
+
+  border: 2px solid #ffd8e1;
+  border-radius: 25px;
+  padding: 23px 18px;
+  text-align: center;
+}
+
+.vietnamese-label {
+  font-size: 13px;
+  color: #d35b72;
+  font-weight: bold;
+}
+
+.vietnamese {
+  margin: 15px 0;
+  font-size: clamp(22px, 5vw, 32px);
+  line-height: 1.5;
+  font-weight: 800;
+  color: #4d6f91;
+}
+
+
+/* =========================
+   音声ボタン
+========================= */
+
+.voice-button {
+  border: none;
+  background: #ed607a;
+  color: white;
+
+  font-size: 16px;
+  font-weight: bold;
+
+  padding: 12px 25px;
+  border-radius: 50px;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 12px rgba(220,80,110,.25);
+
+  transition: .2s;
+}
+
+.voice-button:hover {
+  transform: translateY(-2px);
+}
+
+.voice-button:active {
+  transform: scale(.96);
+}
+
+.voice-note {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #998;
+}
+
+
+/* =========================
+   日本語
+========================= */
+
+.translation {
+  margin-top: 17px;
+  padding-top: 15px;
+  border-top: 1px dashed #e9cbd2;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   単語分解
+========================= */
+
+.word-section {
+  margin-top: 25px;
+}
+
+.word-section h3 {
+  text-align: center;
+  font-size: 20px;
+}
+
+.word-list {
+  display: grid;
+  gap: 10px;
+}
+
+.word {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  background: #f8fbff;
+  border-radius: 17px;
+  padding: 12px 15px;
+}
+
+.word-vietnamese {
+  min-width: 100px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #578ab5;
+}
+
+.word-japanese {
+  font-size: 14px;
+}
+
+
+/* =========================
+   今日の一期一語
+========================= */
+
+.ichigo-word {
+  margin-top: 28px;
+  padding: 25px 15px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff0f4,
+      #fff8e9
+    );
+
+  border-radius: 25px;
+  text-align: center;
+}
+
+.ichigo-word .small {
+  font-size: 13px;
+  color: #bd6878;
+}
+
+.ichigo-word .main {
+  display: block;
+  margin: 4px 0;
+  font-size: 42px;
+  font-weight: 900;
+  color: #e4536d;
+}
+
+.ichigo-word .meaning {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   メニュー
+========================= */
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #5b5555;
+
+  background: white;
+  border-radius: 20px;
+  padding: 17px 8px;
+
+  text-align: center;
+
+  box-shadow:
+    0 5px 18px rgba(100,80,80,.06);
+
+  transition: .2s;
+}
+
+.menu a:hover {
+  transform: translateY(-3px);
+}
+
+.menu strong {
+  display: block;
+  color: #df5c73;
+  font-size: 14px;
+}
+
+.menu small {
+  font-size: 11px;
+  color: #999;
+}
+
+
+/* =========================
+   スマホ
+========================= */
+
+@media (max-width: 600px) {
+
+  .page {
+    padding: 10px 10px 40px;
+  }
+
+  .header {
+    padding-top: 12px;
+  }
+
+  .header p {
+    white-space: nowrap;
+    font-size: 11px;
+  }
+
+  .today-card {
+    padding: 23px 14px 28px;
+  }
+
+  .vietnamese {
+    font-size: 22px;
+  }
+
+  .word {
+    gap: 10px;
+  }
+
+  .word-vietnamese {
+    min-width: 80px;
+  }
+
+  .menu {
+    gap: 7px;
+  }
+
+  .menu a {
+    padding: 13px 4px;
+  }
+}
+
 </style>
 </head>
+
+
 <body>
-  <header>
-    <div class="site-title-top">ベトナム暮らし、ベトナム語は今日も</div>
-    <div class="site-title-sub">🍓一期一語🍓<span class="site-title-reading">【いちごいちご】</span></div>
-    <div class="hero-desc">南部ベトナムで暮らしながら、今日覚えた<br>一語を大切に。</div>
+
+<div class="page">
+
+
+  <!-- =========================
+       🍓 タイトル
+  ========================== -->
+
+  <header class="header">
+
+    <h1>
+      ベトナム暮らし、ベトナム語は今日も<br>
+      <span>🍓一期一語🍓</span>【いちごいちご】
+    </h1>
+
+    <p>
+      南部ベトナムで暮らしながら、今日覚えた一語を大切に。
+    </p>
+
   </header>
 
-  <nav>
-    <button class="nav-btn active" onclick="showPage('top')">トップ</button>
-    <button class="nav-btn" onclick="showPage('vowels')">母音</button>
-    <button class="nav-btn" onclick="showPage('consonants')">子音</button>
-    <button class="nav-btn" onclick="showPage('tones')">声調</button>
-    <button class="nav-btn" onclick="showPage('verbs')">動詞</button>
-    <button class="nav-btn" onclick="showPage('nouns')">名詞</button>
-    <button class="nav-btn" onclick="showPage('grammar')">文法</button>
-    <button class="nav-btn" onclick="showPage('conv')">日常会話</button>
-    <button class="nav-btn" onclick="showPage('lessons')">レッスン記録</button>
+
+  <!-- =========================
+       🇻🇳 ベトナム語の旅
+  ========================== -->
+
+  <section class="journey">
+
+    <div class="journey-title">
+      <span>🇻🇳</span>
+
+      <h2>ベトナム語の旅</h2>
+
+      <span>🍓</span>
+    </div>
+
+    <div class="journey-intro">
+
+      <strong>ゼロから、少しだけ日常会話へ。</strong><br>
+
+      ペラペラを目指す必要はありません。<br>
+
+      街や家で「意思伝達」ができるようになるための<br>
+
+      南部ベトナム語超入門サイトです。
+
+    </div>
+
+  </section>
+
+
+
+  <!-- =========================
+       🍓 今日覚えた
+  ========================== -->
+
+  <article class="today-card">
+
+    <div class="today-label">
+      🍓 TODAY
+    </div>
+
+    <h2>
+      今日は、これ覚えた。
+    </h2>
+
+
+    <!-- 今日の出来事 -->
+
+    <section class="scene">
+
+      <div class="scene-icon">
+        👶
+      </div>
+
+      <h3>
+        今日の出来事
+      </h3>
+
+      <p>
+        Miiを義理のお母さんに<br>
+        抱っこしてもらいたい。
+      </p>
+
+      <p>
+        「お母さん、Miiを抱っこしてもらえますか？」
+      </p>
+
+      <p class="question">
+        ……でも、<br>
+        ベトナム語でどう言えばいいの？😂
+      </p>
+
+    </section>
+
+
+
+    <!-- ベトナム語 -->
+
+    <section class="vietnamese-card">
+
+      <div class="vietnamese-label">
+        🇻🇳 南部ベトナム語
+      </div>
+
+      <div class="vietnamese">
+        Má ơi, má ẵm Mii giùm con được không?
+      </div>
+
+
+      <button
+        class="voice-button"
+        onclick="speakVietnamese()">
+
+        🔊 発音を聞く
+
+      </button>
+
+      <div class="voice-note">
+        ※端末のベトナム語音声を使用します
+      </div>
+
+
+      <div class="translation">
+
+        お母さん、Miiを抱っこしてもらえますか？
+
+      </div>
+
+    </section>
+
+
+
+    <!-- 単語 -->
+
+    <section class="word-section">
+
+      <h3>
+        🔎 ひとつずつ見てみる
+      </h3>
+
+
+      <div class="word-list">
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            má
+          </div>
+
+          <div class="word-japanese">
+            お母さん
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            ơi
+          </div>
+
+          <div class="word-japanese">
+            呼びかける言葉
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            ẵm
+          </div>
+
+          <div class="word-japanese">
+            赤ちゃんを抱っこする
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            Mii
+          </div>
+
+          <div class="word-japanese">
+            みい
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            giùm
+          </div>
+
+          <div class="word-japanese">
+            ～してもらう・～してあげる
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            con
+          </div>
+
+          <div class="word-japanese">
+            年上の家族に対して自分を指す言葉
+          </div>
+
+        </div>
+
+
+        <div class="word">
+
+          <div class="word-vietnamese">
+            được không?
+          </div>
+
+          <div class="word-japanese">
+            ～してもらえる？
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+
+    <!-- 今日の一期一語 -->
+
+    <section class="ichigo-word">
+
+      <div class="small">
+        🍓 今日の一期一語
+      </div>
+
+      <span class="main">
+        ẵm
+      </span>
+
+      <div class="meaning">
+        赤ちゃんを抱っこする
+      </div>
+
+    </section>
+
+  </article>
+
+
+
+  <!-- =========================
+       メニュー
+  ========================== -->
+
+  <nav class="menu">
+
+    <a href="#today">
+
+      🍓
+
+      <strong>
+        今日覚えた
+      </strong>
+
+      <small>
+        今日のベトナム語
+      </small>
+
+    </a>
+
+
+    <a href="#words">
+
+      📚
+
+      <strong>
+        これまでの一語
+      </strong>
+
+      <small>
+        復習しよう
+      </small>
+
+    </a>
+
+
+    <a href="#basic">
+
+      🌱
+
+      <strong>
+        ベトナム語の基礎
+      </strong>
+
+      <small>
+        母音・子音・声調
+      </small>
+
+    </a>
+
   </nav>
 
-  <div class="container">
-    <div id="top" class="page active">
-      <div class="section-intro">
-        <strong>ゼロから、少しだけ日常会話へ。</strong><br>
-        ペラペラを目指す必要はありません。街や家で「意思伝達ができる」ようになるための南部ベトナム語超入門サイトです。
-      </div>
-      <h2>学習ステップ</h2>
-      <p style="font-size: 0.85rem; color: var(--text-muted);">上から順番に進めるとスムーズに学べます！</p>
-      <div class="menu-grid">
-        <div class="menu-card highlight" onclick="showPage('vowels')"><span class="num">1</span><h3>母音 (12個)</h3><p>まずは基本の音から</p></div>
-        <div class="menu-card highlight" onclick="showPage('consonants')"><span class="num">2</span><h3>子音</h3><p>南部発音のコツ</p></div>
-        <div class="menu-card highlight" onclick="showPage('tones')"><span class="num">3</span><h3>声調 (6声)</h3><p>音の上げ下げのイメージ</p></div>
-        <div class="menu-card" onclick="showPage('verbs')"><span class="num">4</span><h3>単語 (動詞)</h3><p>何する？基本の10個</p></div>
-        <div class="menu-card" onclick="showPage('nouns')"><span class="num">5</span><h3>単語 (名詞)</h3><p>身の回りの10個</p></div>
-        <div class="menu-card" onclick="showPage('grammar')"><span class="num">6</span><h3>文法</h3><p>có/không, đã/rồi/chưa</p></div>
-        <div class="menu-card" onclick="showPage('conv')" style="grid-column: span 2;"><span class="num">7</span><h3>日常会話</h3><p>家・買い物・お願いなど暮らしの会話</p></div>
-      </div>
-    </div>
 
-    <div id="vowels" class="page">
-      <h2>🍓 母音 (12個)</h2>
-      <div class="section-intro">南部ベトナム語の基本母音12個です。母音そのものの音と、単語での音を聞き比べてみましょう。</div>
-      <div id="vowels-list"></div>
-    </div>
+</div>
 
-    <div id="consonants" class="page">
-      <h2>🍓 南部ベトナム語の子音</h2>
-      <div class="section-intro">日本人が間違えやすい子音や、北部と南部の違いを中心に解説します。</div>
 
-      <div class="card">
-        <h3>d / gi / r → 全部「ヤ行」の音！</h3>
-        <span class="tag tag-south">南部特有</span>
-        <p style="font-size: 0.85rem; margin-top: 6px;">北部では「d/gi = ズ」「r = ラ行」ですが、南部では全て<strong>「ヤ行 (y)」</strong>の音になります。</p>
-        <div class="example-box"><div class="example-vi">dê (ヤギ) → 「イエー」</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('dê')">🔊 dê を聴く</button></div></div>
-      </div>
 
-      <div class="card">
-        <h3>v → 「イ」または「ヴィ」</h3>
-        <span class="tag tag-south">南部特有</span>
-        <p style="font-size: 0.85rem; margin-top: 6px;">南部では v が「y (ヤ行)」っぽく発音されることが多く、về (帰る) は「イエー」のように聞こえます。</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('về')">🔊 về を聴く</button></div>
-      </div>
+<script>
 
-      <div class="card">
-        <h3>đ → 強い「ド」</h3>
-        <p style="font-size: 0.85rem; margin-top: 6px;">息を一度止めてから強く発音する「d」の音です。英語の D に近いです。</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('đi')">🔊 đi を聴く</button></div>
-      </div>
+/* =========================
+   🇻🇳 ベトナム語音声
+========================= */
 
-      <div class="card">
-        <h3>kh → のどの奥から吐き出す「ハ」</h3>
-        <p style="font-size: 0.85rem; margin-top: 6px;">うがいをするときのように、のどの奥を摩擦させて発音します。</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('không')">🔊 không を聴く</button></div>
-      </div>
+function speakVietnamese() {
 
-      <div class="card">
-        <h3>ng / ngh → 鼻から抜ける「ン」</h3>
-        <p style="font-size: 0.85rem; margin-top: 6px;">日本語の「案外（あんがい）」の「ん」のように鼻に抜く音です。</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('nghe')">🔊 nghe を聴く</button></div>
-      </div>
+  const text =
+    "Má ơi, má ẵm Mii giùm con được không?";
 
-      <div class="card">
-        <h3>tr vs ch → 南部ではほぼ同じ！</h3>
-        <span class="tag tag-south">南部特有</span>
-        <p style="font-size: 0.85rem; margin-top: 6px;">南部では tr も ch も、日本語の「チャ・チ・チュ・チェ・チョ」に近い音になります。</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('trà')">🔊 trà を聴く</button><button class="audio-btn" type="button" onclick="playAudio('chưa')">🔊 chưa を聴く</button></div>
-      </div>
-    </div>
+  if (!("speechSynthesis" in window)) {
 
-    <div id="tones" class="page">
-      <h2>🍓 声調 (6声調)</h2>
-      <div class="section-intro">ベトナム語は音の高さや揺れで意味が変わります。南部での音のイメージを掴みましょう。</div>
-      <div class="card"><h3>1. 平らな音 (ngang)</h3><p>記号なし / まっすぐ高い音を伸ばす</p><div class="example-box"><div class="example-vi">ma (幽霊)</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('ma')">🔊 ma を聴く</button></div></div></div>
-      <div class="card"><h3>2. 上がる音 (sắc)</h3><p>記号: <strong>´</strong> / 語尾をキュッと上げる</p><div class="example-box"><div class="example-vi">má (お母さん)</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('má')">🔊 má を聴く</button></div></div></div>
-      <div class="card"><h3>3. 下がる音 (huyền)</h3><p>記号: <strong>`</strong> / 低い声でため息をつくように</p><div class="example-box"><div class="example-vi">mà (〜だけど)</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('mà')">🔊 mà を聴く</button></div></div></div>
-      <div class="card"><h3>4. 問う音 (hỏi)</h3><p>記号: <strong>?</strong> / 一度低く下げてから少し上げる</p><div class="example-box"><div class="example-vi">mả (墓)</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('mả')">🔊 mả を聴く</button></div></div></div>
-      <div class="card"><h3>5. 波打つ音 (ngã)</h3><p>記号: <strong>~</strong> / 南部では「問う音 (hỏi)」とほぼ同じ発音でOK！</p><span class="tag tag-south">南部なら楽ちん</span><div class="example-box"><div class="example-vi">Mã (馬)</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('Mã')">🔊 Mã を聴く</button></div></div></div>
-      <div class="card"><h3>6. 重い音 (nặng)</h3><p>記号: <strong>.</strong> / のどを詰めて短く低く落とす</p><div class="example-box"><div class="example-vi">mạ (稲)</div><div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('mạ')">🔊 mạ を聴く</button></div></div></div>
-    </div>
+    alert(
+      "この端末では音声読み上げに対応していません。"
+    );
 
-    <div id="verbs" class="page">
-      <h2>🍓 動詞 (何する？)</h2>
-      <div class="section-intro">日常で超よく使う基本動詞10個です。赤ちゃん（Mii）の行動をイメージして覚えてみましょう。</div>
-      <div id="verbs-list"></div>
-    </div>
+    return;
+  }
 
-    <div id="nouns" class="page">
-      <h2>🍓 名詞 (身の回りのもの)</h2>
-      <div class="section-intro">家庭やお店でよく使う身近な名詞10個です。</div>
-      <div id="nouns-list"></div>
-    </div>
 
-    <div id="grammar" class="page">
-      <h2>🍓 基本文法</h2>
-      <div class="section-intro">初心者が最初につまずきやすい言葉を解説します。</div>
-      <div class="card">
-        <h3>có / không （ある・いる / ない）</h3>
-        <p style="font-size: 0.85rem; margin-top: 6px;">質問「〜ある？」は <strong>... có không?</strong><br>「ある」なら <strong>Có</strong>、「ない」なら <strong>Không</strong> と答えます。</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('có không')">🔊 có không を聴く</button><button class="audio-btn" type="button" onclick="playAudio('Có')">🔊 Có を聴く</button><button class="audio-btn" type="button" onclick="playAudio('Không')">🔊 Không を聴く</button></div>
-      </div>
-      <div class="card">
-        <h3>đã / rồi / chưa （過去・完了・未完了）</h3>
-        <p style="font-size: 0.85rem; margin-bottom: 8px;">初心者が最も混乱しやすい3つの比較です。</p>
-        <table class="compare-table">
-          <tr><th>言葉</th><th>意味</th><th>使い方</th></tr>
-          <tr><td><strong>rồi</strong></td><td>もう〜した</td><td>文末につける（一番よく使う！）<br><em>Mii ngủ rồi.</em> (ミィはもう寝た)</td></tr>
-          <tr><td><strong>chưa</strong></td><td>まだ〜していない</td><td>動詞の前、または単独で<br><em>Mii chưa ăn.</em> (ミィはまだ食べてない)</td></tr>
-          <tr><td><strong>đã</strong></td><td>〜した（書き言葉）</td><td>会話ではあまり使わず rồi を多用します。</td></tr>
-        </table>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('rồi')">🔊 rồi</button><button class="audio-btn" type="button" onclick="playAudio('chưa')">🔊 chưa</button><button class="audio-btn" type="button" onclick="playAudio('đã')">🔊 đã</button><button class="audio-btn" type="button" onclick="playAudio('Mii ngủ rồi.')">🔊 例文</button><button class="audio-btn" type="button" onclick="playAudio('Mii chưa ăn.')">🔊 例文</button></div>
-      </div>
-      <div class="card">
-        <h3>文末につける気持ちの言葉</h3>
-        <p style="font-size: 0.85rem; line-height: 1.8;">・<strong>à</strong>：〜なの？（驚き・確認）<br>・<strong>nhé</strong>：〜ね、〜してね（優しく促す）<br>・<strong>đi</strong>：〜しよう！、〜して！（強い促し）<br>・<strong>ạ</strong>：〜です/ます（目上の人への丁寧語）</p>
-        <div class="audio-btn-group"><button class="audio-btn" type="button" onclick="playAudio('à')">🔊 à</button><button class="audio-btn" type="button" onclick="playAudio('nhé')">🔊 nhé</button><button class="audio-btn" type="button" onclick="playAudio('đi')">🔊 đi</button><button class="audio-btn" type="button" onclick="playAudio('ạ')">🔊 ạ</button></div>
-      </div>
-    </div>
+  window.speechSynthesis.cancel();
 
-    <div id="conv" class="page">
-      <h2>🍓 日常会話</h2>
-      <div class="section-intro">ベトナムの家庭や街中でそのまま使える短い日常会話フレーズです。</div>
-      <div id="conv-list"></div>
-    </div>
 
-    <div id="lessons" class="page">
-      <h2>🍓 レッスン記録</h2>
-      <div class="section-intro"><strong>実際に毎日のレッスンで覚えた言葉を、そのままサイトに残していきます。</strong><br>教科書だけのベトナム語ではなく、南部ベトナムでの暮らしの中で「これ、言いたい！」となった表現を中心にしています。</div>
-      <div class="card">
-        <h3>📖 まずは「これまで覚えたもの」を復習</h3>
-        <p style="font-size:.88rem;line-height:1.8;">このサイトでは、レッスンで新しく覚えた言葉を追加するだけではありません。<strong>前に覚えた言葉をもう一度使う</strong>ことを大切にします。</p>
-        <p style="font-size:.88rem;line-height:1.8;margin-top:8px;"><strong>rồi・chưa・đã・à</strong>のように、初心者が混乱しやすい言葉も、例文を変えながら何度も復習します。</p>
-      </div>
-      <div id="lessons-list"></div>
-    </div>
-  </div>
+  const speech =
+    new SpeechSynthesisUtterance(text);
 
-  <footer>🍓今日も一期一語🍓</footer>
 
-  <script>
-    const vowelsData = [
-      { char: "a", vi: "ba", ja: "お父さん／3", note: "日本語の「あ」に一番近い音" },
-      { char: "ă", vi: "ăn", ja: "食べる", note: "口を大きく開けて短く「ア」" },
-      { char: "â", vi: "chân", ja: "足", note: "口をあまり開けず、のどの奥から短く「ア」" },
-      { char: "e", vi: "xe", ja: "車", note: "口を横に大きく広げて「エ」" },
-      { char: "ê", vi: "dê", ja: "ヤギ", note: "口をあまり開けずに「エ」" },
-      { char: "i", vi: "đi", ja: "行く", note: "日本語の「い」と同じ" },
-      { char: "y", vi: "ly", ja: "コップ", note: "音は i と同じ「い」" },
-      { char: "o", vi: "bò", ja: "牛", note: "口を大きく開けて「オ」" },
-      { char: "ô", vi: "cô", ja: "おばさん／女性の先生", note: "口をすぼめて丸く「オ」" },
-      { char: "ơ", vi: "bơ", ja: "アボカド／バター", note: "口の力を抜いて「アー」と「オー」の中間" },
-      { char: "u", vi: "ngủ", ja: "寝る", note: "口を強く丸めて飛び出させて「ウ」" },
-      { char: "ư", vi: "thư", ja: "手紙", note: "口を横に引きながら「ウ」" }
-    ];
+  speech.lang = "vi-VN";
 
-    const verbsData = [
-      { vi: "ăn", ja: "食べる", desc: "ごはんやおやつを食べる動作", exVi: "Mii ăn.", exJa: "ミィが食べる。" },
-      { vi: "uống", ja: "飲む", desc: "水やミルクを飲む動作", exVi: "Mii uống sữa.", exJa: "ミィがミルクを飲む。" },
-      { vi: "ngủ", ja: "寝る", desc: "ねんねする", exVi: "Mii ngủ.", exJa: "ミィが寝る。" },
-      { vi: "đi", ja: "行く", desc: "お出かけ・歩く", exVi: "Đi thôi!", exJa: "行こう！" },
-      { vi: "đến", ja: "来る・到着する", desc: "ここに来る・着く", exVi: "Đến rồi.", exJa: "着いたよ。" },
-      { vi: "mở", ja: "開ける", desc: "ドアや電気をつける・開ける", exVi: "Mở cửa.", exJa: "ドアを開けて。" },
-      { vi: "đóng", ja: "閉める", desc: "ドアや本を閉じる", exVi: "Đóng cửa.", exJa: "ドアを閉めて。" },
-      { vi: "xem", ja: "見る", desc: "テレビや動画を見る", exVi: "Xem TV.", exJa: "テレビを見る。" },
-      { vi: "nghe", ja: "聞く", desc: "音楽や話を聞く", exVi: "Nghe nhạc.", exJa: "音楽を聞く。" },
-      { vi: "mua", ja: "買う", desc: "買い物する", exVi: "Mua cái này.", exJa: "これを買う。" }
-    ];
+  speech.rate = 0.78;
 
-    const nounsData = [
-      { vi: "sữa", ja: "ミルク・牛乳", desc: "赤ちゃんのおやつや飲み物", exVi: "Uống sữa nhé.", exJa: "ミルク飲もうね。" },
-      { vi: "nước", ja: "水", desc: "お湯や飲み水全般", exVi: "Cho nước.", exJa: "お水ちょうだい。" },
-      { vi: "cơm", ja: "ご飯・食事", desc: "毎日のごはん", exVi: "Ăn cơm.", exJa: "ご飯を食べる。" },
-      { vi: "cửa", ja: "ドア・戸", desc: "おうちの部屋のドア", exVi: "Đóng cửa.", exJa: "ドアを閉めて。" },
-      { vi: "TV", ja: "テレビ", desc: "テレビ", exVi: "Xem TV.", exJa: "テレビを見る。" },
-      { vi: "điện thoại", ja: "電話・スマホ", desc: "携帯電話", exVi: "Điện thoại đâu?", exJa: "スマホどこ？" },
-      { vi: "xe", ja: "車・乗り物", desc: "自動車やバイク", exVi: "Xe đẹp.", exJa: "かっこいい車。" },
-      { vi: "sữa chua", ja: "ヨーグルト", desc: "ベトナムで人気のヨーグルト", exVi: "Ăn sữa chua.", exJa: "ヨーグルトを食べる。" },
-      { vi: "bánh", ja: "パン・ケーキ・お菓子", desc: "粉ものの食べ物全般", exVi: "Bánh ngon.", exJa: "美味しいお菓子。" },
-      { vi: "cửa hàng", ja: "店", desc: "お店や売店", exVi: "Đi cửa hàng.", exJa: "お店に行く。" }
-    ];
+  speech.pitch = 1.0;
 
-    const convData = [
-      { category: "赤ちゃん・家", items: [
-        { vi: "Mii uống sữa chưa?", ja: "ミィ、もうミルク飲んだ？" },
-        { vi: "Mii ngủ rồi.", ja: "ミィはもう寝たよ。" },
-        { vi: "Ngoan quá!", ja: "いい子だね！" }
-      ]},
-      { category: "食事・家", items: [
-        { vi: "Ngon quá!", ja: "すごく美味しい！" },
-        { vi: "Uống nước đi.", ja: "お水飲みなよ。" }
-      ]},
-      { category: "買い物・お願い", items: [
-        { vi: "Cái này bao nhiêu?", ja: "これいくら？" },
-        { vi: "Cảm ơn nhiều!", ja: "本当にありがとう！" },
-        { vi: "Giúp tôi với.", ja: "ちょっと手伝ってください。" }
-      ]}
-    ];
 
-    const lessonData = [
-      { vi: "Hôm nay Mii chơi gì?", ja: "今日、Miiは何して遊ぶ？", words: ["Hôm nay＝今日", "Mii＝みい", "chơi＝遊ぶ", "gì＝何"] },
-      { vi: "Hôm nay mình muốn đi chợ.", ja: "今日は市場に行きたい。", words: ["Hôm nay＝今日", "mình＝私・自分", "muốn＝〜したい／欲しい", "đi＝行く", "chợ＝市場"] },
-      { vi: "Mình đi chợ thôi.", ja: "市場に行こう。／市場に行くだけだよ。", words: ["Mình＝私・自分", "đi＝行く", "chợ＝市場", "thôi＝〜だけ／〜しようよ・それでいい"] },
-      { vi: "Mình về nhà thôi.", ja: "家に帰ろう。", words: ["Mình＝私・自分", "về＝帰る・戻る", "nhà＝家", "thôi＝〜しようよ／それでいい"] },
-      { vi: "Hôm nay mình đi chợ nha.", ja: "今日は市場に行こうね。", words: ["Hôm nay＝今日", "mình＝私・自分", "đi＝行く", "chợ＝市場", "nha＝〜ね／〜しようね"] },
-      { vi: "Mii uống sữa chưa?", ja: "Mii、もうミルク飲んだ？", words: ["Mii＝みい", "uống＝飲む", "sữa＝ミルク", "chưa＝もう〜した？／まだ〜していない"] },
-      { vi: "Mii ăn rồi.", ja: "Miiはもう食べた。", words: ["Mii＝みい", "ăn＝食べる", "rồi＝もう〜した／〜したよ"] },
-      { vi: "Mii chưa ăn.", ja: "Miiはまだ食べていない。", words: ["Mii＝みい", "chưa＝まだ〜していない", "ăn＝食べる"] },
-      { vi: "Mii ngủ rồi.", ja: "Miiはもう寝たよ。", words: ["Mii＝みい", "ngủ＝寝る", "rồi＝もう〜した／〜したよ"] },
-      { vi: "Mii đã ngủ.", ja: "Miiは寝た。", words: ["Mii＝みい", "đã＝〜した（過去を表す）", "ngủ＝寝る"] },
-      { vi: "Mii chưa ngủ.", ja: "Miiはまだ寝ていない。", words: ["Mii＝みい", "chưa＝まだ〜していない", "ngủ＝寝る"] },
-      { vi: "Mii đang ngủ à?", ja: "Mii、寝てるの？", words: ["Mii＝みい", "đang＝今〜している", "ngủ＝寝る", "à＝〜なの？／確認"] },
-      { vi: "Mii chưa khóc.", ja: "Miiはまだ泣いていない。", words: ["Mii＝みい", "chưa＝まだ〜していない", "khóc＝泣く"] },
-      { vi: "Mii ị rồi.", ja: "Mii、うんちしたよ。", words: ["Mii＝みい", "ị＝うんちをする", "rồi＝もう〜した／〜したよ"] },
-      { vi: "Tắt quạt đi.", ja: "扇風機を消して。", words: ["Tắt＝消す", "quạt＝扇風機", "đi＝〜して（促し）"] },
-      { vi: "Tắt quạt nha.", ja: "扇風機消そうね。", words: ["Tắt＝消す", "quạt＝扇風機", "nha＝〜ね／やわらかい促し"] },
-      { vi: "Ngủ đi.", ja: "寝て。／寝なよ。", words: ["Ngủ＝寝る", "đi＝〜して（促し）"] },
-      { vi: "Mở cửa dùm đi.", ja: "ドアを開けてくれる？／ドア開けて。", words: ["Mở＝開ける", "cửa＝ドア・戸", "dùm＝〜してくれる／代わりにしてくれる感じ", "đi＝〜して（促し）"] },
-      { vi: "Mẹ ẵm Mii được không?", ja: "ママ、Miiを抱っこしてもいい？／抱っこできる？", words: ["Mẹ＝ママ", "ẵm＝抱っこする", "Mii＝みい", "được không＝〜してもいい？／〜できる？"] }
-    ];
+  /*
+    ベトナム語音声が複数ある場合、
+    vi-VN を優先します。
+  */
 
-    function showPage(pageId) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-      const page = document.getElementById(pageId);
-      if (page) page.classList.add('active');
-      const btnIndex = ['top','vowels','consonants','tones','verbs','nouns','grammar','conv','lessons'].indexOf(pageId);
-      if (btnIndex !== -1) document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
-      window.scrollTo(0, 0);
-    }
+  const voices =
+    window.speechSynthesis.getVoices();
 
-    /* AUDIO SYSTEM
-       iPhone Safari: user gesture -> HTMLAudioElement.play()
-       Google Translate TTS is the primary path.
-       SpeechSynthesis is only a fallback.
-    */
-    let currentAudio = null;
-    let audioUnlock = null;
 
-    function getTTSUrl(text) {
-      return 'https://translate.google.com/translate_tts?ie=UTF-8&tl=vi&client=tw-ob&q=' + encodeURIComponent(text);
-    }
+  const vietnameseVoice =
+    voices.find(
+      voice =>
+        voice.lang &&
+        voice.lang.toLowerCase().startsWith("vi")
+    );
 
-    function stopCurrentAudio() {
-      if (currentAudio) {
-        try {
-          currentAudio.pause();
-          currentAudio.currentTime = 0;
-          currentAudio.src = '';
-        } catch (e) {}
-        currentAudio = null;
-      }
-    }
 
-    function speakWithSpeechSynthesis(text) {
-      if (!('speechSynthesis' in window)) {
-        alert('音声を再生できませんでした。');
-        return;
-      }
+  if (vietnameseVoice) {
 
-      try {
-        window.speechSynthesis.cancel();
+    speech.voice =
+      vietnameseVoice;
 
-        const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
-        const viVoice = voices.find(v =>
-          v.lang && (v.lang.toLowerCase() === 'vi-vn' || v.lang.toLowerCase().startsWith('vi'))
-        );
+  }
 
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = viVoice ? viVoice.lang : 'vi-VN';
-        if (viVoice) utter.voice = viVoice;
-        utter.rate = 0.85;
-        utter.pitch = 1;
-        window.speechSynthesis.speak(utter);
-      } catch (e) {
-        alert('音声を再生できませんでした。');
-      }
-    }
 
-    function playAudio(text) {
-      text = String(text || '').trim();
-      if (!text) return;
+  window.speechSynthesis.speak(
+    speech
+  );
 
-      stopCurrentAudio();
+}
 
-      const url = getTTSUrl(text);
-      const audio = new Audio();
-      currentAudio = audio;
+</script>
 
-      audio.preload = 'auto';
-      audio.playsInline = true;
-      audio.src = url;
 
-      audio.onended = function() {
-        if (currentAudio === audio) currentAudio = null;
-      };
-
-      audio.onerror = function() {
-        if (currentAudio === audio) {
-          currentAudio = null;
-          speakWithSpeechSynthesis(text);
-        }
-      };
-
-      const playPromise = audio.play();
-
-      if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(function() {
-          if (currentAudio === audio) {
-            currentAudio = null;
-            speakWithSpeechSynthesis(text);
-          }
-        });
-      }
-    }
-
-    // Warm up the speech-synthesis voice list on iOS, without attempting playback.
-    if ('speechSynthesis' in window) {
-      try {
-        window.speechSynthesis.getVoices();
-        window.speechSynthesis.onvoiceschanged = function() {
-          window.speechSynthesis.getVoices();
-        };
-      } catch (e) {}
-    }
-
-    // Render vowels
-    const vowelsContainer = document.getElementById('vowels-list');
-    vowelsData.forEach(v => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      const singleUrl = getTTSUrl(v.char);
-      const exUrl = getTTSUrl(v.vi);
-      card.innerHTML = `
-        <div class="vowel-header">
-          <div class="vowel-char">${v.char}</div>
-          <div style="font-size:0.85rem; color: var(--text-muted);">${v.note}</div>
-        </div>
-        <div class="audio-btn-group">
-          <button class="audio-btn" type="button" onclick="playAudio('${v.char}')">🔊 母音「${v.char}」を聴く</button>
-        </div>
-        <a href="${singleUrl}" target="_blank" class="audio-url-link">🔗 「${v.char}」の音声URLを確認する</a>
-        <div class="example-box" style="margin-top: 12px;">
-          <div style="font-size: 0.8rem; color: var(--text-muted);">例単語：</div>
-          <div class="example-vi">${v.vi}</div>
-          <div class="example-ja">${v.ja}</div>
-          <div class="audio-btn-group">
-            <button class="audio-btn" type="button" onclick="playAudio('${v.vi}')">🔊 単語「${v.vi}」を聴く</button>
-          </div>
-          <a href="${exUrl}" target="_blank" class="audio-url-link">🔗 「${v.vi}」の音声URLを確認する</a>
-        </div>
-      `;
-      vowelsContainer.appendChild(card);
-    });
-
-    // Render verbs
-    const verbsContainer = document.getElementById('verbs-list');
-    verbsData.forEach(v => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      const wordUrl = getTTSUrl(v.vi);
-      const exUrl = getTTSUrl(v.exVi);
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="font-size:1.3rem; color:var(--primary);">${v.vi}</h3>
-          <span class="tag tag-verb">🔵 動詞</span>
-        </div>
-        <div style="font-size:0.95rem; font-weight:bold; margin-bottom:4px;">${v.ja}</div>
-        <p style="font-size:0.82rem; color:var(--text-muted);">${v.desc}</p>
-        <div class="audio-btn-group">
-          <button class="audio-btn" type="button" onclick="playAudio('${v.vi}')">🔊 単語を再生</button>
-        </div>
-        <a href="${wordUrl}" target="_blank" class="audio-url-link">🔗 音声URLを開く</a>
-        <div class="example-box">
-          <div class="example-vi">${v.exVi}</div>
-          <div class="example-ja">${v.exJa}</div>
-          <div class="audio-btn-group">
-            <button class="audio-btn" type="button" onclick="playAudio('${v.exVi}')">🔊 例文を再生</button>
-          </div>
-          <a href="${exUrl}" target="_blank" class="audio-url-link">🔗 例文の音声URLを開く</a>
-        </div>
-      `;
-      verbsContainer.appendChild(card);
-    });
-
-    // Render nouns
-    const nounsContainer = document.getElementById('nouns-list');
-    nounsData.forEach(n => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      const wordUrl = getTTSUrl(n.vi);
-      const exUrl = getTTSUrl(n.exVi);
-      card.innerHTML = `
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <h3 style="font-size:1.3rem; color:var(--accent-green);">${n.vi}</h3>
-          <span class="tag tag-noun">🟢 名詞</span>
-        </div>
-        <div style="font-size:0.95rem; font-weight:bold; margin-bottom:4px;">${n.ja}</div>
-        <p style="font-size:0.82rem; color:var(--text-muted);">${n.desc}</p>
-        <div class="audio-btn-group">
-          <button class="audio-btn" type="button" onclick="playAudio('${n.vi}')">🔊 単語を再生</button>
-        </div>
-        <a href="${wordUrl}" target="_blank" class="audio-url-link">🔗 音声URLを開く</a>
-        <div class="example-box">
-          <div class="example-vi">${n.exVi}</div>
-          <div class="example-ja">${n.exJa}</div>
-          <div class="audio-btn-group">
-            <button class="audio-btn" type="button" onclick="playAudio('${n.exVi}')">🔊 例文を再生</button>
-          </div>
-          <a href="${exUrl}" target="_blank" class="audio-url-link">🔗 例文の音声URLを開く</a>
-        </div>
-      `;
-      nounsContainer.appendChild(card);
-    });
-
-    // Render conversations
-    const convContainer = document.getElementById('conv-list');
-    convData.forEach(group => {
-      const groupTitle = document.createElement('h3');
-      groupTitle.style.cssText = "margin: 16px 0 8px 0; font-size: 1.05rem; color: var(--text-dark);";
-      groupTitle.innerText = `📂 ${group.category}`;
-      convContainer.appendChild(groupTitle);
-
-      group.items.forEach(c => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        const audioUrl = getTTSUrl(c.vi);
-        card.innerHTML = `
-          <div class="example-vi" style="font-size:1.1rem; color:var(--primary);">${c.vi}</div>
-          <div class="example-ja" style="font-size:0.95rem; margin-top:2px;">${c.ja}</div>
-          <div class="audio-btn-group">
-            <button class="audio-btn" type="button" onclick="playAudio('${c.vi}')">🔊 会話を再生</button>
-          </div>
-          <a href="${audioUrl}" target="_blank" class="audio-url-link">🔗 音声URLを開く</a>
-        `;
-        convContainer.appendChild(card);
-      });
-    });
-
-    // Render lesson record
-    const lessonsContainer = document.getElementById('lessons-list');
-    lessonData.forEach((l, index) => {
-      const card = document.createElement('div');
-      card.className = 'card';
-      const audioUrl = getTTSUrl(l.vi);
-      const wordsHtml = l.words.map(w => `<div style="font-size:.82rem;line-height:1.7;">・${w}</div>`).join('');
-      card.innerHTML = `
-        <div style="font-size:.76rem;color:var(--text-muted);margin-bottom:4px;">Lesson ${index + 1}</div>
-        <div class="example-vi" style="font-size:1.08rem;color:var(--primary);">${l.vi}</div>
-        <div class="example-ja" style="font-size:.94rem;margin-top:3px;">${l.ja}</div>
-        <div class="audio-btn-group">
-          <button class="audio-btn" type="button" onclick="playAudio('${l.vi}')">🔊 この文を聴く</button>
-        </div>
-        <a href="${audioUrl}" target="_blank" class="audio-url-link">🔗 音声URLを開く</a>
-        <div class="example-box" style="margin-top:12px;">
-          <div style="font-size:.82rem;font-weight:bold;margin-bottom:4px;">単語の意味</div>
-          ${wordsHtml}
-        </div>
-      `;
-      lessonsContainer.appendChild(card);
-    });
-  </script>
 </body>
 </html>
-<section id="lessons" class="page">
-<h2>📖 レッスン記録</h2>
-<p>実際の毎日のレッスンから、最近覚えた表現を復習します。</p>
-<div class="lesson-card"><h3>⭐ 今日の重点：rồi・chưa・đã・à</h3>
-<p><b>Mii uống sữa chưa?</b><br>ミィ、もうミルク飲んだ？<br> Mii＝ミィ／uống＝飲む／sữa＝ミルク／chưa＝もう〜した？・まだ？</p>
-<p><b>Mii uống sữa rồi.</b><br>ミィ、もうミルク飲んだよ。<br>Mii＝ミィ／uống＝飲む／sữa＝ミルク／rồi＝もう〜した・〜したよ</p>
-<p><b>Mii chưa ngủ.</b><br>ミィはまだ寝ていない。<br>Mii＝ミィ／chưa＝まだ〜していない／ngủ＝寝る</p>
-<p><b>Mii đã ngủ.</b><br>ミィは寝た。<br>Mii＝ミィ／đã＝すでに〜した／ngủ＝寝る</p>
-<p><b>Mii đang ngủ à?</b><br>ミィ、寝てるの？<br>Mii＝ミィ／đang＝〜している最中／ngủ＝寝る／à＝〜なの？</p>
-</div>
-<div class="lesson-card"><h3>🏠 家で使う表現</h3>
-<p><b>Tắt quạt đi.</b><br>扇風機消して。<br>Tắt＝消す／quạt＝扇風機／đi＝〜して・促す</p>
-<p><b>Tắt quạt nha.</b><br>扇風機消してね。<br>Tắt＝消す／quạt＝扇風機／nha＝〜ね</p>
-<p><b>Ngủ đi.</b><br>寝てね・寝なよ。<br>Ngủ＝寝る／đi＝〜して・促す</p>
-<p><b>Mở cửa dùm đi.</b><br>ドア開けてくれる？・ドア開けて。<br>Mở＝開ける／cửa＝ドア／dùm＝〜してくれる・手伝って／đi＝お願い・促し</p>
-</div>
-<div class="lesson-card"><h3>🍓 毎日の生活</h3>
-<p><b>Hôm nay Mii chơi gì?</b><br>今日ミィは何して遊ぶ？<br>Hôm nay＝今日／Mii＝ミィ／chơi＝遊ぶ／gì＝何</p>
-<p><b>Mình đi chợ nha.</b><br>市場に行こうね。<br>Mình＝私たち・自分たち／đi＝行く／chợ＝市場／nha＝〜ね</p>
-<p><b>Hôm nay mình muốn đi chợ.</b><br>今日は市場に行きたい。<br>Hôm nay＝今日／mình＝私・私たち／muốn＝〜したい／đi＝行く／chợ＝市場</p>
-<p><b>Mình về nhà thôi.</b><br>家に帰ろう。<br>Mình＝私たち・自分たち／về＝帰る／nhà＝家／thôi＝〜しよう・これでいいよ</p>
-</div>
-</section>
-
