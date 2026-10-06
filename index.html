@@ -430,6 +430,7 @@ body {
   .menu a {
     padding: 13px 4px;
   }
+
 }
 
 </style>
@@ -764,10 +765,63 @@ body {
    🇻🇳 ベトナム語音声
 ========================= */
 
+let vietnameseVoices = [];
+
+
+/* =========================
+   音声一覧を読み込む
+========================= */
+
+function loadVietnameseVoices() {
+
+  if (!("speechSynthesis" in window)) {
+    return;
+  }
+
+  const voices =
+    window.speechSynthesis.getVoices();
+
+  vietnameseVoices =
+    voices.filter(
+      voice =>
+        voice.lang &&
+        voice.lang.toLowerCase().startsWith("vi")
+    );
+
+}
+
+
+/* =========================
+   最初に読み込む
+========================= */
+
+loadVietnameseVoices();
+
+
+/* =========================
+   iPhoneなどで
+   音声一覧が後から読み込まれる場合
+========================= */
+
+if ("onvoiceschanged" in window.speechSynthesis) {
+
+  window.speechSynthesis.onvoiceschanged =
+    loadVietnameseVoices;
+
+}
+
+
+/* =========================
+   🔊 ベトナム語を話す
+========================= */
+
 function speakVietnamese() {
 
   const text =
     "Má ơi, má ẵm Mii giùm con được không?";
+
+
+  /* 音声読み上げに対応しているか確認 */
 
   if (!("speechSynthesis" in window)) {
 
@@ -779,44 +833,47 @@ function speakVietnamese() {
   }
 
 
+  /* 現在の音声を停止 */
+
   window.speechSynthesis.cancel();
 
+
+  /* 音声を作る */
 
   const speech =
     new SpeechSynthesisUtterance(text);
 
 
+  /* 🇻🇳 ベトナム語を指定 */
+
   speech.lang = "vi-VN";
 
+
+  /* ゆっくり話す */
+
   speech.rate = 0.78;
+
+
+  /* 声の高さ */
 
   speech.pitch = 1.0;
 
 
-  /*
-    ベトナム語音声が複数ある場合、
-    vi-VN を優先します。
-  */
+  /* =========================
+     🇻🇳 ベトナム語音声を選択
+  ========================== */
 
-  const voices =
-    window.speechSynthesis.getVoices();
-
-
-  const vietnameseVoice =
-    voices.find(
-      voice =>
-        voice.lang &&
-        voice.lang.toLowerCase().startsWith("vi")
-    );
-
-
-  if (vietnameseVoice) {
+  if (vietnameseVoices.length > 0) {
 
     speech.voice =
-      vietnameseVoice;
+      vietnameseVoices[0];
 
   }
 
+
+  /* =========================
+     🔊 再生
+  ========================== */
 
   window.speechSynthesis.speak(
     speech
