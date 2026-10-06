@@ -8,10 +8,6 @@
 
 <style>
 
-/* =========================
-   全体
-========================= */
-
 * {
   box-sizing: border-box;
 }
@@ -44,11 +40,6 @@ body {
   padding: 20px 15px 60px;
 }
 
-
-/* =========================
-   🍓 ヘッダー
-========================= */
-
 .header {
   text-align: center;
   padding: 18px 10px 15px;
@@ -71,11 +62,6 @@ body {
   font-size: 13px;
   color: #8a7777;
 }
-
-
-/* =========================
-   🇻🇳 ベトナム語の旅
-========================= */
 
 .journey {
   position: relative;
@@ -108,11 +94,6 @@ body {
 .journey-intro strong {
   color: #e85872;
 }
-
-
-/* =========================
-   今日のカード
-========================= */
 
 .today-card {
   position: relative;
@@ -152,11 +133,6 @@ body {
   color: #5b4b4b;
 }
 
-
-/* =========================
-   今日の出来事
-========================= */
-
 .scene {
   background: #fff8f3;
   border-radius: 22px;
@@ -181,11 +157,6 @@ body {
   color: #e0546e;
   font-weight: bold;
 }
-
-
-/* =========================
-   ベトナム語カード
-========================= */
 
 .vietnamese-card {
   background:
@@ -214,11 +185,6 @@ body {
   font-weight: 800;
   color: #4d6f91;
 }
-
-
-/* =========================
-   音声ボタン
-========================= */
 
 .voice-button {
   border: none;
@@ -253,11 +219,6 @@ body {
   color: #998;
 }
 
-
-/* =========================
-   日本語
-========================= */
-
 .translation {
   margin-top: 17px;
   padding-top: 15px;
@@ -265,11 +226,6 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
-
-
-/* =========================
-   単語分解
-========================= */
 
 .word-section {
   margin-top: 25px;
@@ -306,11 +262,6 @@ body {
   font-size: 14px;
 }
 
-
-/* =========================
-   今日の一期一語
-========================= */
-
 .ichigo-word {
   margin-top: 28px;
   padding: 25px 15px;
@@ -343,11 +294,6 @@ body {
   font-size: 16px;
   font-weight: bold;
 }
-
-
-/* =========================
-   メニュー
-========================= */
 
 .menu {
   display: grid;
@@ -386,11 +332,6 @@ body {
   font-size: 11px;
   color: #999;
 }
-
-
-/* =========================
-   スマホ
-========================= */
 
 @media (max-width: 600px) {
 
@@ -441,11 +382,6 @@ body {
 
 <div class="page">
 
-
-  <!-- =========================
-       🍓 タイトル
-  ========================== -->
-
   <header class="header">
 
     <h1>
@@ -459,10 +395,6 @@ body {
 
   </header>
 
-
-  <!-- =========================
-       🇻🇳 ベトナム語の旅
-  ========================== -->
 
   <section class="journey">
 
@@ -489,11 +421,6 @@ body {
   </section>
 
 
-
-  <!-- =========================
-       🍓 今日覚えた
-  ========================== -->
-
   <article class="today-card">
 
     <div class="today-label">
@@ -504,8 +431,6 @@ body {
       今日は、これ覚えた。
     </h2>
 
-
-    <!-- 今日の出来事 -->
 
     <section class="scene">
 
@@ -533,9 +458,6 @@ body {
 
     </section>
 
-
-
-    <!-- ベトナム語 -->
 
     <section class="vietnamese-card">
 
@@ -569,9 +491,6 @@ body {
 
     </section>
 
-
-
-    <!-- 単語 -->
 
     <section class="word-section">
 
@@ -679,9 +598,6 @@ body {
     </section>
 
 
-
-    <!-- 今日の一期一語 -->
-
     <section class="ichigo-word">
 
       <div class="small">
@@ -700,11 +616,6 @@ body {
 
   </article>
 
-
-
-  <!-- =========================
-       メニュー
-  ========================== -->
 
   <nav class="menu">
 
@@ -758,7 +669,6 @@ body {
 </div>
 
 
-
 <script>
 
 /* =========================
@@ -769,10 +679,6 @@ body {
 let currentAudio = null;
 
 
-/* =========================
-   🔊 ベトナム語を話す
-========================= */
-
 async function speakVietnamese() {
 
   const text =
@@ -780,8 +686,6 @@ async function speakVietnamese() {
 
 
   try {
-
-    /* 前の音声があれば停止 */
 
     if (currentAudio) {
 
@@ -793,10 +697,6 @@ async function speakVietnamese() {
 
     }
 
-
-    /* =========================
-       Cloudflare Workerへ送信
-    ========================== */
 
     const response =
       await fetch(
@@ -815,52 +715,56 @@ async function speakVietnamese() {
       );
 
 
-    /* =========================
-       エラー確認
-    ========================== */
-
     if (!response.ok) {
 
       const errorText =
         await response.text();
 
       throw new Error(
-        errorText ||
-        "音声生成に失敗しました"
+        "Cloudflare ERROR\n\n" +
+        errorText
       );
 
     }
 
 
-    /* =========================
-       ElevenLabsの音声データ
-       MP3を取得
-    ========================== */
+    const contentType =
+      response.headers.get("content-type") || "";
+
+
+    if (!contentType.includes("audio")) {
+
+      const errorText =
+        await response.text();
+
+      throw new Error(
+        "音声データではありません。\n\n" +
+        errorText
+      );
+
+    }
+
 
     const blob =
       await response.blob();
 
 
-    /* =========================
-       一時的な再生URLを作成
-    ========================== */
+    if (!blob || blob.size === 0) {
+
+      throw new Error(
+        "音声データが空でした。"
+      );
+
+    }
+
 
     const audioUrl =
       URL.createObjectURL(blob);
 
 
-    /* =========================
-       音声を再生
-    ========================== */
-
     currentAudio =
       new Audio(audioUrl);
 
-
-    /* =========================
-       再生終了後
-       一時URLを削除
-    ========================== */
 
     currentAudio.onended = () => {
 
@@ -883,7 +787,8 @@ async function speakVietnamese() {
 
 
     alert(
-      "音声を再生できませんでした。"
+      "音声を再生できませんでした。\n\n" +
+      error.message
     );
 
   }
