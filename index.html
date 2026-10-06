@@ -557,7 +557,7 @@ body {
       </button>
 
       <div class="voice-note">
-        ※端末のベトナム語音声を使用します
+        ※Văn Thục（ElevenLabs）の音声を使用します
       </div>
 
 
@@ -762,122 +762,131 @@ body {
 <script>
 
 /* =========================
-   🇻🇳 ベトナム語音声
+   🇻🇳 ElevenLabs 音声
+   Văn Thục
 ========================= */
 
-let vietnameseVoices = [];
-
-
-/* =========================
-   音声一覧を読み込む
-========================= */
-
-function loadVietnameseVoices() {
-
-  if (!("speechSynthesis" in window)) {
-    return;
-  }
-
-  const voices =
-    window.speechSynthesis.getVoices();
-
-  vietnameseVoices =
-    voices.filter(
-      voice =>
-        voice.lang &&
-        voice.lang.toLowerCase().startsWith("vi")
-    );
-
-}
-
-
-/* =========================
-   最初に読み込む
-========================= */
-
-loadVietnameseVoices();
-
-
-/* =========================
-   iPhoneなどで
-   音声一覧が後から読み込まれる場合
-========================= */
-
-if ("onvoiceschanged" in window.speechSynthesis) {
-
-  window.speechSynthesis.onvoiceschanged =
-    loadVietnameseVoices;
-
-}
+let currentAudio = null;
 
 
 /* =========================
    🔊 ベトナム語を話す
 ========================= */
 
-function speakVietnamese() {
+async function speakVietnamese() {
 
   const text =
     "Má ơi, má ẵm Mii giùm con được không?";
 
 
-  /* 音声読み上げに対応しているか確認 */
+  try {
 
-  if (!("speechSynthesis" in window)) {
+    /* 前の音声があれば停止 */
 
-    alert(
-      "この端末では音声読み上げに対応していません。"
+    if (currentAudio) {
+
+      currentAudio.pause();
+
+      currentAudio.src = "";
+
+      currentAudio = null;
+
+    }
+
+
+    /* =========================
+       Cloudflare Workerへ送信
+    ========================== */
+
+    const response =
+      await fetch(
+        "https://ichigoichigo-tts.hehen565656.workers.dev",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            text: text
+          })
+        }
+      );
+
+
+    /* =========================
+       エラー確認
+    ========================== */
+
+    if (!response.ok) {
+
+      const errorText =
+        await response.text();
+
+      throw new Error(
+        errorText ||
+        "音声生成に失敗しました"
+      );
+
+    }
+
+
+    /* =========================
+       ElevenLabsの音声データ
+       MP3を取得
+    ========================== */
+
+    const blob =
+      await response.blob();
+
+
+    /* =========================
+       一時的な再生URLを作成
+    ========================== */
+
+    const audioUrl =
+      URL.createObjectURL(blob);
+
+
+    /* =========================
+       音声を再生
+    ========================== */
+
+    currentAudio =
+      new Audio(audioUrl);
+
+
+    /* =========================
+       再生終了後
+       一時URLを削除
+    ========================== */
+
+    currentAudio.onended = () => {
+
+      URL.revokeObjectURL(audioUrl);
+
+      currentAudio = null;
+
+    };
+
+
+    await currentAudio.play();
+
+
+  } catch (error) {
+
+    console.error(
+      "ElevenLabs TTS Error:",
+      error
     );
 
-    return;
-  }
 
-
-  /* 現在の音声を停止 */
-
-  window.speechSynthesis.cancel();
-
-
-  /* 音声を作る */
-
-  const speech =
-    new SpeechSynthesisUtterance(text);
-
-
-  /* 🇻🇳 ベトナム語を指定 */
-
-  speech.lang = "vi-VN";
-
-
-  /* ゆっくり話す */
-
-  speech.rate = 0.78;
-
-
-  /* 声の高さ */
-
-  speech.pitch = 1.0;
-
-
-  /* =========================
-     🇻🇳 ベトナム語音声を選択
-  ========================== */
-
-  if (vietnameseVoices.length > 0) {
-
-    speech.voice =
-      vietnameseVoices[0];
+    alert(
+      "音声を再生できませんでした。"
+    );
 
   }
-
-
-  /* =========================
-     🔊 再生
-  ========================== */
-
-  window.speechSynthesis.speak(
-    speech
-  );
 
 }
 
