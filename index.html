@@ -377,7 +377,6 @@ body {
 </style>
 </head>
 
-
 <body>
 
 <div class="page">
@@ -448,7 +447,7 @@ body {
       </p>
 
       <p>
-        「お母さん、Miiを抱っこしてもらえますか？」
+        「お母さん、みいを抱っこしてくれる？」
       </p>
 
       <p class="question">
@@ -466,7 +465,7 @@ body {
       </div>
 
       <div class="vietnamese">
-        Má ơi, má ẵm Mii giùm con được không?
+        Mẹ ẵm Mii được không?
       </div>
 
 
@@ -479,13 +478,13 @@ body {
       </button>
 
       <div class="voice-note">
-        ※Văn Thục（ElevenLabs）の音声を使用します
+        ※iPhoneのマナーモードをOFFにすると音声が出ます
       </div>
 
 
       <div class="translation">
 
-        お母さん、Miiを抱っこしてもらえますか？
+        お母さん、みいを抱っこしてくれる？
 
       </div>
 
@@ -505,24 +504,11 @@ body {
         <div class="word">
 
           <div class="word-vietnamese">
-            má
+            Mẹ
           </div>
 
           <div class="word-japanese">
             お母さん
-          </div>
-
-        </div>
-
-
-        <div class="word">
-
-          <div class="word-vietnamese">
-            ơi
-          </div>
-
-          <div class="word-japanese">
-            呼びかける言葉
           </div>
 
         </div>
@@ -557,37 +543,11 @@ body {
         <div class="word">
 
           <div class="word-vietnamese">
-            giùm
-          </div>
-
-          <div class="word-japanese">
-            ～してもらう・～してあげる
-          </div>
-
-        </div>
-
-
-        <div class="word">
-
-          <div class="word-vietnamese">
-            con
-          </div>
-
-          <div class="word-japanese">
-            年上の家族に対して自分を指す言葉
-          </div>
-
-        </div>
-
-
-        <div class="word">
-
-          <div class="word-vietnamese">
             được không?
           </div>
 
           <div class="word-japanese">
-            ～してもらえる？
+            ～してくれる？
           </div>
 
         </div>
@@ -671,129 +631,63 @@ body {
 
 <script>
 
-/* =========================
-   🇻🇳 ElevenLabs 音声
-   Văn Thục
-========================= */
-
 let currentAudio = null;
 
+function speakVietnamese() {
 
-async function speakVietnamese() {
+  const text = "Mẹ ẵm Mii được không?";
 
-  const text =
-    "Má ơi, má ẵm Mii giùm con được không?";
-
-
-  try {
-
-    if (currentAudio) {
-
-      currentAudio.pause();
-
-      currentAudio.src = "";
-
-      currentAudio = null;
-
-    }
-
-
-    const response =
-      await fetch(
-        "https://ichigoichigo-tts.hehen565656.workers.dev",
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type": "application/json"
-          },
-
-          body: JSON.stringify({
-            text: text
-          })
-        }
-      );
-
-
-    if (!response.ok) {
-
-      const errorText =
-        await response.text();
-
-      throw new Error(
-        "Cloudflare ERROR\n\n" +
-        errorText
-      );
-
-    }
-
-
-    const contentType =
-      response.headers.get("content-type") || "";
-
-
-    if (!contentType.includes("audio")) {
-
-      const errorText =
-        await response.text();
-
-      throw new Error(
-        "音声データではありません。\n\n" +
-        errorText
-      );
-
-    }
-
-
-    const blob =
-      await response.blob();
-
-
-    if (!blob || blob.size === 0) {
-
-      throw new Error(
-        "音声データが空でした。"
-      );
-
-    }
-
-
-    const audioUrl =
-      URL.createObjectURL(blob);
-
-
-    currentAudio =
-      new Audio(audioUrl);
-
-
-    currentAudio.onended = () => {
-
-      URL.revokeObjectURL(audioUrl);
-
-      currentAudio = null;
-
-    };
-
-
-    await currentAudio.play();
-
-
-  } catch (error) {
-
-    console.error(
-      "ElevenLabs TTS Error:",
-      error
-    );
-
+  if (!window.speechSynthesis) {
 
     alert(
-      "音声を再生できませんでした。\n\n" +
-      error.message
+      "この端末では音声再生に対応していません。"
     );
+
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const utterance =
+    new SpeechSynthesisUtterance(text);
+
+  utterance.lang = "vi-VN";
+
+  utterance.rate = 0.82;
+
+  utterance.pitch = 1.0;
+
+  utterance.volume = 1.0;
+
+  const voices =
+    window.speechSynthesis.getVoices();
+
+  const vietnameseVoice =
+    voices.find(function(voice) {
+
+      return (
+        voice.lang &&
+        voice.lang
+          .toLowerCase()
+          .startsWith("vi")
+      );
+
+    });
+
+  if (vietnameseVoice) {
+
+    utterance.voice =
+      vietnameseVoice;
 
   }
 
+  window.speechSynthesis.speak(
+    utterance
+  );
+
 }
+
+window.speechSynthesis.getVoices();
 
 </script>
 
