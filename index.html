@@ -627,69 +627,8 @@ body {
 
 
 </div>
+<script src="lessons.js"></script>
 
-
-<script>
-
-let currentAudio = null;
-
-function speakVietnamese() {
-
-  const text = "Mẹ ẵm Mii được không?";
-
-  if (!window.speechSynthesis) {
-
-    alert(
-      "この端末では音声再生に対応していません。"
-    );
-
-    return;
-  }
-
-  window.speechSynthesis.cancel();
-
-  const utterance =
-    new SpeechSynthesisUtterance(text);
-
-  utterance.lang = "vi-VN";
-
-  utterance.rate = 0.82;
-
-  utterance.pitch = 1.0;
-
-  utterance.volume = 1.0;
-
-  const voices =
-    window.speechSynthesis.getVoices();
-
-  const vietnameseVoice =
-    voices.find(function(voice) {
-
-      return (
-        voice.lang &&
-        voice.lang
-          .toLowerCase()
-          .startsWith("vi")
-      );
-
-    });
-
-  if (vietnameseVoice) {
-
-    utterance.voice =
-      vietnameseVoice;
-
-  }
-
-  window.speechSynthesis.speak(
-    utterance
-  );
-
-}
-
-window.speechSynthesis.getVoices();
-
-</script>
 
 
 </body>
