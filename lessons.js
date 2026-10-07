@@ -1,24 +1,20 @@
 const lessons = [
-
   {
     date: "2026年10月3日",
     title: "奥さんと一緒に市場へ行こうとした",
-    scene: "奥さんと一緒に市場へ行こうとして、必要なベトナム語を覚えた。",
-    vietnamese: "Mình muốn đi chợ.",
-    translation: "市場に行きたい。",
+    scene: "奥さんと一緒に市場へ行こうとして、実際に使いたい言葉から勉強した。",
+    vietnamese: "Hôm nay mình muốn đi chợ.",
+    translation: "今日は市場に行きたい。",
     words: [
-      ["Mình", "自分／僕・私"],
+      ["Hôm nay", "今日"],
+      ["mình", "自分／僕・私"],
       ["muốn", "～したい"],
       ["đi", "行く"],
       ["chợ", "市場"]
     ],
     extraWords: [
       ["về", "帰る"],
-      ["mua", "買う"],
-      ["ăn", "食べる"],
-      ["uống", "飲む"],
-      ["ngủ", "寝る"],
-      ["chơi", "遊ぶ"]
+      ["mua", "買う"]
     ],
     mainWord: "đi",
     mainMeaning: "行く"
@@ -26,18 +22,18 @@ const lessons = [
 
   {
     date: "2026年10月4日",
-    title: "お母さんに「ドアを閉めて」とお願いしたい",
-    scene: "家の中で、お母さんにドアを閉めてもらいたい場面があった。",
-    vietnamese: "Đóng cửa dùm đi.",
-    translation: "ドアを閉めてくれる？",
+    title: "お母さんに「ドアを閉めて」と頼みたい",
+    scene: "家で、お母さんにドアを閉めてもらいたい場面があった。",
+    vietnamese: "Mở cửa dùm đi.",
+    translation: "ドアを開けてくれる？",
     words: [
-      ["Đóng", "閉める"],
+      ["Mở", "開ける"],
       ["cửa", "ドア・扉"],
       ["dùm", "～してくれる／～してもらえる"],
-      ["đi", "～してね／お願いのニュアンス"]
+      ["đi", "お願いのニュアンス"]
     ],
     extraWords: [
-      ["mở", "開ける"],
+      ["đóng", "閉める"],
       ["tắt", "消す"],
       ["bật", "つける"]
     ],
@@ -47,34 +43,23 @@ const lessons = [
 
   {
     date: "2026年10月5日",
-    title: "今日は動詞をまとめて覚えてみる",
-    scene: "実際の生活で使えるように、これまで出てきた動詞をまとめて整理した。",
-    vietnamese: "Mình muốn học động từ.",
-    translation: "動詞を勉強したい。",
+    title: "今日は動詞を5つ覚える",
+    scene: "実際の生活で使えるように、動詞を中心に勉強した。まずは5つ。難しいことは考えず、使いながら覚えていく。",
+    vietnamese: "Minh uống sữa.",
+    translation: "ミンがミルクを飲む。",
     words: [
+      ["uống", "飲む"],
+      ["ăn", "食べる"],
       ["muốn", "～したい"],
-      ["học", "勉強する／学ぶ"],
-      ["động từ", "動詞"]
+      ["buồn ngủ", "眠い／眠そう"],
+      ["ngủ", "寝る"]
     ],
     extraWords: [
-      ["ăn", "食べる"],
-      ["uống", "飲む"],
-      ["ngủ", "寝る"],
       ["đi", "行く"],
-      ["về", "帰る"],
-      ["chơi", "遊ぶ"],
-      ["mở", "開ける"],
-      ["đóng", "閉める"],
-      ["bật", "つける"],
-      ["tắt", "消す"],
-      ["ẵm", "赤ちゃんを抱っこする"],
-      ["mua", "買う"],
-      ["xem", "見る"],
-      ["nghe", "聞く"],
-      ["đến", "来る／到着する"]
+      ["chơi", "遊ぶ"]
     ],
-    mainWord: "động từ",
-    mainMeaning: "動詞"
+    mainWord: "uống",
+    mainMeaning: "飲む"
   },
 
   {
@@ -107,7 +92,6 @@ const lessons = [
     mainWord: "dùm",
     mainMeaning: "～してくれる？／～してもらえる？"
   }
-
 ];
 
 
@@ -126,10 +110,8 @@ function speakVietnamese(text) {
   utterance.volume = 1;
 
   const voices = speechSynthesis.getVoices();
-
-  const vietnameseVoice = voices.find(voice =>
-    voice.lang &&
-    voice.lang.toLowerCase().startsWith("vi")
+  const vietnameseVoice = voices.find(v =>
+    v.lang && v.lang.toLowerCase().startsWith("vi")
   );
 
   if (vietnameseVoice) {
@@ -141,30 +123,30 @@ function speakVietnamese(text) {
 
 
 function renderLesson() {
-
   const container = document.getElementById("lessons");
-
   if (!container) return;
 
   const params = new URLSearchParams(window.location.search);
-  const date = params.get("date");
+  const selectedDate = params.get("date");
 
-  let lesson;
+  const lesson =
+    lessons.find(item => item.date === selectedDate) ||
+    lessons[lessons.length - 1];
 
-  if (date) {
-    lesson = lessons.find(item => item.date === date);
-  } else {
-    lesson = lessons[lessons.length - 1];
+  const todayMenu = document.querySelector(".menu a[href='#today']");
+  if (todayMenu) {
+    todayMenu.href = "./";
+    todayMenu.innerHTML =
+      `🍓<br>今日覚えた<br>${lesson.date}のベトナム語`;
   }
 
-  if (!lesson) {
-    container.innerHTML = "<p>この日のレッスンはありません。</p>";
-    return;
+  const archiveMenu = document.querySelector(".menu a[href='#words']");
+  if (archiveMenu) {
+    archiveMenu.href = "#words";
   }
 
   container.innerHTML = `
-
-    <article class="today-card">
+    <article class="today-card" id="today">
 
       <div class="today-label">
         🍓 ${lesson.date}
@@ -173,24 +155,18 @@ function renderLesson() {
       <h2>${lesson.title}</h2>
 
       <section class="scene">
-
         <div class="scene-icon">👶</div>
-
         <h3>今日の出来事</h3>
 
         <p>${lesson.scene}</p>
 
-        <p>
-          「${lesson.translation}」
-        </p>
+        <p>「${lesson.translation}」</p>
 
         <p class="question">
           ……でも、<br>
           ベトナム語でどう言えばいいの？😂
         </p>
-
       </section>
-
 
       <section class="vietnamese-card">
 
@@ -218,51 +194,35 @@ function renderLesson() {
 
       </section>
 
-
       <section class="word-section">
 
         <h3>🔎 ひとつずつ見てみる</h3>
 
         <div class="word-list">
-
           ${lesson.words.map(word => `
             <div class="word">
-              <div class="word-vietnamese">
-                ${word[0]}
-              </div>
-
-              <div class="word-japanese">
-                ${word[1]}
-              </div>
+              <div class="word-vietnamese">${word[0]}</div>
+              <div class="word-japanese">${word[1]}</div>
             </div>
           `).join("")}
-
         </div>
 
       </section>
-
 
       ${
         lesson.extraWords
           ? `
           <section class="word-section">
 
-            <h3>📚 ついでに覚えた動詞</h3>
+            <h3>📚 ついでに覚えた言葉</h3>
 
             <div class="word-list">
-
               ${lesson.extraWords.map(word => `
                 <div class="word">
-                  <div class="word-vietnamese">
-                    ${word[0]}
-                  </div>
-
-                  <div class="word-japanese">
-                    ${word[1]}
-                  </div>
+                  <div class="word-vietnamese">${word[0]}</div>
+                  <div class="word-japanese">${word[1]}</div>
                 </div>
               `).join("")}
-
             </div>
 
           </section>
@@ -270,31 +230,21 @@ function renderLesson() {
           : ""
       }
 
-
       <section class="ichigo-word">
-
-        <div class="small">
-          🍓 今日の一期一語
-        </div>
-
-        <span class="main">
-          ${lesson.mainWord}
-        </span>
-
-        <div class="meaning">
-          ${lesson.mainMeaning}
-        </div>
-
+        <div class="small">🍓 今日の一期一語</div>
+        <span class="main">${lesson.mainWord}</span>
+        <div class="meaning">${lesson.mainMeaning}</div>
       </section>
 
-
-      <section class="archive">
+      <section class="archive" id="words">
 
         <h3>📚 これまでの一語</h3>
 
+        <p>復習しよう</p>
+
         ${lessons.map(item => `
           <p>
-            <a href="?date=${item.date}">
+            <a href="?date=${encodeURIComponent(item.date)}">
               🍓 ${item.date}　${item.mainWord}
             </a>
           </p>
@@ -303,7 +253,6 @@ function renderLesson() {
       </section>
 
     </article>
-
   `;
 }
 
