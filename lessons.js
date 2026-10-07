@@ -12,6 +12,22 @@ const lessons = [
     ],
     mainWord: "ngủ",
     mainMeaning: "寝る／眠る"
+  },
+
+  {
+    date: "2026年10月7日",
+    title: "お母さん、みいを抱っこしてくれる？",
+    scene: "Miiを義理のお母さんに抱っこしてもらいたい。",
+    vietnamese: "Mẹ ẵm Mii dùm?",
+    translation: "お母さん、みいを抱っこしてくれる？",
+    words: [
+      ["Mẹ", "お母さん"],
+      ["ẵm", "赤ちゃんを抱っこする"],
+      ["Mii", "みい"],
+      ["dùm?", "〜してくれる？"]
+    ],
+    mainWord: "dùm",
+    mainMeaning: "〜してくれる？／〜してもらえる？"
   }
 ];
 
@@ -30,6 +46,7 @@ function speakVietnamese(text) {
   utterance.volume = 1;
 
   const voices = window.speechSynthesis.getVoices();
+
   const vietnameseVoice = voices.find(voice =>
     voice.lang &&
     voice.lang.toLowerCase().startsWith("vi")
@@ -55,7 +72,7 @@ function renderLessons() {
       </div>
 
       <h2>
-        今日は、これ覚えた。
+        ${lesson.title}
       </h2>
 
       <section class="scene">
@@ -114,6 +131,7 @@ function renderLessons() {
               <div class="word-vietnamese">
                 ${word[0]}
               </div>
+
               <div class="word-japanese">
                 ${word[1]}
               </div>
