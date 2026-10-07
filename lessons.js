@@ -1,4 +1,82 @@
 const lessons = [
+
+  {
+    date: "2026年10月3日",
+    title: "奥さんと一緒に市場へ行こうとした",
+    scene: "奥さんと一緒に市場へ行こうとして、必要なベトナム語を覚えた。",
+    vietnamese: "Mình muốn đi chợ.",
+    translation: "市場に行きたい。",
+    words: [
+      ["Mình", "自分／僕・私"],
+      ["muốn", "～したい"],
+      ["đi", "行く"],
+      ["chợ", "市場"]
+    ],
+    extraWords: [
+      ["về", "帰る"],
+      ["mua", "買う"],
+      ["ăn", "食べる"],
+      ["uống", "飲む"],
+      ["ngủ", "寝る"],
+      ["chơi", "遊ぶ"]
+    ],
+    mainWord: "đi",
+    mainMeaning: "行く"
+  },
+
+  {
+    date: "2026年10月4日",
+    title: "お母さんに「ドアを閉めて」とお願いしたい",
+    scene: "家の中で、お母さんにドアを閉めてもらいたい場面があった。",
+    vietnamese: "Đóng cửa dùm đi.",
+    translation: "ドアを閉めてくれる？",
+    words: [
+      ["Đóng", "閉める"],
+      ["cửa", "ドア・扉"],
+      ["dùm", "～してくれる／～してもらえる"],
+      ["đi", "～してね／お願いのニュアンス"]
+    ],
+    extraWords: [
+      ["mở", "開ける"],
+      ["tắt", "消す"],
+      ["bật", "つける"]
+    ],
+    mainWord: "dùm",
+    mainMeaning: "～してくれる？／～してもらえる？"
+  },
+
+  {
+    date: "2026年10月5日",
+    title: "今日は動詞をまとめて覚えてみる",
+    scene: "実際の生活で使えるように、これまで出てきた動詞をまとめて整理した。",
+    vietnamese: "Mình muốn học động từ.",
+    translation: "動詞を勉強したい。",
+    words: [
+      ["muốn", "～したい"],
+      ["học", "勉強する／学ぶ"],
+      ["động từ", "動詞"]
+    ],
+    extraWords: [
+      ["ăn", "食べる"],
+      ["uống", "飲む"],
+      ["ngủ", "寝る"],
+      ["đi", "行く"],
+      ["về", "帰る"],
+      ["chơi", "遊ぶ"],
+      ["mở", "開ける"],
+      ["đóng", "閉める"],
+      ["bật", "つける"],
+      ["tắt", "消す"],
+      ["ẵm", "赤ちゃんを抱っこする"],
+      ["mua", "買う"],
+      ["xem", "見る"],
+      ["nghe", "聞く"],
+      ["đến", "来る／到着する"]
+    ],
+    mainWord: "động từ",
+    mainMeaning: "動詞"
+  },
+
   {
     date: "2026年10月6日",
     title: "Mii、寝てる？",
@@ -8,7 +86,7 @@ const lessons = [
     words: [
       ["Mii", "みい"],
       ["ngủ", "寝る／眠る"],
-      ["hả?", "〜なの？／〜してる？"]
+      ["hả?", "～なの？／～してる？"]
     ],
     mainWord: "ngủ",
     mainMeaning: "寝る／眠る"
@@ -17,19 +95,21 @@ const lessons = [
   {
     date: "2026年10月7日",
     title: "お母さん、みいを抱っこしてくれる？",
-    scene: "Miiを義理のお母さんに抱っこしてもらいたい。",
+    scene: "Miiをお母さんに抱っこしてもらいたい。",
     vietnamese: "Mẹ ẵm Mii dùm?",
     translation: "お母さん、みいを抱っこしてくれる？",
     words: [
       ["Mẹ", "お母さん"],
       ["ẵm", "赤ちゃんを抱っこする"],
       ["Mii", "みい"],
-      ["dùm?", "〜してくれる？"]
+      ["dùm?", "～してくれる？"]
     ],
     mainWord: "dùm",
-    mainMeaning: "〜してくれる？／〜してもらえる？"
+    mainMeaning: "～してくれる？／～してもらえる？"
   }
+
 ];
+
 
 function speakVietnamese(text) {
   if (!window.speechSynthesis) {
@@ -37,7 +117,7 @@ function speakVietnamese(text) {
     return;
   }
 
-  window.speechSynthesis.cancel();
+  speechSynthesis.cancel();
 
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = "vi-VN";
@@ -45,7 +125,7 @@ function speakVietnamese(text) {
   utterance.pitch = 1;
   utterance.volume = 1;
 
-  const voices = window.speechSynthesis.getVoices();
+  const voices = speechSynthesis.getVoices();
 
   const vietnameseVoice = voices.find(voice =>
     voice.lang &&
@@ -56,24 +136,41 @@ function speakVietnamese(text) {
     utterance.voice = vietnameseVoice;
   }
 
-  window.speechSynthesis.speak(utterance);
+  speechSynthesis.speak(utterance);
 }
 
-function renderLessons() {
+
+function renderLesson() {
+
   const container = document.getElementById("lessons");
 
   if (!container) return;
 
-  container.innerHTML = lessons.map(lesson => `
+  const params = new URLSearchParams(window.location.search);
+  const date = params.get("date");
+
+  let lesson;
+
+  if (date) {
+    lesson = lessons.find(item => item.date === date);
+  } else {
+    lesson = lessons[lessons.length - 1];
+  }
+
+  if (!lesson) {
+    container.innerHTML = "<p>この日のレッスンはありません。</p>";
+    return;
+  }
+
+  container.innerHTML = `
+
     <article class="today-card">
 
       <div class="today-label">
         🍓 ${lesson.date}
       </div>
 
-      <h2>
-        ${lesson.title}
-      </h2>
+      <h2>${lesson.title}</h2>
 
       <section class="scene">
 
@@ -93,6 +190,7 @@ function renderLessons() {
         </p>
 
       </section>
+
 
       <section class="vietnamese-card">
 
@@ -120,6 +218,7 @@ function renderLessons() {
 
       </section>
 
+
       <section class="word-section">
 
         <h3>🔎 ひとつずつ見てみる</h3>
@@ -142,6 +241,36 @@ function renderLessons() {
 
       </section>
 
+
+      ${
+        lesson.extraWords
+          ? `
+          <section class="word-section">
+
+            <h3>📚 ついでに覚えた動詞</h3>
+
+            <div class="word-list">
+
+              ${lesson.extraWords.map(word => `
+                <div class="word">
+                  <div class="word-vietnamese">
+                    ${word[0]}
+                  </div>
+
+                  <div class="word-japanese">
+                    ${word[1]}
+                  </div>
+                </div>
+              `).join("")}
+
+            </div>
+
+          </section>
+          `
+          : ""
+      }
+
+
       <section class="ichigo-word">
 
         <div class="small">
@@ -158,8 +287,25 @@ function renderLessons() {
 
       </section>
 
+
+      <section class="archive">
+
+        <h3>📚 これまでの一語</h3>
+
+        ${lessons.map(item => `
+          <p>
+            <a href="?date=${item.date}">
+              🍓 ${item.date}　${item.mainWord}
+            </a>
+          </p>
+        `).join("")}
+
+      </section>
+
     </article>
-  `).join("");
+
+  `;
 }
 
-document.addEventListener("DOMContentLoaded", renderLessons);
+
+document.addEventListener("DOMContentLoaded", renderLesson);
