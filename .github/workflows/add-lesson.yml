@@ -85,7 +85,9 @@ jobs:
           if not match:
               raise SystemExit("lessons.js の配列が見つかりません")
 
-          insert_at = content.rfind("]", match.end())
+          
+          end_marker = "\n];\n\nfunction speakVietnamese"
+          insert_at = content.find(end_marker, match.end())
           if insert_at < 0:
               raise SystemExit("配列の終わりが見つかりません")
 
