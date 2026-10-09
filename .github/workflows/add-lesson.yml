@@ -1,0 +1,114 @@
+name: Add Vietnamese Lesson
+
+on:
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "日付（例：2026年10月9日）"
+        required: true
+        type: string
+      title:
+        description: "レッスンのタイトル"
+        required: true
+        type: string
+      scene:
+        description: "今日の場面"
+        required: true
+        type: string
+      vietnamese:
+        description: "ベトナム語の例文"
+        required: true
+        type: string
+      translation:
+        description: "日本語訳"
+        required: true
+        type: string
+      words:
+        description: '単語の意味（例：[["Hôm nay","今日"],["ngủ","寝る"]])'
+        required: true
+        type: string
+      mainWord:
+        description: "メイン単語"
+        required: true
+        type: string
+      mainMeaning:
+        description: "メイン単語の意味"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  add-lesson:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get repository
+        uses: actions/checkout@v4
+
+      - name: Add lesson
+        env:
+          LESSON_DATE: ${{ inputs.date }}
+          LESSON_TITLE: ${{ inputs.title }}
+          LESSON_SCENE: ${{ inputs.scene }}
+          LESSON_VIETNAMESE: ${{ inputs.vietnamese }}
+          LESSON_TRANSLATION: ${{ inputs.translation }}
+          LESSON_WORDS: ${{ inputs.words }}
+          LESSON_MAIN_WORD: ${{ inputs.mainWord }}
+          LESSON_MAIN_MEANING: ${{ inputs.mainMeaning }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          path = Path("lessons.js")
+          content = path.read_text(encoding="utf-8")
+
+          def env(name):
+              return os.environ[name]
+
+          lesson = {
+              "date": env("LESSON_DATE"),
+              "title": env("LESSON_TITLE"),
+              "scene": env("LESSON_SCENE"),
+              "vietnamese": env("LESSON_VIETNAMESE"),
+              "translation": env("LESSON_TRANSLATION"),
+              "words": json.loads(env("LESSON_WORDS")),
+              "extraWords": [],
+              "mainWord": env("LESSON_MAIN_WORD"),
+              "mainMeaning": env("LESSON_MAIN_MEANING")
+          }
+
+          match = re.search(r'const\s+lessons\s*=\s*\[', content)
+          if not match:
+              raise SystemExit("lessons.js の配列が見つかりません")
+
+          insert_at = content.rfind("]", match.end())
+          if insert_at < 0:
+              raise SystemExit("配列の終わりが見つかりません")
+
+          existing = content[match.end():insert_at].rstrip()
+          separator = "" if not existing or existing.endswith(",") else ","
+          new_entry = json.dumps(lesson, ensure_ascii=False, indent=2)
+
+          updated = (
+              content[:insert_at]
+              + separator
+              + "\n  "
+              + new_entry.replace("\n", "\n  ")
+              + "\n"
+              + content[insert_at:]
+          )
+          path.write_text(updated, encoding="utf-8")
+          print("レッスンを追加しました")
+          PY
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lessons.js
+          git diff --cached --quiet || git commit -m "Add Vietnamese lesson"
+          git push
