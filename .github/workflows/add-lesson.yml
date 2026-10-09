@@ -75,7 +75,7 @@ jobs:
               "scene": env("LESSON_SCENE"),
               "vietnamese": env("LESSON_VIETNAMESE"),
               "translation": env("LESSON_TRANSLATION"),
-              "words": json.loads(env("LESSON_WORDS").strip()),
+              "words": json.loads(env("LESSON_WORDS").strip().replace("'", '"')),
               "extraWords": [],
               "mainWord": env("LESSON_MAIN_WORD"),
               "mainMeaning": env("LESSON_MAIN_MEANING")
