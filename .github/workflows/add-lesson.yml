@@ -1,5 +1,4 @@
 name: Add Vietnamese Lesson
-
 on:
   workflow_dispatch:
     inputs:
@@ -24,7 +23,7 @@ on:
         required: true
         type: string
       words:
-        description: '単語の意味（例：[["Hôm nay","今日"],["ngủ","寝る"]])'
+        description: "単語の意味（例：Bé=赤ちゃん; còn=まだ〜している; ngủ=寝る; hả=〜なの？）"
         required: true
         type: string
       mainWord:
@@ -35,17 +34,14 @@ on:
         description: "メイン単語の意味"
         required: true
         type: string
-
 permissions:
   contents: write
-
 jobs:
   add-lesson:
     runs-on: ubuntu-latest
     steps:
       - name: Get repository
         uses: actions/checkout@v4
-
       - name: Add lesson
         env:
           LESSON_DATE: ${{ inputs.date }}
@@ -62,39 +58,69 @@ jobs:
           import os
           import re
           from pathlib import Path
-
           path = Path("lessons.js")
           content = path.read_text(encoding="utf-8")
-
           def env(name):
-              return os.environ[name]
-
+              return os.environ.get(name, "").strip()
+          def parse_words(raw):
+              # JSON形式と「単語=意味; 単語=意味」形式の両方に対応
+              try:
+                  value = json.loads(raw)
+                  if isinstance(value, list) and all(
+                      isinstance(pair, list) and len(pair) == 2
+                      for pair in value
+                  ):
+                      return value
+              except (json.JSONDecodeError, TypeError):
+                  pass
+              pairs = []
+              for item in raw.split(";"):
+                  item = item.strip()
+                  if not item:
+                      continue
+                  if "=" not in item:
+                      raise SystemExit(
+                          "単語の入力形式を確認してください。"
+                          "例：Bé=赤ちゃん; còn=まだ〜している"
+                      )
+                  word, meaning = item.split("=", 1)
+                  pairs.append([word.strip(), meaning.strip()])
+              if not pairs:
+                  raise SystemExit("単語の意味が入力されていません")
+              return pairs
           lesson = {
               "date": env("LESSON_DATE"),
               "title": env("LESSON_TITLE"),
               "scene": env("LESSON_SCENE"),
               "vietnamese": env("LESSON_VIETNAMESE"),
               "translation": env("LESSON_TRANSLATION"),
-              "words": json.loads(env("LESSON_WORDS").strip().replace("'", '"')),
+              "words": parse_words(env("LESSON_WORDS")),
               "extraWords": [],
               "mainWord": env("LESSON_MAIN_WORD"),
               "mainMeaning": env("LESSON_MAIN_MEANING")
           }
-
           match = re.search(r'const\s+lessons\s*=\s*\[', content)
           if not match:
               raise SystemExit("lessons.js の配列が見つかりません")
-
-          
           end_marker = "\n];\n\nfunction speakVietnamese"
           insert_at = content.find(end_marker, match.end())
           if insert_at < 0:
-              raise SystemExit("配列の終わりが見つかりません")
-
+              raise SystemExit(
+                  "lessons.js の配列の終わりが見つかりません。"
+                  "ファイル構成を確認してください"
+              )
           existing = content[match.end():insert_at].rstrip()
+          # 同じ日付・タイトルのレッスンがある場合は重複追加しない
+          if (
+              lesson["date"] in existing
+              and lesson["title"] in existing
+          ):
+              raise SystemExit(
+                  "同じ日付・タイトルが既にある可能性があるため、"
+                  "重複追加を中止しました"
+              )
           separator = "" if not existing or existing.endswith(",") else ","
           new_entry = json.dumps(lesson, ensure_ascii=False, indent=2)
-
           updated = (
               content[:insert_at]
               + separator
@@ -106,7 +132,6 @@ jobs:
           path.write_text(updated, encoding="utf-8")
           print("レッスンを追加しました")
           PY
-
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
