@@ -4,7 +4,7 @@ on:
 workflow_dispatch:
 inputs:
 date:
-description: “日付（例：2026年10月10日）”
+description: “日付”
 required: true
 type: string
 title:
@@ -83,12 +83,12 @@ uses: actions/checkout@v4
                   continue
               if "=" not in item:
                   raise SystemExit(
-                      "Wordsは「単語=意味; 単語=意味」の形式で入力してください"
+                      "wordsは「単語=意味; 単語=意味」の形式で入力してください"
                   )
               word, meaning = item.split("=", 1)
               pairs.append([word.strip(), meaning.strip()])
           if not pairs:
-              raise SystemExit("Wordsが空です")
+              raise SystemExit("wordsが空です")
           return pairs
       lesson = {
           "date": env("LESSON_DATE"),
@@ -107,16 +107,13 @@ uses: actions/checkout@v4
       end_marker = "\n];\n\nfunction speakVietnamese"
       insert_at = content.find(end_marker, match.end())
       if insert_at < 0:
-          raise SystemExit(
-              "lessons.js の配列の終わりが見つかりません"
-          )
+          raise SystemExit("lessons.js の配列の終わりが見つかりません")
       existing = content[match.end():insert_at]
-      # 同じ日付とタイトルが両方ある場合は、重複追加せず正常終了
       if (
           json.dumps(lesson["date"], ensure_ascii=False) in existing
           and json.dumps(lesson["title"], ensure_ascii=False) in existing
       ):
-          print("この日付とタイトルのレッスンは登録済みです。追加をスキップします。")
+          print("この日付とタイトルは登録済みです。追加をスキップします。")
           raise SystemExit(0)
       separator = "" if not existing.strip() or existing.rstrip().endswith(",") else ","
       new_entry = json.dumps(lesson, ensure_ascii=False, indent=2)
