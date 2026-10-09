@@ -220,7 +220,36 @@ function renderLesson() {
               ${lesson.extraWords.map(word => `
                 <div class="word">
                   <div class="word-vietnamese">${word[0]}</div>
-                  <div class="word-japanese">${word[1]}</div>
+                  <div class="word-japanese">${word[1,
+  {
+    "date": "2026年10月9日",
+    "title": "まだ寝てる？",
+    "scene": "朝、ミンがまだ寝ているか奥さんに聞く",
+    "vietnamese": "Minh còn ngủ hả?",
+    "translation": "ミン、まだ寝てるの？",
+    "words": [
+      [
+        "Minh",
+        "ミン"
+      ],
+      [
+        "còn",
+        "まだ〜している"
+      ],
+      [
+        "ngủ",
+        "寝る"
+      ],
+      [
+        "hả",
+        "〜なの？（質問）"
+      ]
+    ],
+    "extraWords": [],
+    "mainWord": "còn",
+    "mainMeaning": "まだ〜している・まだ〜がある"
+  }
+]}</div>
                 </div>
               `).join("")}
             </div>
