@@ -64,22 +64,6 @@ const lessons = [
     mainMeaning: "まだ～している・まだ～がある"
   },
 
-  {
-    "date": "2026年10月10日",
-    "title": "動作確認テスト",
-    "scene": "ワークフローの動作確認",
-    "vietnamese": "Xin chào.",
-    "translation": "こんにちは。",
-    "words": [
-      [
-        "Xin chào",
-        "こんにちは"
-      ]
-    ],
-    "mainWord": "Xin chào",
-    "mainMeaning": "こんにちは",
-    "extraWords": []
-  }
 
 ];
 
