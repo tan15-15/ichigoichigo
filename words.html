@@ -1,99 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>これまでの一語 🍓一期一語</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #fff7f8;
+      color: #49363b;
+      font-family: sans-serif;
+    }
+    header, main {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    header {
+      padding: 22px;
+      background: #fff;
+      border: 2px solid #f4c8d2;
+      border-radius: 22px;
+      text-align: center;
+    }
+    h1 {
+      color: #c83e61;
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+    }
+    a { color: #b72f53; }
+    .tools {
+      display: grid;
+      gap: 12px;
+      margin: 22px 0;
+    }
+    input, select {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #e5b8c4;
+      border-radius: 12px;
+      background: white;
+      font-size: 1rem;
+    }
+    #words-list {
+      display: grid;
+      gap: 14px;
+    }
+    .word-card {
+      padding: 18px;
+      background: white;
+      border: 1px solid #f0d1d9;
+      border-radius: 18px;
+    }
+    .word-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .word-label {
+      color: #b72f53;
+      font-size: .85rem;
+    }
+    .word-card h2 {
+      margin: 12px 0 4px;
+      color: #9f2848;
+      font-size: 1.6rem;
+    }
+    .word-meaning {
+      margin: 0 0 14px;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .word-detail {
+      margin: 9px 0 0;
+      line-height: 1.6;
+    }
+    button {
+      padding: 9px 12px;
+      border: 0;
+      border-radius: 10px;
+      background: #fbe3e9;
+      color: #8f2341;
+      font-size: .95rem;
+      cursor: pointer;
+    }
+    .empty-words {
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🍓 これまでの一語</h1>
+    <p>少しずつ覚えたベトナム語を、ここで復習しよう。</p>
+    <a href="index.html">← 今日のレッスンに戻る</a>
+  </header>
 
-const filterBox = document.getElementById("filters");
-const searchBox = document.getElementById("search");
-const resultBox = document.getElementById("results");
-const countBox = document.getElementById("count");
+  <main>
+    <div class="tools">
+      <input id="word-search" type="search"
+        placeholder="ベトナム語・日本語で検索">
+      <select id="word-category" aria-label="単語の種類"></select>
+    </div>
+    <div id="words-list"></div>
+  </main>
 
-let activeCategory = "すべて";
-
-const categories = ["すべて", ...new Set(vocabulary.map(word => word.p))];
-
-filterBox.innerHTML = categories.map(category => `
-  <button type="button"
-    class="${category === activeCategory ? "active" : ""}"
-    data-category="${esc(category)}">
-    ${esc(category)}
-  </button>
-`).join("");
-
-filterBox.addEventListener("click", event => {
-  const button = event.target.closest("[data-category]");
-  if (!button) return;
-
-  activeCategory = button.dataset.category;
-
-  filterBox.querySelectorAll("button").forEach(item => {
-    item.classList.toggle("active", item.dataset.category === activeCategory);
-  });
-
-  renderWords();
-});
-
-searchBox.addEventListener("input", renderWords);
-
-function renderWords() {
-  const query = searchBox.value.trim().toLocaleLowerCase();
-
-  const matches = vocabulary.filter(word => {
-    const categoryMatches =
-      activeCategory === "すべて" || word.p === activeCategory;
-
-    const text = [
-      word.v, word.m, word.p, word.o, word.r, word.e, word.j
-    ].join(" ").toLocaleLowerCase();
-
-    return categoryMatches && (!query || text.includes(query));
-  }).sort((a, b) => a.v.localeCompare(b.v, "vi"));
-
-  countBox.textContent = `${matches.length}語`;
-
-  if (!matches.length) {
-    resultBox.innerHTML = `
-      <div class="empty">
-        見つかりませんでした。別の言葉で検索してみてください。
-      </div>`;
-    return;
-  }
-
-  const groups = {};
-  matches.forEach(word => {
-    (groups[word.p] ||= []).push(word);
-  });
-
-  resultBox.innerHTML = Object.entries(groups).map(([category, words]) => `
-    <section>
-      <h2 class="group-title">${esc(category)}</h2>
-
-      ${words.map(word => `
-        <article class="word">
-          <div class="word-top">
-            <span class="vn">${esc(word.v)}</span>
-            <span class="pos">${esc(word.p)}</span>
-          </div>
-
-          <div class="meaning">${esc(word.m)}</div>
-
-          <button class="audio" type="button"
-            data-speak="${esc(word.v)}">
-            🔊 単語を聴く
-          </button>
-
-          <p class="detail">
-            <strong>反対語・関連語：</strong>${esc(word.o)}
-          </p>
-
-          <div class="example">
-            <div class="vn">${esc(word.e)}</div>
-            <div>${esc(word.j)}</div>
-            <button class="audio" type="button"
-              data-speak="${esc(word.e)}">
-              🔊 例文を聴く
-            </button>
-          </div>
-        </article>
-      `).join("")}
-    </section>
-  `).join("");
-}
-
-renderWords();
+  <script src="lessons.js"></script>
+  <script src="words-page.js"></script>
+</body>
+</html>
