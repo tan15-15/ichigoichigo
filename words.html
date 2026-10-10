@@ -1,0 +1,99 @@
+
+const filterBox = document.getElementById("filters");
+const searchBox = document.getElementById("search");
+const resultBox = document.getElementById("results");
+const countBox = document.getElementById("count");
+
+let activeCategory = "すべて";
+
+const categories = ["すべて", ...new Set(vocabulary.map(word => word.p))];
+
+filterBox.innerHTML = categories.map(category => `
+  <button type="button"
+    class="${category === activeCategory ? "active" : ""}"
+    data-category="${esc(category)}">
+    ${esc(category)}
+  </button>
+`).join("");
+
+filterBox.addEventListener("click", event => {
+  const button = event.target.closest("[data-category]");
+  if (!button) return;
+
+  activeCategory = button.dataset.category;
+
+  filterBox.querySelectorAll("button").forEach(item => {
+    item.classList.toggle("active", item.dataset.category === activeCategory);
+  });
+
+  renderWords();
+});
+
+searchBox.addEventListener("input", renderWords);
+
+function renderWords() {
+  const query = searchBox.value.trim().toLocaleLowerCase();
+
+  const matches = vocabulary.filter(word => {
+    const categoryMatches =
+      activeCategory === "すべて" || word.p === activeCategory;
+
+    const text = [
+      word.v, word.m, word.p, word.o, word.r, word.e, word.j
+    ].join(" ").toLocaleLowerCase();
+
+    return categoryMatches && (!query || text.includes(query));
+  }).sort((a, b) => a.v.localeCompare(b.v, "vi"));
+
+  countBox.textContent = `${matches.length}語`;
+
+  if (!matches.length) {
+    resultBox.innerHTML = `
+      <div class="empty">
+        見つかりませんでした。別の言葉で検索してみてください。
+      </div>`;
+    return;
+  }
+
+  const groups = {};
+  matches.forEach(word => {
+    (groups[word.p] ||= []).push(word);
+  });
+
+  resultBox.innerHTML = Object.entries(groups).map(([category, words]) => `
+    <section>
+      <h2 class="group-title">${esc(category)}</h2>
+
+      ${words.map(word => `
+        <article class="word">
+          <div class="word-top">
+            <span class="vn">${esc(word.v)}</span>
+            <span class="pos">${esc(word.p)}</span>
+          </div>
+
+          <div class="meaning">${esc(word.m)}</div>
+
+          <button class="audio" type="button"
+            data-speak="${esc(word.v)}">
+            🔊 単語を聴く
+          </button>
+
+          <p class="detail">
+            <strong>反対語・関連語：</strong>${esc(word.o)}
+          </p>
+
+          <div class="example">
+            <div class="vn">${esc(word.e)}</div>
+            <div>${esc(word.j)}</div>
+            <button class="audio" type="button"
+              data-speak="${esc(word.e)}">
+              🔊 例文を聴く
+            </button>
+          </div>
+        </article>
+      `).join("")}
+    </section>
+  `).join("");
+}
+
+renderWords();
