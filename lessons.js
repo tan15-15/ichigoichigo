@@ -163,7 +163,6 @@ function renderLesson() {
       ${lessons.map(x => `<p><a href="?date=${encodeURIComponent(x.date)}">🍓 ${esc(x.date)}　${esc(x.mainWord)}</a></p>`).join("")}</section>
     </article>`;
 
-  addGlossary();
 }
 
 function addGlossary() {
