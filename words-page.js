@@ -38,8 +38,7 @@ function renderWordsPage() {
 
     const filtered = vocabulary.filter(word => {
       const text = [
-        word.v, word.m, word.p, word.o,
-        word.r, word.e, word.j
+        word.v, word.m, word.p, word.o, word.r, word.e, word.j
       ].filter(Boolean).join(" ").toLowerCase();
 
       const matchesKeyword = text.includes(keyword);
@@ -80,10 +79,7 @@ function renderWordsPage() {
         </div>
 
         <h2>${escapeHTML(word.v || "")}</h2>
-
-        <p class="word-meaning">
-          ${escapeHTML(word.m || "")}
-        </p>
+        <p class="word-meaning">${escapeHTML(word.m || "")}</p>
 
         ${word.p ? `
           <p class="word-detail">
@@ -94,12 +90,6 @@ function renderWordsPage() {
         ${word.o ? `
           <p class="word-detail">
             <strong>関連する言葉：</strong>${escapeHTML(word.o)}
-          </p>
-        ` : ""}
-
-        ${word.r ? `
-          <p class="word-detail">
-            <strong>覚え方：</strong>${escapeHTML(word.r)}
           </p>
         ` : ""}
 
