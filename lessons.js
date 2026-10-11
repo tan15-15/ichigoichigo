@@ -111,6 +111,23 @@ const vocabulary = [
     "mainMeaning": "まだ～していない",
     "extraWords": []
   }
+,
+  {
+    "date": "2026年10月11日",
+    "title": "ミン、まだ寝てる？",
+    "scene": "朝、ミンがまだ寝ているか奥さんに聞いてみる。",
+    "vietnamese": "Minh ơi, còn ngủ hả?",
+    "translation": "ミン、まだ寝てる？",
+    "words": [
+      "Minh ơi=ミン、ねえ",
+      "còn=まだ～している",
+      "ngủ=寝る",
+      "hả=～なの？"
+    ],
+    "mainWord": "còn",
+    "mainMeaning": "まだ～している",
+    "extraWords": []
+  }
 
 ];
 
