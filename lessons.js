@@ -94,7 +94,24 @@ const vocabulary = [
   {v:"thức",m:"起きている",p:"動詞・状態",o:"ngủ（寝る）",r:"ngủ",e:"Minh thức rồi.",j:"ミンはもう起きている。"},
   {v:"uống",m:"飲む",p:"動詞",o:"ăn（食べる）",r:"ăn",e:"Minh uống sữa.",j:"ミンがミルクを飲む。"},
   {v:"về",m:"帰る",p:"動詞",o:"đi（行く）",r:"đi",e:"Mình về.",j:"帰る。"},
-  {v:"ẵm",m:"赤ちゃんを抱っこする（南部でよく使う）",p:"動詞",o:"đặt xuống（下ろす）",r:"đặt xuống",e:"Mẹ ẵm Minh.",j:"お母さんがミンを抱っこする。"}
+  {v:"ẵm",m:"赤ちゃんを抱っこする（南部でよく使う）",p:"動詞",o:"đặt xuống（下ろす）",r:"đặt xuống",e:"Mẹ ẵm Minh.",j:"お母さんがミンを抱っこする。"},
+  {
+    "date": "2026年10月10日",
+    "title": "まだ起きてないの？",
+    "scene": "朝、ミンがまだ寝ているので、奥さんに聞いてみたい。",
+    "vietnamese": "Minh chưa dậy hả?",
+    "translation": "ミン、まだ起きてないの？",
+    "words": [
+      "Minh=ミン",
+      "chưa=まだ～していない",
+      "dậy=起きる",
+      "hả=～なの？"
+    ],
+    "mainWord": "chưa",
+    "mainMeaning": "まだ～していない",
+    "extraWords": []
+  }
+
 ];
 
 function speakVietnamese(text) {
