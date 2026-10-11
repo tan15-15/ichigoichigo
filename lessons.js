@@ -346,4 +346,7 @@ document.addEventListener("click", e => {
   if (button) speakVietnamese(button.dataset.speak);
 });
 
-document.addEventListener("DOMContentLoaded", renderLesson);
+document.addEventListener("DOMContentLoaded", () => {
+  renderLesson();
+  addGlossary();
+});
