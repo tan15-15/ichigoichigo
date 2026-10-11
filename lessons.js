@@ -64,6 +64,44 @@ const lessons = [
     extraWords: [["rồi", "もう・すでに"], ["chưa", "まだ～していない・もう～した？"]],
     mainWord: "còn",
     mainMeaning: "まだ～している・まだある"
+  },
+  {
+    date: "2026年10月10日",
+    title: "もう朝なのに、まだ起きてないの？",
+    scene: "朝になってもミンが寝ている。奥さんに聞いてみよう。",
+    vietnamese: "Sáng rồi mà Minh chưa dậy hả?",
+    translation: "もう朝なのに、ミンはまだ起きてないの？",
+    words: [
+      ["Sáng rồi", "もう朝"],
+      ["mà", "～なのに"],
+      ["Minh", "ミン"],
+      ["chưa", "まだ～していない"],
+      ["dậy", "起きる"],
+      ["hả", "～なの？"]
+    ],
+    extraWords: [["ngủ", "寝る"], ["thức", "起きている"]],
+    mainWord: "chưa",
+    mainMeaning: "まだ～していない"
+  },
+  {
+    date: "2026年10月11日",
+    title: "ミン、まだ寝てる？ 起きてミルク飲もうね",
+    scene: "朝、まだ寝ているミンに声をかけて、起きたらミルクを飲もうと伝える。",
+    vietnamese: "Minh ơi, còn ngủ hả? Dậy uống sữa nha.",
+    translation: "ミン、まだ寝てる？ 起きてミルクを飲もうね。",
+    words: [
+      ["Minh ơi", "ミン、ねえ"],
+      ["còn", "まだ～している"],
+      ["ngủ", "寝る"],
+      ["hả", "～なの？"],
+      ["Dậy", "起きて"],
+      ["uống", "飲む"],
+      ["sữa", "ミルク"],
+      ["nha", "～しようね・～してね（やわらかい言い方）"]
+    ],
+    extraWords: [["chưa", "まだ～していない"], ["rồi", "もう・すでに"]],
+    mainWord: "còn",
+    mainMeaning: "まだ～している・まだある"
   }
 ];
 
@@ -95,40 +133,10 @@ const vocabulary = [
   {v:"uống",m:"飲む",p:"動詞",o:"ăn（食べる）",r:"ăn",e:"Minh uống sữa.",j:"ミンがミルクを飲む。"},
   {v:"về",m:"帰る",p:"動詞",o:"đi（行く）",r:"đi",e:"Mình về.",j:"帰る。"},
   {v:"ẵm",m:"赤ちゃんを抱っこする（南部でよく使う）",p:"動詞",o:"đặt xuống（下ろす）",r:"đặt xuống",e:"Mẹ ẵm Minh.",j:"お母さんがミンを抱っこする。"},
-  {
-    "date": "2026年10月10日",
-    "title": "まだ起きてないの？",
-    "scene": "朝、ミンがまだ寝ているので、奥さんに聞いてみたい。",
-    "vietnamese": "Minh chưa dậy hả?",
-    "translation": "ミン、まだ起きてないの？",
-    "words": [
-      "Minh=ミン",
-      "chưa=まだ～していない",
-      "dậy=起きる",
-      "hả=～なの？"
-    ],
-    "mainWord": "chưa",
-    "mainMeaning": "まだ～していない",
-    "extraWords": []
-  }
-,
-  {
-    "date": "2026年10月11日",
-    "title": "ミン、まだ寝てる？",
-    "scene": "朝、ミンがまだ寝ているか奥さんに聞いてみる。",
-    "vietnamese": "Minh ơi, còn ngủ hả?",
-    "translation": "ミン、まだ寝てる？",
-    "words": [
-      "Minh ơi=ミン、ねえ",
-      "còn=まだ～している",
-      "ngủ=寝る",
-      "hả=～なの？"
-    ],
-    "mainWord": "còn",
-    "mainMeaning": "まだ～している",
-    "extraWords": []
-  }
-
+  {v:"sáng",m:"朝・明るい",p:"名詞・形容詞",o:"tối（夜・暗い）",r:"tối",e:"Sáng rồi.",j:"もう朝だよ。"},
+  {v:"mà",m:"～なのに・～だけど",p:"接続表現",o:"—",r:"—",e:"Sáng rồi mà Minh chưa dậy.",j:"もう朝なのに、ミンはまだ起きていない。"},
+  {v:"ơi",m:"呼びかけに使う言葉",p:"会話の表現",o:"—",r:"—",e:"Minh ơi!",j:"ミン、ねえ！"},
+  {v:"nha",m:"～しようね・～してね（やわらかい言い方）",p:"会話の表現",o:"—",r:"—",e:"Dậy uống sữa nha.",j:"起きてミルクを飲もうね。"}
 ];
 
 function speakVietnamese(text) {
@@ -160,9 +168,7 @@ function speakVietnamese(text) {
   }
 
   utterance.onerror = () => {
-    if (status) {
-      status.textContent = "音声を再生できませんでした。端末・ブラウザのベトナム語音声対応をご確認ください。";
-    }
+    if (status) status.textContent = "音声を再生できませんでした。端末・ブラウザのベトナム語音声対応をご確認ください。";
   };
 
   utterance.onend = () => {
@@ -289,7 +295,6 @@ function addGlossary() {
     if (!b) return;
 
     activePos = b.dataset.pos;
-
     filters.querySelectorAll("button").forEach(x => {
       x.setAttribute("aria-pressed", String(x.dataset.pos === activePos));
     });
@@ -308,7 +313,6 @@ function addGlossary() {
     ).sort((a, b) => a.v.localeCompare(b.v, "vi"));
 
     document.getElementById("glossary-count").textContent = `${matches.length}語が見つかりました`;
-
     const results = document.getElementById("glossary-results");
 
     if (!matches.length) {
