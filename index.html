@@ -30,6 +30,22 @@ body {
 .journey-title h2 { margin: 0; font-size: 26px; color: #5b8fbb; }
 .journey-intro { margin: 10px 0 0; font-size: 14px; }
 .journey-intro strong { color: #e85872; }
+
+.audio-warning {
+  margin: 18px auto 0;
+  max-width: 760px;
+  padding: 14px 16px;
+  border: 2px solid #f0a12b;
+  border-radius: 16px;
+  background: #fff0c9;
+  color: #713d00;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.7;
+  text-align: left;
+}
+.audio-warning strong { color: #a83220; }
+
 .today-card {
   position: relative; background: #fff; border-radius: 32px; padding: 28px 20px 35px;
   margin-top: 25px; box-shadow: 0 12px 35px rgba(100,80,80,.09); overflow: hidden;
@@ -59,13 +75,12 @@ body {
 }
 .voice-button:hover { transform: translateY(-2px); }
 .voice-button:active { transform: scale(.96); }
-.voice-note { margin-top: 8px; font-size: 11px; color: #998; }
 .translation { margin-top: 17px; padding-top: 15px; border-top: 1px dashed #e9cbd2; font-size: 16px; font-weight: bold; }
 .word-section { margin-top: 25px; }
 .word-section h3 { text-align: center; font-size: 20px; }
 .word-list { display: grid; gap: 10px; }
 .word { display: flex; align-items: center; gap: 15px; background: #f8fbff; border-radius: 17px; padding: 12px 15px; }
-.word-vietnamese { font-family: "Noto Sans", sans-serif; min-width: 100px; font-size: 20px; font-weight: 700; color: #578ab5; }
+.word-vietnamese { font-family: "Noto Sans", sans-serif; min-width: 100px; font-size: 20px; font-weight: 500; color: #578ab5; }
 .word-japanese { font-size: 14px; }
 .ichigo-word {
   margin-top: 28px; padding: 25px 15px;
@@ -73,7 +88,7 @@ body {
   border-radius: 25px; text-align: center;
 }
 .ichigo-word .small { font-size: 13px; color: #bd6878; }
-.ichigo-word .main { font-family: "Noto Sans", sans-serif; display: block; margin: 4px 0; font-size: 42px; font-weight: 800; color: #e4536d; }
+.ichigo-word .main { font-family: "Noto Sans", sans-serif; display: block; margin: 4px 0; font-size: 42px; font-weight: 500; color: #e4536d; }
 .ichigo-word .meaning { font-size: 16px; font-weight: bold; }
 .menu { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 25px; }
 .menu a {
@@ -83,6 +98,7 @@ body {
 .menu a:hover { transform: translateY(-3px); }
 .menu strong { display: block; color: #df5c73; font-size: 14px; }
 .menu small { font-size: 11px; color: #999; }
+
 @media (max-width: 600px) {
   .page { padding: 10px 10px 40px; }
   .header { padding-top: 12px; }
@@ -93,6 +109,7 @@ body {
   .word-vietnamese { min-width: 80px; }
   .menu { gap: 7px; }
   .menu a { padding: 13px 4px; }
+  .audio-warning { font-size: 13px; padding: 12px; }
 }
 </style>
 </head>
@@ -105,6 +122,7 @@ body {
     </h1>
     <p>南部ベトナムで暮らしながら、今日覚えた一語を大切に。</p>
   </header>
+
   <section class="journey">
     <div class="journey-title">
       <span>🇻🇳</span>
@@ -117,8 +135,15 @@ body {
       街や家で「意思伝達」ができるようになるための<br>
       南部ベトナム語超入門サイトです。
     </div>
+
+    <div class="audio-warning" role="note">
+      ⚠️ <strong>音声が出ないときは、まずマナーモードを確認！</strong><br>
+      iPhoneなどはマナーモードがオンだと音声が出ないことがあります。マナーモードを解除し、端末の音量を上げてください。ベトナム語音声に対応していない端末・ブラウザでは再生できない場合もあります。
+    </div>
   </section>
+
   <main id="lessons"></main>
+
   <nav class="menu">
     <a href="./index.html#today">
       🍓
@@ -137,6 +162,7 @@ body {
     </a>
   </nav>
 </div>
+
 <script src="lessons.js"></script>
 </body>
 </html>
