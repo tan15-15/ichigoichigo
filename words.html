@@ -3,14 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <title>これまでの一語 🍓一期一語</title>
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 20px;
+      padding: 16px;
       background: #fff7f8;
       color: #49363b;
-      font-family: sans-serif;
+      font-family: "Noto Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.7;
     }
     header, main {
       max-width: 760px;
@@ -26,29 +31,28 @@
     h1 {
       color: #c83e61;
       margin: 0 0 8px;
-      font-size: 1.7rem;
+      font-size: 1.6rem;
     }
     a { color: #b72f53; }
     .tools {
       display: grid;
       gap: 12px;
-      margin: 22px 0;
+      margin: 20px 0;
     }
     input, select {
-      box-sizing: border-box;
       width: 100%;
       padding: 13px;
       border: 1px solid #e5b8c4;
       border-radius: 12px;
       background: white;
-      font-size: 1rem;
+      font: inherit;
     }
     #words-list {
       display: grid;
-      gap: 14px;
+      gap: 12px;
     }
     .word-card {
-      padding: 18px;
+      padding: 17px;
       background: white;
       border: 1px solid #f0d1d9;
       border-radius: 18px;
@@ -63,27 +67,36 @@
       color: #b72f53;
       font-size: .85rem;
     }
+    /* ベトナム語の単語・例文の太さを500に統一 */
+    .word-card h2,
+    .word-card [lang="vi"] {
+      font-family: "Noto Sans", sans-serif;
+      font-weight: 500;
+      font-synthesis: none;
+    }
     .word-card h2 {
-      margin: 12px 0 4px;
+      margin: 10px 0 4px;
       color: #9f2848;
       font-size: 1.6rem;
+      line-height: 1.5;
     }
     .word-meaning {
-      margin: 0 0 14px;
-      font-size: 1.1rem;
-      font-weight: bold;
+      margin: 0 0 12px;
+      font-size: 1rem;
     }
     .word-detail {
       margin: 9px 0 0;
-      line-height: 1.6;
+      line-height: 1.7;
+      overflow-wrap: anywhere;
     }
     button {
-      padding: 9px 12px;
+      padding: 8px 11px;
       border: 0;
       border-radius: 10px;
       background: #fbe3e9;
       color: #8f2341;
-      font-size: .95rem;
+      font: inherit;
+      font-size: .9rem;
       cursor: pointer;
     }
     .empty-words {
@@ -92,24 +105,32 @@
       border-radius: 16px;
       text-align: center;
     }
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      header { padding: 18px 12px; }
+      .word-card { padding: 14px; }
+      .word-card h2 { font-size: 1.45rem; }
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>🍓 これまでの一語</h1>
-    <p>少しずつ覚えたベトナム語を、ここで復習しよう。</p>
-    <a href="index.html">← 今日のレッスンに戻る</a>
+    <p>覚えた言葉を検索して、少しずつ復習しよう。</p>
+    <a href="./index.html">← 今日のレッスンに戻る</a>
   </header>
-
   <main>
     <div class="tools">
-      <input id="word-search" type="search"
-        placeholder="ベトナム語・日本語で検索">
+      <input
+        id="word-search"
+        type="search"
+        placeholder="ベトナム語・日本語の意味で検索"
+        aria-label="単語を検索"
+      >
       <select id="word-category" aria-label="単語の種類"></select>
     </div>
     <div id="words-list"></div>
   </main>
-
   <script src="lessons.js"></script>
   <script src="words-page.js"></script>
 </body>
