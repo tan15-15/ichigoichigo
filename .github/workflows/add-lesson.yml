@@ -1,4 +1,6 @@
+
 name: Add Vietnamese Lesson
+
 on:
   workflow_dispatch:
     inputs:
@@ -6,14 +8,17 @@ on:
         description: "追加するレッスン内容（JSONを丸ごと貼り付け）"
         required: true
         type: string
+
 permissions:
   contents: write
+
 jobs:
   add-lesson:
     runs-on: ubuntu-latest
     steps:
       - name: Get repository
         uses: actions/checkout@v4
+
       - name: Add lesson
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
@@ -23,16 +28,18 @@ jobs:
           import re
           import os
           from pathlib import Path
+
           raw = os.environ.get("LESSON_JSON", "").strip()
-          # iPhoneのスマートクォートを通常の引用符に戻す
           raw = raw.translate(str.maketrans({
               "“": '"', "”": '"', "„": '"', "‟": '"',
               "‘": "'", "’": "'", "‚": "'", "‛": "'"
           }))
+
           try:
               lesson = json.loads(raw)
           except json.JSONDecodeError as e:
               raise SystemExit(f"JSONの形式が正しくありません: {e}")
+
           required = [
               "date", "title", "scene", "vietnamese",
               "translation", "words", "mainWord", "mainMeaning"
@@ -40,18 +47,23 @@ jobs:
           missing = [key for key in required if key not in lesson]
           if missing:
               raise SystemExit("不足している項目: " + ", ".join(missing))
+
           if not isinstance(lesson["words"], list):
               raise SystemExit("words は単語と意味のリストにしてください")
+
           lesson.setdefault("extraWords", [])
           path = Path("lessons.js")
           content = path.read_text(encoding="utf-8")
+
           match = re.search(r'const\s+lessons\s*=\s*\[', content)
           if not match:
               raise SystemExit("lessons.js の配列が見つかりません")
-          end_marker = "\n];\n\nfunction speakVietnamese"
+
+          end_marker = "\n];\n\nconst vocabulary = ["
           insert_at = content.find(end_marker, match.end())
           if insert_at < 0:
               raise SystemExit("lessons.js の配列の終わりが見つかりません")
+
           existing = content[match.end():insert_at]
           if (
               json.dumps(lesson["date"], ensure_ascii=False) in existing
@@ -59,6 +71,7 @@ jobs:
           ):
               print("同じ日付とタイトルのレッスンがあるため、追加をスキップします。")
               raise SystemExit(0)
+
           separator = (
               "" if not existing.strip() or existing.rstrip().endswith(",")
               else ","
@@ -72,9 +85,11 @@ jobs:
               + "\n"
               + content[insert_at:]
           )
+
           path.write_text(updated, encoding="utf-8")
           print("レッスンを追加しました")
           PY
+
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
