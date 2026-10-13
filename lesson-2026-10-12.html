@@ -2,7 +2,11 @@
 Đi ăn với vợ nha.
 Chơi với ba nha.
 Mình cùng đi ăn nha.
-Mình cùng chơi nha.</p><button class="audio" onclick="speak("Ngủ với ba nha.\nĐi ăn với vợ nha.\nChơi với ba nha.\nMình cùng đi ăn nha.\nMình cùng chơi nha.")">🔊 音声を聞く</button><p>パパといっしょに寝ようね。
+Mình cùng chơi nha.</p><button class="audio" data-speak="Ngủ với ba nha.
+Đi ăn với vợ nha.
+Chơi với ba nha.
+Mình cùng đi ăn nha.
+Mình cùng chơi nha.">🔊 音声を聞く</button><p>パパといっしょに寝ようね。
 奥さんといっしょに食べに行こうね。
 パパといっしょに遊ぼうね。
 いっしょに食べに行こうね。
@@ -10,8 +14,12 @@ Mình cùng chơi nha.</p><button class="audio" onclick="speak("Ngủ với ba n
 Đi ăn với vợ nha.
 Chơi với ba nha.
 Mình cùng đi ăn nha.
-Mình cùng chơi nha.</p><button class="audio" onclick="speak("Ngủ với ba nha.\nĐi ăn với vợ nha.\nChơi với ba nha.\nMình cùng đi ăn nha.\nMình cùng chơi nha.")">🔊 音声を聞く</button><p>パパといっしょに寝ようね。
+Mình cùng chơi nha.</p><button class="audio" data-speak="Ngủ với ba nha.
+Đi ăn với vợ nha.
+Chơi với ba nha.
+Mình cùng đi ăn nha.
+Mình cùng chơi nha.">🔊 音声を聞く</button><p>パパといっしょに寝ようね。
 奥さんといっしょに食べに行こうね。
 パパといっしょに遊ぼうね。
 いっしょに食べに行こうね。
-いっしょに遊ぼうね。</p><ul><li><strong>với</strong> — 〜と、〜といっしょに（英語のwithに近い）</li><li><strong>vợ</strong> — 奥さん、妻</li><li><strong>ba</strong> — パパ</li><li><strong>ngủ</strong> — 寝る</li><li><strong>đi</strong> — 行く</li><li><strong>ăn</strong> — 食べる</li><li><strong>đi ăn</strong> — 食べに行く</li><li><strong>chơi</strong> — 遊ぶ</li><li><strong>cùng</strong> — いっしょに</li><li><strong>mình</strong> — 私たち、私たち自身</li><li><strong>nha</strong> — 〜ね、〜しようね</li></ul></section><nav class="nav"><a href="./index.html">🍓 トップページへ</a><a href="./words.html">📚 単語帳へ</a></nav></main><script>function speak(t){if(!('speechSynthesis' in window)){alert('このブラウザでは音声再生に対応していません');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='vi-VN';u.rate=0.78;speechSynthesis.speak(u)}</script></body></html>
+いっしょに遊ぼうね。</p><ul><li><strong>với</strong> — 〜と、〜といっしょに（英語のwithに近い）</li><li><strong>vợ</strong> — 奥さん、妻</li><li><strong>ba</strong> — パパ</li><li><strong>ngủ</strong> — 寝る</li><li><strong>đi</strong> — 行く</li><li><strong>ăn</strong> — 食べる</li><li><strong>đi ăn</strong> — 食べに行く</li><li><strong>chơi</strong> — 遊ぶ</li><li><strong>cùng</strong> — いっしょに</li><li><strong>mình</strong> — 私たち、私たち自身</li><li><strong>nha</strong> — 〜ね、〜しようね</li></ul></section><nav class="nav"><a href="./index.html">🍓 トップページへ</a><a href="./words.html">📚 単語帳へ</a></nav></main><script>function speak(t){if(!('speechSynthesis' in window)){alert('このブラウザでは音声再生に対応していません');return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='vi-VN';u.rate=0.78;speechSynthesis.speak(u)}document.addEventListener('click',e=>{const b=e.target.closest('[data-speak]');if(b)speak(b.dataset.speak)});</script></body></html>
