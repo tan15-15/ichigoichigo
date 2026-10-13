@@ -508,7 +508,9 @@ function renderLesson() {
           const keyWords = (x.archiveWords || x.words.slice(0, 5).map(w => w[0])).slice(0, 5);
           return `<div class="archive-item">
             <div class="archive-date">${esc(x.date.replace("年", "/").replace("月", "/").replace("日", ""))}</div>
-            <a href="./index.html?date=${encodeURIComponent(x.date)}#today">
+            
+            <a href="./lesson-${x.date.replace("年", "-").replace("月", "-").replace("日", "").replace(/-(\d)(?=-|$)/g, "-0$1")}.html">
+
               <span class="archive-title">${esc(x.title)}</span>
               <span class="archive-words">${keyWords.map(esc).join(" ・ ")}</span>
             </a>
