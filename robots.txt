@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://tan15-15.github.io/ichigoichigo/sitemap.xml
