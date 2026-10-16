@@ -1,0 +1,107 @@
+
+name: Update Vietnamese Lesson from JSON
+
+on:
+  workflow_dispatch:
+    inputs:
+      lesson_json:
+        description: '既存の記事を置き換えるJSON'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-lesson:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Replace lesson from JSON
+        env:
+          LESSON_JSON: ${{ inputs.lesson_json }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+          const file = 'lessons.js';
+          const source = fs.readFileSync(file, 'utf8');
+          const input = JSON.parse(process.env.LESSON_JSON);
+          const required = ['date','title','scene','vietnamese','translation','words','mainWord','mainMeaning'];
+
+          for (const key of required) {
+            if (!(key in input)) throw new Error('JSONに必須項目がありません: ' + key);
+          }
+
+          if (!Array.isArray(input.words)) throw new Error('words は配列にしてください');
+
+          const marker = source.match(/const\s+lessons\s*=\s*\[/);
+          if (!marker) throw new Error('lessons 配列が見つかりません');
+
+          const start = source.indexOf('[', marker.index);
+          let depth = 0, quote = '', escaped = false, end = -1;
+
+          for (let i = start; i < source.length; i++) {
+            const c = source[i];
+            if (quote) {
+              if (escaped) escaped = false;
+              else if (c === '\\') escaped = true;
+              else if (c === quote) quote = '';
+              continue;
+            }
+            if (c === '"' || c === "'" || c === '`') {
+              quote = c;
+              continue;
+            }
+            if (c === '[') depth++;
+            if (c === ']') {
+              depth--;
+              if (depth === 0) {
+                end = i + 1;
+                break;
+              }
+            }
+          }
+
+          if (end < 0) throw new Error('lessons 配列の終端が見つかりません');
+
+          const lessons = vm.runInNewContext(source.slice(start, end));
+          const index = lessons.findIndex(x => x.date === input.date);
+
+          if (index < 0) {
+            throw new Error('同じ日付の記事がありません: ' + input.date);
+          }
+
+          const replacement = {
+            ...input,
+            sceneIcon: input.sceneIcon || lessons[index].sceneIcon || '🍓',
+            sceneTitle: input.sceneTitle || lessons[index].sceneTitle || '今日の出来事',
+            extraWords: input.extraWords || [],
+            archiveWords: input.archiveWords || input.words.slice(0, 5).map(w => w[0]),
+            articleSections: input.articleSections || []
+          };
+
+          lessons[index] = replacement;
+
+          fs.writeFileSync(
+            file,
+            source.slice(0, start) + JSON.stringify(lessons, null, 2) + source.slice(end)
+          );
+
+          console.log('Updated existing lesson: ' + replacement.date + ' / ' + replacement.title);
+          NODE
+
+      - name: Commit updated lesson
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lessons.js
+          git commit -m "Update Vietnamese lesson from JSON"
+          git push
