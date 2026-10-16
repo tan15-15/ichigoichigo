@@ -1,0 +1,120 @@
+
+name: Update Vietnamese Blog Text
+
+on:
+  workflow_dispatch:
+    inputs:
+      lesson_date:
+        description: "修正する記事の日付（例：2026年10月3日）"
+        required: true
+        type: string
+      paragraphs_json:
+        description: 'ブログ本文（例：["段落1","段落2"]）'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  update-blog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Update blog paragraphs
+        env:
+          LESSON_DATE: ${{ inputs.lesson_date }}
+          PARAGRAPHS_JSON: ${{ inputs.paragraphs_json }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          date = os.environ["LESSON_DATE"].strip()
+          try:
+              paragraphs = json.loads(os.environ["PARAGRAPHS_JSON"])
+          except json.JSONDecodeError as e:
+              raise SystemExit(f"JSONの形式が正しくありません: {e}")
+
+          if not isinstance(paragraphs, list) or not paragraphs or not all(isinstance(p, str) for p in paragraphs):
+              raise SystemExit('本文は ["段落1","段落2"] の形式で入力してください。')
+
+          path = Path("lessons.js")
+          source = path.read_text(encoding="utf-8")
+
+          def matching_end(text, start, opening, closing):
+              depth = 0
+              quote = None
+              escaped = False
+              for i in range(start, len(text)):
+                  ch = text[i]
+                  if quote:
+                      if escaped:
+                          escaped = False
+                      elif ch == "\\":
+                          escaped = True
+                      elif ch == quote:
+                          quote = None
+                      continue
+                  if ch in ('"', "'", "`"):
+                      quote = ch
+                  elif ch == opening:
+                      depth += 1
+                  elif ch == closing:
+                      depth -= 1
+                      if depth == 0:
+                          return i
+              raise SystemExit("配列またはオブジェクトの終端が見つかりません。")
+
+          pattern = re.compile(r'\{\s*date\s*:\s*["\']' + re.escape(date) + r'["\']')
+          found = list(pattern.finditer(source))
+          if len(found) != 1:
+              raise SystemExit(f"日付「{date}」の記事を1件に特定できません（該当数: {len(found)}）。変更していません。")
+
+          start = source.find("{", found[0].start())
+          end = matching_end(source, start, "{", "}") + 1
+          lesson = source[start:end]
+
+          key = re.search(r'\barticleSections\s*:\s*\[', lesson)
+          if not key:
+              raise SystemExit("記事本文が見つかりません。変更していません。")
+
+          sections_start = lesson.find("[", key.start())
+          sections_end = matching_end(lesson, sections_start, "[", "]")
+          section_start = lesson.find("{", sections_start)
+          if section_start < 0 or section_start > sections_end:
+              raise SystemExit("本文セクションが見つかりません。変更していません。")
+
+          section_end = matching_end(lesson, section_start, "{", "}") + 1
+          section = lesson[section_start:section_end]
+          pkey = re.search(r'\bparagraphs\s*:\s*\[', section)
+          if not pkey:
+              raise SystemExit("本文の段落が見つかりません。変更していません。")
+
+          pstart = section.find("[", pkey.start())
+          pend = matching_end(section, pstart, "[", "]")
+          replacement = json.dumps(paragraphs, ensure_ascii=False, indent=2)
+          new_section = section[:pstart] + replacement + section[pend + 1:]
+          new_lesson = lesson[:section_start] + new_section + lesson[section_end:]
+          updated = source[:start] + new_lesson + source[end:]
+
+          path.write_text(updated, encoding="utf-8")
+          print(f"{date} の最初の本文セクションを更新しました。")
+          print("単語・音声・復習欄は変更していません。")
+          PY
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lessons.js
+          if git diff --cached --quiet; then
+            echo "変更はありません"
+          else
+            git commit -m "Update Vietnamese blog text"
+            git push
+          fi
