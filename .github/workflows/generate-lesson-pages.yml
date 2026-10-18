@@ -69,7 +69,7 @@ jobs:
             `<button class="audio" data-speak="${esc(phrase)}">🔊 音声を聞く</button>`;
           for (const lesson of lessons) {
             const sections = (lesson.articleSections || []).map(section =>
-              `<section><h2>${esc(section.heading)}</h2>${(section.paragraphs || []).map(p => `<p>${esc(p)}</p>`).join('')}${(section.examples || []).map(ex => `<div class="example"><p class="vi">${esc(ex.v)}</p>${audio(ex.v)}<p>${esc(ex.j)}</p><p class="words">${esc(ex.w)}</p></div>`).join('')}</section>`
+              `<section><h2>${esc(section.heading || section.title || '') }</h2>${(section.paragraphs || []).map(p => `<p>${esc(p)}</p>`).join('')}${(section.examples || []).map(ex => `<div class="example"><p class="vi">${esc(ex.v)}</p>${audio(ex.v)}<p>${esc(ex.j)}</p><p class="words">${esc(ex.w)}</p></div>`).join('')}</section>`
             ).join('');
             const words = (lesson.words || []).map(w =>
               `<li><strong>${esc(w[0])}</strong> — ${esc(w[1])}</li>`
