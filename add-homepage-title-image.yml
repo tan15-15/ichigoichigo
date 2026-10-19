@@ -1,0 +1,76 @@
+name: Add Homepage Title Image
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-homepage-title-image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Add existing title banner to homepage
+        run: |
+          python3 <<'PYTHON'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          if not path.exists():
+              raise SystemExit('index.html が見つかりません')
+
+          image = Path('ichigoichigo-banner.png.PNG')
+          if not image.exists():
+              raise SystemExit('ichigoichigo-banner.png.PNG が見つかりません。画像ファイルは変更していません')
+
+          html = path.read_text(encoding='utf-8')
+          if 'class="homepage-title-banner"' in html:
+              print('タイトル画像はすでに追加されています。変更はありません。')
+              raise SystemExit(0)
+
+          css = '''\n/* 一期一語：トップページのタイトル画像 */
+          .homepage-title-banner {
+            margin: 10px auto 18px;
+            text-align: center;
+          }
+          .homepage-title-banner img {
+            display: block;
+            width: 100%;
+            max-width: 900px;
+            height: auto;
+            margin: 0 auto;
+            border-radius: 22px;
+          }
+          '''
+          style_close = re.search(r'</style\s*>', html, flags=re.I)
+          if not style_close:
+              raise SystemExit('index.html 内に </style> が見つかりません。変更していません')
+          html = html[:style_close.start()] + css + html[style_close.start():]
+
+          banner = '''\n  <section class="homepage-title-banner" aria-label="一期一語のタイトル画像">
+            <img src="./ichigoichigo-banner.png.PNG" alt="ベトナム暮らし、ベトナム語は今日も一期一語">
+          </section>
+          '''
+          header_close = re.search(r'</header\s*>', html, flags=re.I)
+          if not header_close:
+              raise SystemExit('index.html 内に </header> が見つかりません。変更していません')
+          html = html[:header_close.end()] + banner + html[header_close.end():]
+          path.write_text(html, encoding='utf-8')
+          print('index.html に既存のタイトル画像を追加しました。')
+          PYTHON
+
+      - name: Commit homepage change
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo 'No homepage changes to commit.'
+          else
+            git commit -m "Show title banner on homepage"
+            git push
+          fi
