@@ -1,0 +1,88 @@
+name: Add Footer Links to Lesson Pages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  add-footer-links:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Add footer links without replacing article content
+        run: |
+          python3 <<'PYTHON'
+          from pathlib import Path
+          import re
+
+          css = "\n".join([
+              "/* 一期一語：全記事ページ共通フッター */",
+              ".ichigo-site-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:22px 0 16px}",
+              ".ichigo-site-menu a{display:block;text-align:center;text-decoration:none;background:#fff;border:1px solid #f3d5df;border-radius:14px;padding:12px 8px;color:#a82150;font-weight:700;font-size:14px}",
+              ".ichigo-visitor-counter{margin:16px 0 8px;padding:18px 10px;text-align:center;background:#fff;border:2px dashed #ffc6d3;border-radius:18px;color:#d95370;font-weight:700;font-size:14px}",
+              ".ichigo-visitor-counter img{display:inline-block;margin-top:8px;max-width:100%;min-height:24px}",
+              "@media(max-width:520px){.ichigo-site-menu{grid-template-columns:1fr}}",
+              ""
+          ])
+          markup = "\n".join([
+              "<nav class=\"ichigo-site-menu\" aria-label=\"サイト内メニュー\">",
+              "  <a href=\"./index.html#today\">🍓 今日覚えた</a>",
+              "  <a href=\"./words.html\">📚 これまでの一語</a>",
+              "  <a href=\"./index.html#basic\">🌱 ベトナム語の基礎</a>",
+              "</nav>",
+              "<footer class=\"ichigo-visitor-counter\">🍓 このサイトを訪れた人 🍓<br>",
+              "  <img src=\"https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c\" alt=\"訪問者数カウンター\">",
+              "</footer>",
+              ""
+          ])
+
+          pages = sorted(p for p in Path('.').glob('lesson-*.html')
+                         if re.fullmatch(r'lesson-\d{4}-\d{2}-\d{2}\.html', p.name))
+          if not pages:
+              raise SystemExit('対象の lesson-YYYY-MM-DD.html が見つかりません')
+
+          changed = 0
+          skipped = 0
+          for path in pages:
+              html = path.read_text(encoding='utf-8')
+              if 'class=\"ichigo-site-menu\"' in html or 'class=\"ichigo-visitor-counter\"' in html:
+                  print(f'SKIP (footer already exists): {path.name}')
+                  skipped += 1
+                  continue
+              style_close = re.search(r'</style\s*>', html, flags=re.I)
+              if style_close:
+                  html = html[:style_close.start()] + css + html[style_close.start():]
+              else:
+                  head_close = re.search(r'</head\s*>', html, flags=re.I)
+                  if not head_close:
+                      print(f'SKIP (no head/style found): {path.name}')
+                      skipped += 1
+                      continue
+                  html = html[:head_close.start()] + '<style>' + css + '</style>\n' + html[head_close.start():]
+              body_close = re.search(r'</body\s*>', html, flags=re.I)
+              if not body_close:
+                  print(f'SKIP (no body close found): {path.name}')
+                  skipped += 1
+                  continue
+              html = html[:body_close.start()] + markup + '\n' + html[body_close.start():]
+              path.write_text(html, encoding='utf-8')
+              print(f'UPDATED: {path.name}')
+              changed += 1
+          print(f'Finished. Updated: {changed}; skipped: {skipped}')
+          PYTHON
+
+      - name: Commit updated pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lesson-*.html
+          if git diff --cached --quiet; then
+            echo 'No page changes to commit.'
+          else
+            git commit -m "Add common footer links to lesson pages"
+            git push
+          fi
