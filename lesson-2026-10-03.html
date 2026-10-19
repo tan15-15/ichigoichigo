@@ -19,6 +19,12 @@ main{width:min(900px,calc(100% - 22px));margin:22px auto 38px}.article{backgroun
 .archive{background:#fff8fb;border:1.5px solid #ffc7d9;border-radius:18px;padding:18px;margin:28px 0 5px}.archive h2{margin-top:0}.archive-links{display:flex;flex-direction:column;gap:9px}.archive-links a,.archive-home a{display:block;text-decoration:none;color:#a92758;background:#fff;border:1px solid #ffd5e1;border-radius:12px;padding:10px 12px;overflow-wrap:break-word;word-break:normal;line-break:strict;text-wrap:pretty}.archive-links a:hover,.archive-home a:hover{background:#ffe8f0}.archive-home{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
 button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif !important}
 @media(min-width:700px){.article{padding:42px 52px}.intro{padding:20px 24px}}@media(max-width:600px){header{padding:0}.site-banner{max-height:none}.step-box{padding:17px 12px}.step-box p{font-size:16px}.site-links{grid-template-columns:1fr;gap:8px}.site-links a{padding:11px 12px;font-size:14px}.article h1{font-size:clamp(19px,5.2vw,25px);line-height:1.42}.article h2{font-size:clamp(17px,4.4vw,21px);padding:9px 10px}}@media(max-width:420px){th,td{padding:8px;font-size:14px}.speak{padding:7px 11px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+/* 一期一語：全記事ページ共通フッター */
+.ichigo-site-menu{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:22px 0 16px}
+.ichigo-site-menu a{display:block;text-align:center;text-decoration:none;background:#fff;border:1px solid #f3d5df;border-radius:14px;padding:12px 8px;color:#a82150;font-weight:700;font-size:14px}
+.ichigo-visitor-counter{margin:16px 0 8px;padding:18px 10px;text-align:center;background:#fff;border:2px dashed #ffc6d3;border-radius:18px;color:#d95370;font-weight:700;font-size:14px}
+.ichigo-visitor-counter img{display:inline-block;margin-top:8px;max-width:100%;min-height:24px}
+@media(max-width:520px){.ichigo-site-menu{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -139,4 +145,13 @@ button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Goth
   });
 })();
 </script>
+<nav class="ichigo-site-menu" aria-label="サイト内メニュー">
+  <a href="./index.html#today">🍓 今日覚えた</a>
+  <a href="./words.html">📚 これまでの一語</a>
+  <a href="./index.html#basic">🌱 ベトナム語の基礎</a>
+</nav>
+<footer class="ichigo-visitor-counter">🍓 このサイトを訪れた人 🍓<br>
+  <img src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" alt="訪問者数カウンター">
+</footer>
+
 </body></html>
