@@ -1,3 +1,4 @@
+
 name: Add or Update Vietnamese Lesson
 
 on:
@@ -18,7 +19,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Add new lesson or update matching date
+      - name: Update lesson data and HTML page
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
@@ -26,17 +27,7 @@ jobs:
           const fs = require('fs');
           const vm = require('vm');
 
-          const file = 'lessons.js';
-          const source = fs.readFileSync(file, 'utf8');
-          const raw = (process.env.LESSON_JSON || '').trim();
-          let input;
-
-          try {
-            input = JSON.parse(raw);
-          } catch (error) {
-            throw new Error('JSONの形式が正しくありません: ' + error.message);
-          }
-
+          const input = JSON.parse(process.env.LESSON_JSON || '{}');
           const required = [
             'date', 'title', 'scene', 'vietnamese',
             'translation', 'words', 'mainWord', 'mainMeaning'
@@ -49,11 +40,30 @@ jobs:
           }
 
           if (!Array.isArray(input.words)) {
-            throw new Error('words は単語と意味のリスト（配列）にしてください');
+            throw new Error('words は単語と意味の配列にしてください');
           }
 
+          const dateMatch = String(input.date).match(
+            /(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/
+          );
+
+          if (!dateMatch) {
+            throw new Error('date は「2026年10月20日」の形式にしてください');
+          }
+
+          const [, year, month, day] = dateMatch;
+          const isoDate =
+            `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          const pagePath = `lesson-${isoDate}.html`;
+
+          // lessons.js の記事データを読み込む
+          const lessonFile = 'lessons.js';
+          const source = fs.readFileSync(lessonFile, 'utf8');
           const marker = source.match(/const\s+lessons\s*=\s*\[/);
-          if (!marker) throw new Error('lessons.js の配列が見つかりません');
+
+          if (!marker) {
+            throw new Error('lessons.js の lessons 配列が見つかりません');
+          }
 
           const start = source.indexOf('[', marker.index);
           let depth = 0;
@@ -86,46 +96,173 @@ jobs:
             }
           }
 
-          if (end < 0) throw new Error('lessons 配列の終わりが見つかりません');
+          if (end < 0) {
+            throw new Error('lessons 配列の終わりが見つかりません');
+          }
 
           const lessons = vm.runInNewContext(source.slice(start, end));
-          if (!Array.isArray(lessons)) throw new Error('lessons が配列ではありません');
-
           const index = lessons.findIndex(item => item.date === input.date);
 
           if (index >= 0) {
-            // 日付が一致する記事だけ更新。JSONにない任意項目は既存の値を維持する。
             lessons[index] = { ...lessons[index], ...input };
-            console.log('同じ日付の記事を更新します: ' + input.date);
+            console.log('既存の記事データを更新:', input.date);
           } else {
-            // 新規記事では未指定の任意項目に初期値を設定する。
-            const newLesson = {
+            lessons.push({
               ...input,
               sceneIcon: input.sceneIcon || '🍓',
               sceneTitle: input.sceneTitle || '今日の出来事',
               extraWords: input.extraWords || [],
-              archiveWords: input.archiveWords || input.words.slice(0, 5).map(word => word[0]),
+              archiveWords: input.archiveWords ||
+                input.words.slice(0, 5).map(item =>
+                  Array.isArray(item) ? item[0] : item.word
+                ),
               articleSections: input.articleSections || []
-            };
-            lessons.push(newLesson);
-            console.log('新しい日付の記事を追加します: ' + input.date);
+            });
+            console.log('新しい記事データを追加:', input.date);
           }
 
           fs.writeFileSync(
-            file,
-            source.slice(0, start) + JSON.stringify(lessons, null, 2) + source.slice(end),
+            lessonFile,
+            source.slice(0, start) +
+              JSON.stringify(lessons, null, 2) +
+              source.slice(end),
             'utf8'
           );
+
+          // HTMLの文字を安全に表示する
+          const esc = value => String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+
+          // ベトナム語の音声ボタン
+          const speak = value =>
+            ` <button class="speak" type="button" ` +
+            `data-text="${esc(value)}" ` +
+            `onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button>`;
+
+          const viet = value =>
+            `<p class="viet-card">${esc(value)}${speak(value)}</p>`;
+
+          const renderPairs = items =>
+            (Array.isArray(items) ? items : []).map(item => {
+              const v = Array.isArray(item) ? item[0] : item.word;
+              const j = Array.isArray(item) ? item[1] : item.meaning;
+              return `<div class="step-box">
+                <p>${esc(v)}${speak(v)}</p>
+                <p class="translation">${esc(j)}</p>
+              </div>`;
+            }).join('\n');
+
+          const sections = Array.isArray(input.articleSections)
+            ? input.articleSections : [];
+
+          const sectionsHtml = sections.map(section => {
+            const heading = section.heading || section.title || '';
+
+            const paragraphs = (section.paragraphs || []).map(p => {
+              const text = String(p);
+              const hasVietnamese =
+                /[ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùảũụứừửữựýỳỷỹỵ]/i.test(text);
+              return `<p>${esc(text)}${hasVietnamese ? speak(text) : ''}</p>`;
+            }).join('\n');
+
+            const examples = (section.examples || []).map(ex =>
+              `<div class="step-box">
+                ${viet(ex.v || ex.vietnamese || '')}
+                <p class="translation">${esc(ex.j || ex.translation || '')}</p>
+                <p>${esc(ex.w || ex.words || '')}</p>
+              </div>`
+            ).join('\n');
+
+            return `<section>
+              <h2>${esc(heading)}</h2>
+              ${paragraphs}
+              ${examples}
+            </section>`;
+          }).join('\n');
+
+          const articleHtml = `<article class="article">
+            <p class="date">${esc(input.date)}</p>
+            <h1>${esc(input.title)}</h1>
+
+            <section class="step-box">
+              <h2>${esc(input.sceneIcon || '🍓')} ${esc(input.sceneTitle || '今日の出来事')}</h2>
+              <p>${esc(input.scene)}</p>
+            </section>
+
+            <section>
+              <h2>🇻🇳 今日の一文</h2>
+              ${viet(input.vietnamese)}
+              <p class="translation">${esc(input.translation)}</p>
+            </section>
+
+            <section>
+              <h2>🍓 今日の一語</h2>
+              ${viet(input.mainWord)}
+              <p class="translation">${esc(input.mainMeaning)}</p>
+            </section>
+
+            ${sectionsHtml}
+
+            <section>
+              <h2>📚 今日の単語</h2>
+              ${renderPairs(input.words)}
+            </section>
+
+            ${input.extraWords?.length ? `
+              <section>
+                <h2>➕ 関連する言葉</h2>
+                ${renderPairs(input.extraWords)}
+              </section>` : ''}
+
+            <section>
+              <h2>🍓 今日の復習</h2>
+              ${viet(input.vietnamese)}
+              <p class="translation">${esc(input.translation)}</p>
+              <p>${esc(input.mainWord)}＝${esc(input.mainMeaning)}</p>
+            </section>
+          </article>`;
+
+          // 既存ページがあればそのデザインを使用。
+          // 新しい日付なら、既存の10月3日ページを土台にする。
+          const templatePath = fs.existsSync(pagePath)
+            ? pagePath : 'lesson-2026-10-03.html';
+
+          if (!fs.existsSync(templatePath)) {
+            throw new Error('HTMLテンプレートが見つかりません: ' + templatePath);
+          }
+
+          let html = fs.readFileSync(templatePath, 'utf8');
+          const articleRegex =
+            /<article\b[^>]*class=["'][^"']*\barticle\b[^"']*["'][^>]*>[\s\S]*?<\/article>/i;
+
+          if (!articleRegex.test(html)) {
+            throw new Error(
+              '記事部分を特定できません。HTMLは変更していません。'
+            );
+          }
+
+          html = html.replace(articleRegex, articleHtml);
+          html = html.replace(
+            /<title>[\s\S]*?<\/title>/i,
+            `<title>${esc(input.title)}｜一期一語</title>`
+          );
+
+          fs.writeFileSync(pagePath, html, 'utf8');
+          console.log('記事HTMLを生成・更新:', pagePath);
           NODE
 
-      - name: Commit and push lesson changes
+      - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lessons.js
+          git add lessons.js "lesson-"*.html
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
-            git commit -m "Add or update Vietnamese lesson"
+            git commit -m "Add or update Vietnamese lesson and HTML page"
             git push
           fi
