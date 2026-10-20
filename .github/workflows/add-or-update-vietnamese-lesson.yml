@@ -1,3 +1,4 @@
+
 name: Add or Update Vietnamese Lesson
 
 on:
@@ -18,7 +19,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Update lesson data and HTML page
+      - name: Update lesson data and only the target HTML page
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
@@ -55,76 +56,9 @@ jobs:
             `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
           const pagePath = `lesson-${isoDate}.html`;
 
-          const lessonFile = 'lessons.js';
-          const source = fs.readFileSync(lessonFile, 'utf8');
-          const marker = source.match(/const\s+lessons\s*=\s*\[/);
-
-          if (!marker) {
-            throw new Error('lessons.js の lessons 配列が見つかりません');
-          }
-
-          const start = source.indexOf('[', marker.index);
-          let depth = 0;
-          let quote = '';
-          let escaped = false;
-          let end = -1;
-
-          for (let i = start; i < source.length; i++) {
-            const c = source[i];
-
-            if (quote) {
-              if (escaped) escaped = false;
-              else if (c === '\\') escaped = true;
-              else if (c === quote) quote = '';
-              continue;
-            }
-
-            if (c === '"' || c === "'" || c === '`') {
-              quote = c;
-              continue;
-            }
-
-            if (c === '[') depth++;
-            if (c === ']') {
-              depth--;
-              if (depth === 0) {
-                end = i + 1;
-                break;
-              }
-            }
-          }
-
-          if (end < 0) {
-            throw new Error('lessons 配列の終わりが見つかりません');
-          }
-
-          const lessons = vm.runInNewContext(source.slice(start, end));
-          const index = lessons.findIndex(item => item.date === input.date);
-
-          if (index >= 0) {
-            lessons[index] = { ...lessons[index], ...input };
-            console.log('既存の記事データを更新:', input.date);
-          } else {
-            lessons.push({
-              ...input,
-              sceneIcon: input.sceneIcon || '🍓',
-              sceneTitle: input.sceneTitle || '今日の出来事',
-              extraWords: input.extraWords || [],
-              archiveWords: input.archiveWords ||
-                input.words.slice(0, 5).map(item =>
-                  Array.isArray(item) ? item[0] : (item.v ?? item.word ?? '')
-                ),
-              articleSections: input.articleSections || []
-            });
-            console.log('新しい記事データを追加:', input.date);
-          }
-
-          fs.writeFileSync(
-            lessonFile,
-            source.slice(0, start) +
-              JSON.stringify(lessons, null, 2) +
-              source.slice(end),
-            'utf8'
+          fs.appendFileSync(
+            process.env.GITHUB_ENV,
+            `TARGET_PAGE=${pagePath}\n`
           );
 
           const esc = value => String(value ?? '')
@@ -135,22 +69,21 @@ jobs:
             .replace(/'/g, '&#39;');
 
           const speak = value =>
-            ` <button class="speak" type="button" ` +
-            `data-text="${esc(value)}" ` +
-            `onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button>`;
+            ` <button class="speak" type="button" data-text="${esc(value)}" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button>`;
 
           const viet = value =>
             `<p class="viet-card">${esc(value)}${speak(value)}</p>`;
 
-          // 配列形式とオブジェクト形式の両方に対応
           const renderPairs = items =>
             (Array.isArray(items) ? items : []).map(item => {
               const v = Array.isArray(item)
                 ? item[0]
                 : (item.v ?? item.word ?? item.vietnamese ?? '');
+
               const j = Array.isArray(item)
                 ? item[1]
                 : (item.j ?? item.meaning ?? item.translation ?? '');
+
               const w = Array.isArray(item)
                 ? ''
                 : (item.w ?? item.words ?? '');
@@ -163,16 +96,19 @@ jobs:
             }).join('\n');
 
           const sections = Array.isArray(input.articleSections)
-            ? input.articleSections : [];
+            ? input.articleSections
+            : [];
 
           const sectionsHtml = sections.map(section => {
             const heading = section.heading || section.title || '';
 
             const paragraphs = (section.paragraphs || []).map(p => {
-              const text = String(p);
+              const value = String(p);
+
               const hasVietnamese =
-                /[ăâđêôơưáàảãạắằẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùảũụứừửữựýỳỷỹỵ]/i.test(text);
-              return `<p>${esc(text)}${hasVietnamese ? speak(text) : ''}</p>`;
+                /[ăâđêôơưáàảãạắằẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùũụứừửữựýỳỷỹỵ]/i.test(value);
+
+              return `<p>${esc(value)}${hasVietnamese ? speak(value) : ''}</p>`;
             }).join('\n');
 
             const examples = (section.examples || []).map(ex =>
@@ -232,160 +168,149 @@ jobs:
             </section>
           </article>`;
 
-          const templatePath = 'lesson-2026-10-03.html';
+          // 既存の日付ページがあれば、そのページを読み込む。
+          // 新しい日付なら10月3日のページをテンプレートに使う。
+          // テンプレート自体や他の日付のページは書き換えない。
+          const templatePath = fs.existsSync(pagePath)
+            ? pagePath
+            : 'lesson-2026-10-03.html';
 
           if (!fs.existsSync(templatePath)) {
-            throw new Error('HTMLテンプレートが見つかりません: ' + templatePath);
+            throw new Error(
+              'HTMLテンプレートが見つかりません: ' + templatePath
+            );
           }
 
           let html = fs.readFileSync(templatePath, 'utf8');
-
-          const bannerRegex =
-            /src="data:image\/jpeg;base64,([^"]+)"/i;
-          const bannerMatch = html.match(bannerRegex);
-
-          if (bannerMatch) {
-            fs.writeFileSync(
-              'site-banner.jpg',
-              Buffer.from(bannerMatch[1], 'base64')
-            );
-
-            html = html.replace(bannerRegex, 'src="site-banner.jpg"');
-            fs.writeFileSync(templatePath, html, 'utf8');
-            console.log('共通タイトル画像を保存しました');
-          } else if (!fs.existsSync('site-banner.jpg')) {
-            throw new Error('共通タイトル画像が見つかりません');
-          }
-
-          for (const file of fs.readdirSync('.')) {
-            if (!/^lesson-.*\.html$/i.test(file)) continue;
-
-            let page = fs.readFileSync(file, 'utf8');
-            const updated = page.replace(
-              /src="data:image\/jpeg;base64,[^"]+"/gi,
-              'src="site-banner.jpg"'
-            );
-
-            if (updated !== page) {
-              fs.writeFileSync(file, updated, 'utf8');
-              console.log('共通画像に変更:', file);
-            }
-          }
-
-          html = fs.readFileSync(templatePath, 'utf8');
 
           const articleRegex =
             /<article\b[^>]*class=["'][^"']*\barticle\b[^"']*["'][^>]*>[\s\S]*?<\/article>/i;
 
           if (!articleRegex.test(html)) {
             throw new Error(
-              '記事部分を特定できません。HTMLは変更していません。'
+              `${templatePath} の記事部分を特定できません。` +
+              '安全のためHTMLは変更していません。'
+            );
+          }
+
+          if (
+            !fs.existsSync('site-banner.jpg') &&
+            !/src=["']data:image\//i.test(html)
+          ) {
+            throw new Error(
+              'site-banner.jpg が見つかりません。' +
+              '既存ファイルを変更せずに停止しました。'
             );
           }
 
           html = html.replace(articleRegex, articleHtml);
+
           html = html.replace(
             /<title>[\s\S]*?<\/title>/i,
             `<title>${esc(input.title)}｜一期一語</title>`
           );
 
+          // 書き込むHTMLは、入力された日付のページだけ。
           fs.writeFileSync(pagePath, html, 'utf8');
+
+          // lessons.js の対象日付だけを更新、なければ追加。
+          const lessonFile = 'lessons.js';
+          const source = fs.readFileSync(lessonFile, 'utf8');
+
+          const marker = source.match(/const\s+lessons\s*=\s*\[/);
+
+          if (!marker) {
+            throw new Error(
+              'lessons.js の lessons 配列が見つかりません'
+            );
+          }
+
+          const start = source.indexOf('[', marker.index);
+          let depth = 0;
+          let quote = '';
+          let escaped = false;
+          let end = -1;
+
+          for (let i = start; i < source.length; i++) {
+            const c = source[i];
+
+            if (quote) {
+              if (escaped) escaped = false;
+              else if (c === '\\') escaped = true;
+              else if (c === quote) quote = '';
+              continue;
+            }
+
+            if (c === '"' || c === "'" || c === '`') {
+              quote = c;
+              continue;
+            }
+
+            if (c === '[') depth++;
+
+            if (c === ']') {
+              depth--;
+              if (depth === 0) {
+                end = i + 1;
+                break;
+              }
+            }
+          }
+
+          if (end < 0) {
+            throw new Error('lessons 配列の終わりが見つかりません');
+          }
+
+          const lessons = vm.runInNewContext(
+            source.slice(start, end)
+          );
+
+          const index = lessons.findIndex(
+            item => item.date === input.date
+          );
+
+          if (index >= 0) {
+            lessons[index] = { ...lessons[index], ...input };
+            console.log('既存の記事データを更新:', input.date);
+          } else {
+            lessons.push({
+              ...input,
+              sceneIcon: input.sceneIcon || '🍓',
+              sceneTitle: input.sceneTitle || '今日の出来事',
+              extraWords: input.extraWords || [],
+              archiveWords: input.archiveWords ||
+                input.words.slice(0, 5).map(item =>
+                  Array.isArray(item)
+                    ? item[0]
+                    : (item.v ?? item.word ?? '')
+                ),
+              articleSections: input.articleSections || []
+            });
+
+            console.log('新しい記事データを追加:', input.date);
+          }
+
+          fs.writeFileSync(
+            lessonFile,
+            source.slice(0, start) +
+              JSON.stringify(lessons, null, 2) +
+              source.slice(end),
+            'utf8'
+          );
+
           console.log('記事HTMLを生成・更新:', pagePath);
           NODE
-      - name: Fix lesson page styles, menus and archive links
-        run: |
-          node <<'NODE'
-          const fs = require('fs');
 
-          const files = fs.readdirSync('.')
-            .filter(f => /^lesson-\d{4}-\d{2}-\d{2}\.html$/.test(f))
-            .sort()
-            .reverse();
-
-          const extraCss = `
-          <style id="ichigo-fix-styles">
-          .viet-line,.vi,.viet-card {
-            color:#c62828 !important;
-            font-weight:700 !important;
-          }
-          .translation {
-            color:#1565c0 !important;
-            font-weight:700 !important;
-          }
-          .word-breakdown .vi,
-          .word-breakdown .vietnamese {
-            color:#c62828 !important;
-            font-weight:700 !important;
-          }
-          .word-breakdown .ja,
-          .word-breakdown .meaning {
-            color:#1565c0 !important;
-            font-weight:700 !important;
-          }
-          .word-breakdown .separator {
-            color:#222 !important;
-          }
-          </style>`;
-
-          for (const file of files) {
-            let html = fs.readFileSync(file, 'utf8');
-
-            // 重複する旧メニュー・旧訪問者カウンターを削除
-            html = html.replace(
-              /<nav\b[^>]*class=["'][^"']*\bsite-links\b[^"']*["'][^>]*>[\s\S]*?<\/nav>/gi,
-              ''
-            );
-            html = html.replace(
-              /<section\b[^>]*class=["'][^"']*\bvisitor-counter\b[^"']*["'][^>]*>[\s\S]*?<\/section>/gi,
-              ''
-            );
-
-            // 修正用CSSを重複させずに追加
-            html = html.replace(
-              /<style id="ichigo-fix-styles">[\s\S]*?<\/style>/gi,
-              ''
-            );
-            if (/<\/head>/i.test(html)) {
-              html = html.replace(/<\/head>/i, extraCss + '\n</head>');
-            }
-
-            // 実在する日付ページへのリンク一覧を作成
-            const currentFile = file;
-            const links = files
-              .filter(f => f !== currentFile)
-              .map(f => {
-                const date = f.match(/lesson-(\d{4})-(\d{2})-(\d{2})\.html/);
-                if (!date) return '';
-                return `<li><a href="${f}">${date[1]}年${Number(date[2])}月${Number(date[3])}日</a></li>`;
-              })
-              .join('\n');
-
-            const archive =
-              `<section class="ichigo-archive">\n` +
-              `<h2>📚 これまでのブログ</h2>\n<ul>\n${links}\n</ul>\n</section>`;
-
-            // 既存のアーカイブだけを更新。なければ記事末尾に追加
-            if (/<section\b[^>]*class=["'][^"']*\bichigo-archive\b[^"']*["'][^>]*>[\s\S]*?<\/section>/i.test(html)) {
-              html = html.replace(
-                /<section\b[^>]*class=["'][^"']*\bichigo-archive\b[^"']*["'][^>]*>[\s\S]*?<\/section>/i,
-                archive
-              );
-            } else if (/<\/article>/i.test(html)) {
-              html = html.replace(/<\/article>/i, archive + '\n</article>');
-            }
-
-            fs.writeFileSync(file, html, 'utf8');
-            console.log('修正:', file);
-          }
-          NODE
-      - name: Commit and push changes
+      - name: Commit and push only the requested date
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lessons.js "lesson-"*.html site-banner.jpg
+
+          git add lessons.js "$TARGET_PAGE"
+
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
-            git commit -m "Add or update Vietnamese lesson and HTML page"
+            git commit -m "Add or update Vietnamese lesson"
             git push
           fi
