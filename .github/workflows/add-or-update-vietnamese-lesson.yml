@@ -292,7 +292,92 @@ jobs:
           fs.writeFileSync(pagePath, html, 'utf8');
           console.log('記事HTMLを生成・更新:', pagePath);
           NODE
+      - name: Fix lesson page styles, menus and archive links
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
 
+          const files = fs.readdirSync('.')
+            .filter(f => /^lesson-\d{4}-\d{2}-\d{2}\.html$/.test(f))
+            .sort()
+            .reverse();
+
+          const extraCss = `
+          <style id="ichigo-fix-styles">
+          .viet-line,.vi,.viet-card {
+            color:#c62828 !important;
+            font-weight:700 !important;
+          }
+          .translation {
+            color:#1565c0 !important;
+            font-weight:700 !important;
+          }
+          .word-breakdown .vi,
+          .word-breakdown .vietnamese {
+            color:#c62828 !important;
+            font-weight:700 !important;
+          }
+          .word-breakdown .ja,
+          .word-breakdown .meaning {
+            color:#1565c0 !important;
+            font-weight:700 !important;
+          }
+          .word-breakdown .separator {
+            color:#222 !important;
+          }
+          </style>`;
+
+          for (const file of files) {
+            let html = fs.readFileSync(file, 'utf8');
+
+            // 重複する旧メニュー・旧訪問者カウンターを削除
+            html = html.replace(
+              /<nav\b[^>]*class=["'][^"']*\bsite-links\b[^"']*["'][^>]*>[\s\S]*?<\/nav>/gi,
+              ''
+            );
+            html = html.replace(
+              /<section\b[^>]*class=["'][^"']*\bvisitor-counter\b[^"']*["'][^>]*>[\s\S]*?<\/section>/gi,
+              ''
+            );
+
+            // 修正用CSSを重複させずに追加
+            html = html.replace(
+              /<style id="ichigo-fix-styles">[\s\S]*?<\/style>/gi,
+              ''
+            );
+            if (/<\/head>/i.test(html)) {
+              html = html.replace(/<\/head>/i, extraCss + '\n</head>');
+            }
+
+            // 実在する日付ページへのリンク一覧を作成
+            const currentFile = file;
+            const links = files
+              .filter(f => f !== currentFile)
+              .map(f => {
+                const date = f.match(/lesson-(\d{4})-(\d{2})-(\d{2})\.html/);
+                if (!date) return '';
+                return `<li><a href="${f}">${date[1]}年${Number(date[2])}月${Number(date[3])}日</a></li>`;
+              })
+              .join('\n');
+
+            const archive =
+              `<section class="ichigo-archive">\n` +
+              `<h2>📚 これまでのブログ</h2>\n<ul>\n${links}\n</ul>\n</section>`;
+
+            // 既存のアーカイブだけを更新。なければ記事末尾に追加
+            if (/<section\b[^>]*class=["'][^"']*\bichigo-archive\b[^"']*["'][^>]*>[\s\S]*?<\/section>/i.test(html)) {
+              html = html.replace(
+                /<section\b[^>]*class=["'][^"']*\bichigo-archive\b[^"']*["'][^>]*>[\s\S]*?<\/section>/i,
+                archive
+              );
+            } else if (/<\/article>/i.test(html)) {
+              html = html.replace(/<\/article>/i, archive + '\n</article>');
+            }
+
+            fs.writeFileSync(file, html, 'utf8');
+            console.log('修正:', file);
+          }
+          NODE
       - name: Commit and push changes
         run: |
           git config user.name "github-actions[bot]"
