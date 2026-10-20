@@ -165,7 +165,7 @@ jobs:
             const paragraphs = (section.paragraphs || []).map(p => {
               const text = String(p);
               const hasVietnamese =
-                /[ăâđêôơưáàảãạắằẳẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùảũụứừửữựýỳỷỹỵ]/i.test(text);
+                /[ăâđêôơưáàảãạắằẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùảũụứừửữựýỳỷỹỵ]/i.test(text);
               return `<p>${esc(text)}${hasVietnamese ? speak(text) : ''}</p>`;
             }).join('\n');
 
@@ -226,16 +226,52 @@ jobs:
             </section>
           </article>`;
 
-          // 既存ページがあればそのデザインを使用。
-          // 新しい日付なら、既存の10月3日ページを土台にする。
-          const templatePath = fs.existsSync(pagePath)
-            ? pagePath : 'lesson-2026-10-03.html';
+          // 10月3日のHTMLを共通テンプレートとして使う
+          const templatePath = 'lesson-2026-10-03.html';
 
           if (!fs.existsSync(templatePath)) {
             throw new Error('HTMLテンプレートが見つかりません: ' + templatePath);
           }
 
           let html = fs.readFileSync(templatePath, 'utf8');
+
+          // 10月3日の埋め込み画像を共通画像ファイルとして保存
+          const bannerRegex =
+            /src="data:image\/jpeg;base64,([^"]+)"/i;
+          const bannerMatch = html.match(bannerRegex);
+
+          if (bannerMatch) {
+            fs.writeFileSync(
+              'site-banner.jpg',
+              Buffer.from(bannerMatch[1], 'base64')
+            );
+
+            html = html.replace(bannerRegex, 'src="site-banner.jpg"');
+            fs.writeFileSync(templatePath, html, 'utf8');
+            console.log('共通タイトル画像を保存しました');
+          } else if (!fs.existsSync('site-banner.jpg')) {
+            throw new Error('共通タイトル画像が見つかりません');
+          }
+
+          // 既存の記事HTMLも同じ画像ファイルを参照するようにする
+          for (const file of fs.readdirSync('.')) {
+            if (!/^lesson-.*\.html$/i.test(file)) continue;
+
+            let page = fs.readFileSync(file, 'utf8');
+            const updated = page.replace(
+              /src="data:image\/jpeg;base64,[^"]+"/gi,
+              'src="site-banner.jpg"'
+            );
+
+            if (updated !== page) {
+              fs.writeFileSync(file, updated, 'utf8');
+              console.log('共通画像に変更:', file);
+            }
+          }
+
+          // 共通テンプレートから記事ページを作る
+          html = fs.readFileSync(templatePath, 'utf8');
+
           const articleRegex =
             /<article\b[^>]*class=["'][^"']*\barticle\b[^"']*["'][^>]*>[\s\S]*?<\/article>/i;
 
@@ -259,7 +295,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add lessons.js "lesson-"*.html
+          git add lessons.js "lesson-"*.html site-banner.jpg
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
