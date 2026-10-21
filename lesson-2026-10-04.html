@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>一期一語 - ベトナム語学習</title>
+  <title>🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く方法 - 一期一語</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
@@ -114,14 +114,37 @@
       margin-bottom: 0;
     }
 
-    /* いちごちゃんワンポイント */
-    .character-box {
+    /* キャラクター（いちごちゃん）吹き出し付きボックス */
+    .character-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       background: #fff8e1;
       border: 1px solid #ffe082;
       padding: 10px 14px;
       border-radius: 12px;
-      margin: 12px 0;
+      margin: 14px 0;
+    }
+
+    .character-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e83e8c;
+      flex-shrink: 0;
+    }
+
+    .character-text {
       font-size: 13px;
+      color: #222222;
+    }
+
+    .character-name {
+      font-weight: bold;
+      color: #e83e8c;
+      display: block;
+      margin-bottom: 2px;
     }
 
     /* 音声ボタン */
@@ -138,7 +161,7 @@
       margin-left: 6px;
     }
 
-    /* 配色ルール: ベトナム語＝赤太字 / 日本語＝緑字 / 補足＝黒字 */
+    /* 文字色ルール */
     .vn-text {
       color: var(--vn-red);
       font-weight: bold;
@@ -164,7 +187,7 @@
       margin-bottom: 8px;
     }
 
-    /* 反対語の縦並び ↕︎ */
+    /* 反対語 ↕︎ 表示 */
     .opposites-box {
       background: #ffffff;
       padding: 14px;
@@ -180,7 +203,7 @@
       margin: 6px 0;
     }
 
-    /* 今日の一步 🐾 */
+    /* 今日の一歩 🐾 */
     .step-box {
       background: #fce4ec;
       padding: 14px;
@@ -192,7 +215,7 @@
       text-align: center;
     }
 
-    /* 3つボタンナビゲーション（過去ログの直前に配置） */
+    /* ナビボタン（過去記事一覧の直前） */
     nav.site-nav {
       display: flex;
       gap: 8px;
@@ -265,7 +288,7 @@
 
   <main>
     <article>
-      <div class="date">2026年10月21日</div>
+      <div class="date">2026年10月04日</div>
       <h1>🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く方法</h1>
 
       <section>
@@ -273,9 +296,14 @@
         <div class="blog-story">
           <p>奥さんと一緒にバイクにまたがり、毎朝ローカルのお店へ麺を食べに行くのが我が家の日課です。フォー、ブンリュー、バインカン…どれも本当に激ウマ！</p>
           <p>だけど、ローカルなお店ってメニュー表も無ければ値段も書いてないことがほとんどなんですよね。「これ、食べ終わったら一体いくら請求されるんだ！？」って毎回ちょっとドキドキします。</p>
-          
-          <div class="character-box">
-            🍓 <strong>いちごちゃん</strong>：「そんな時はビクビクしないで、このひと言を聞けばバッチリだよ！」
+
+          <!-- キャラクターワンポイント表示 -->
+          <div class="character-container">
+            <img src="assets/ichigo-chan.png" alt="いちごちゃん" class="character-avatar" onerror="this.style.display='none'">
+            <div class="character-text">
+              <span class="character-name">🍓 いちごちゃん</span>
+              「そんな時はビクビクしないで、ドヤ顔でこのひ文字を聞けばバッチリだよ！」
+            </div>
           </div>
 
           <p>そんな時に使えるのが、今日覚えた <strong>Nhiêu tiền?</strong>（いくら？）です！お会計の時、笑顔で聞いてみましょう！</p>
@@ -302,11 +330,11 @@
         <h2>↕︎ 反対語で覚える！</h2>
         <div class="opposites-box">
           <div>
-            <span class="vn-text">Mắc</span> <span class="jp-text">（高い）</span> <span class="audio-btn" onclick="playAudio('mắc')">🔊 聴く</span>
+            <span class="vn-text">Mắc</span> <span class="jp-text">（高い）</span> <span class="audio-btn" onclick="playAudio('Mắc')">🔊 聴く</span>
           </div>
           <div class="arrow-down">↕︎</div>
           <div>
-            <span class="vn-text">Rẻ</span> <span class="jp-text">（安い）</span> <span class="audio-btn" onclick="playAudio('rẻ')">🔊 聴く</span>
+            <span class="vn-text">Rẻ</span> <span class="jp-text">（安い）</span> <span class="audio-btn" onclick="playAudio('Rẻ')">🔊 聴く</span>
           </div>
         </div>
       </section>
@@ -356,6 +384,7 @@
     <a href="./index.html#basic">🌱 ベトナム語の基礎</a>
   </nav>
 
+  <!-- 過去の記事一覧（lessons.jsによって自動読み込み＆手動表示の両方に対応） -->
   <section class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list">
@@ -369,7 +398,6 @@
 
 </div>
 
-<!-- 音声再生用JavaScript（既存の機能を保持） -->
 <script>
   function playAudio(text) {
     if ('speechSynthesis' in window) {
