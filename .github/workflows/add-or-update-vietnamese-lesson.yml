@@ -1,4 +1,3 @@
-
 name: Add or Update Vietnamese Lesson
 
 on:
@@ -56,6 +55,7 @@ jobs:
             `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
           const pagePath = `lesson-${isoDate}.html`;
 
+          // GITHUB_ENVへTARGET_PAGEを出力
           fs.appendFileSync(
             process.env.GITHUB_ENV,
             `TARGET_PAGE=${pagePath}\n`
@@ -90,8 +90,7 @@ jobs:
 
               return `<div class="step-box">
                 <p>${esc(v)}${speak(v)}</p>
-                <p class="translation">${esc(j)}</p>
-                ${w ? `<p>${esc(w)}</p>` : ''}
+                <p class="translation">${esc(j)}</p>${w ? `<p>${esc(w)}</p>` : ''}
               </div>`;
             }).join('\n');
 
@@ -106,7 +105,7 @@ jobs:
               const value = String(p);
 
               const hasVietnamese =
-                /[ăâđêôơưáàảãạắằẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùũụứừửữựýỳỷỹỵ]/i.test(value);
+                /[ăâđêôơưáàảãạắằẵặấầẩẫậéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùúụứừửữựýỳỷỹỵ]/i.test(value);
 
               return `<p>${esc(value)}${hasVietnamese ? speak(value) : ''}</p>`;
             }).join('\n');
@@ -121,8 +120,7 @@ jobs:
 
             return `<section>
               <h2>${esc(heading)}</h2>
-              ${paragraphs}
-              ${examples}
+              ${paragraphs}${examples}
             </section>`;
           }).join('\n');
 
@@ -131,7 +129,7 @@ jobs:
             <h1>${esc(input.title)}</h1>
 
             <section class="step-box">
-              <h2>${esc(input.sceneIcon || '🍓')} ${esc(input.sceneTitle || '今日の出来事')}</h2>
+              <h2>${esc(input.sceneIcon \vert{}\vert{} '🍓')} ${esc(input.sceneTitle || '今日の出来事')}</h2>
               <p>${esc(input.scene)}</p>
             </section>
 
@@ -168,27 +166,26 @@ jobs:
             </section>
           </article>`;
 
-          // 既存の日付ページがあれば、そのページを読み込む。
-          // 新しい日付なら10月3日のページをテンプレートに使う。
-          // テンプレート自体や他の日付のページは書き換えない。
-          const templatePath = fs.existsSync(pagePath)
-            ? pagePath
-            : 'lesson-2026-10-03.html';
-
-          if (!fs.existsSync(templatePath)) {
-            throw new Error(
-              'HTMLテンプレートが見つかりません: ' + templatePath
-            );
+          // テンプレート処理と新規ファイルの安全な作成
+          if (!fs.existsSync(pagePath)) {
+            const templatePath = 'lesson-2026-10-03.html';
+            if (!fs.existsSync(templatePath)) {
+              throw new Error(
+                'HTMLテンプレートが見つかりません: ' + templatePath
+              );
+            }
+            fs.copyFileSync(templatePath, pagePath);
+            console.log('新しいページファイルをテンプレートから作成:', pagePath);
           }
 
-          let html = fs.readFileSync(templatePath, 'utf8');
+          let html = fs.readFileSync(pagePath, 'utf8');
 
           const articleRegex =
             /<article\b[^>]*class=["'][^"']*\barticle\b[^"']*["'][^>]*>[\s\S]*?<\/article>/i;
 
           if (!articleRegex.test(html)) {
             throw new Error(
-              `${templatePath} の記事部分を特定できません。` +
+              `${pagePath} の記事部分を特定できません。` +
               '安全のためHTMLは変更していません。'
             );
           }
@@ -210,10 +207,9 @@ jobs:
             `<title>${esc(input.title)}｜一期一語</title>`
           );
 
-          // 書き込むHTMLは、入力された日付のページだけ。
           fs.writeFileSync(pagePath, html, 'utf8');
 
-          // lessons.js の対象日付だけを更新、なければ追加。
+          // lessons.js の更新処理
           const lessonFile = 'lessons.js';
           const source = fs.readFileSync(lessonFile, 'utf8');
 
