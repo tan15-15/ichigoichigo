@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く方法 - 一期一語</title>
+  <title>🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く｜ベトナム暮らし</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
@@ -24,7 +24,7 @@
       color: var(--text-main);
       margin: 0;
       padding: 12px;
-      line-height: 1.6;
+      line-height: 1.7;
     }
 
     .container {
@@ -37,32 +37,17 @@
       margin-bottom: 12px;
     }
 
-    header img {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      display: block;
-    }
-
-    .visitor-counter {
-      text-align: center;
+    .subtitle {
       font-size: 13px;
       color: #666;
-      margin-bottom: 16px;
-      background: #ffffff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: 1px solid #ffe0b2;
-      display: inline-block;
-      width: 100%;
-      box-sizing: border-box;
+      margin-top: 4px;
+      margin-bottom: 12px;
     }
 
     article {
       background: var(--card-bg);
-      padding: 16px;
-      border-radius: 12px;
+      padding: 18px;
+      border-radius: 14px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       margin-bottom: 20px;
     }
@@ -74,7 +59,7 @@
     }
 
     h1 {
-      font-size: 19px;
+      font-size: 18px;
       color: var(--vn-red);
       margin: 0 0 16px 0;
       line-height: 1.4;
@@ -83,7 +68,7 @@
     }
 
     section {
-      margin-bottom: 22px;
+      margin-bottom: 24px;
     }
 
     h2 {
@@ -96,14 +81,14 @@
       display: inline-block;
     }
 
-    /* ブログ本文（黒文字） */
     .blog-story {
       font-size: 14px;
-      color: #222222;
+      color: var(--text-main);
       background: #fafafa;
       padding: 14px;
-      border-radius: 8px;
+      border-radius: 10px;
       border-left: 4px solid var(--border-color);
+      margin-bottom: 12px;
     }
 
     .blog-story p {
@@ -114,45 +99,35 @@
       margin-bottom: 0;
     }
 
-    /* キャラクター（いちごちゃん）吹き出しデザイン */
-    .character-container {
+    .character-box {
       display: flex;
       align-items: flex-start;
       gap: 12px;
       background: #fff8e1;
       border: 2px solid #ffe082;
-      padding: 12px 14px;
-      border-radius: 14px;
-      margin: 16px 0;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+      padding: 12px;
+      border-radius: 12px;
+      margin: 14px 0;
     }
 
-    .character-badge {
-      width: 48px;
-      height: 48px;
+    .character-avatar {
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #e83e8c;
+      flex-shrink: 0;
       background: #ff4081;
-      color: #ffffff;
-      font-size: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
-      box-shadow: 0 2px 6px rgba(232,62,140,0.3);
-      border: 2px solid #ffffff;
-      overflow: hidden;
-    }
-
-    .character-badge img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      color: white;
+      font-size: 20px;
     }
 
     .character-text {
       font-size: 13px;
       color: #222222;
-      line-height: 1.5;
     }
 
     .character-name {
@@ -160,24 +135,21 @@
       color: #e83e8c;
       display: block;
       margin-bottom: 2px;
-      font-size: 13px;
     }
 
-    /* 音声再生ボタン */
     .audio-btn {
-      font-size: 11px;
-      font-weight: normal;
+      font-size: 12px;
       background: #e8f5e9;
       color: var(--jp-green);
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 3px 8px;
+      border-radius: 6px;
       border: 1px solid #a5d6a7;
       cursor: pointer;
       display: inline-block;
-      margin-left: 6px;
+      margin-top: 6px;
+      font-weight: normal;
     }
 
-    /* 文字色ルール: ベトナム語赤太字 / 日本語緑字 / 補足黒字 */
     .vn-text {
       color: var(--vn-red);
       font-weight: bold;
@@ -191,50 +163,54 @@
     }
 
     .desc-text {
-      color: #222222;
-      font-size: 12px;
+      color: var(--text-main);
+      font-size: 13px;
     }
 
     .card {
       background: #f1f8e9;
-      padding: 12px;
-      border-radius: 8px;
+      padding: 14px;
+      border-radius: 10px;
       border: 1px solid #c8e6c9;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
-    /* 反対語 ↕︎ 表示 */
     .opposites-box {
       background: #ffffff;
-      padding: 14px;
-      border-radius: 8px;
+      padding: 16px;
+      border-radius: 10px;
       border: 2px solid var(--border-color);
       text-align: center;
+      margin-bottom: 12px;
     }
 
     .arrow-down {
       font-size: 20px;
       color: #e91e63;
       font-weight: bold;
-      margin: 6px 0;
+      margin: 8px 0;
     }
 
-    /* 今日の一歩 🐾 */
-    .step-box {
-      background: #fce4ec;
-      padding: 14px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      color: #c2185b;
-      font-weight: bold;
-      font-size: 14px;
-      text-align: center;
+    .word-list-box {
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
     }
 
-    /* 3つのナビボタン（過去記事一覧の直前に配置） */
+    .word-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .word-item:last-child {
+      border-bottom: none;
+    }
+
     nav.site-nav {
       display: flex;
-      gap: 8px;
+      gap: 12px;
+      margin-top: 20px;
       margin-bottom: 20px;
     }
 
@@ -251,37 +227,6 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    /* 過去の記事一覧（別日記事を網羅） */
-    .archive-section {
-      background: #ffffff;
-      padding: 14px;
-      border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    .archive-section h3 {
-      margin: 0 0 10px 0;
-      color: #c2185b;
-      font-size: 14px;
-    }
-
-    .archive-section ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    .archive-section li {
-      margin-bottom: 8px;
-    }
-
-    .archive-section a {
-      color: #1e88e5;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
     footer {
       text-align: center;
       font-size: 12px;
@@ -296,126 +241,114 @@
 <div class="container">
 
   <header>
-    <img src="site-banner.jpg" alt="一期一語 バナー" onerror="this.style.display='none'">
+    <div style="font-size: 22px; font-weight: bold; color: #e83e8c;">一期一語 🍓</div>
+    <div class="subtitle">ベトナム暮らし、ベトナム語は今日も🍓一期一語🍓</div>
   </header>
-
-  <div class="visitor-counter">
-    🍓 このサイトを訪れた人 🍓<br>
-    <img alt="訪問者数カウンター" src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" style="margin-top:4px;">
-  </div>
 
   <main>
     <article>
       <div class="date">2026年10月04日</div>
-      <h1>🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く方法</h1>
+      <h1>🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く</h1>
+      <div class="subtitle">ゼロから、少しずつ。日常会話で使える南部ベトナム語。</div>
 
       <section>
-        <h2>🍓 今日の出来事</h2>
+        <h2>今日の出来事</h2>
         <div class="blog-story">
           <p>奥さんと一緒に愛車にまたがり、毎朝ローカルのお店へ麺を食べに行くのが我が家の最高の日課です。定番のフォーはもちろん、出汁の効いたブンリューやモチモチ食感のバインカンなど、ローカル店の味は本当に激ウマで毎日感動しています！</p>
-          <p>ただ、ローカルなお店って看板すらなかったり、壁にメニュー表も値段も一切書いていないことがほとんどなんですよね。「美味しかった〜！」と大満足した後に、「これ、食べ終わったら一体いくら請求されるんだ！？」と毎回ちょっとドキドキしながら席を立っています（笑）。</p>
-
-          <!-- キャラクターワンポイント表示（画像＋フォールバック文字） -->
-          <div class="character-container">
-            <div class="character-badge">
-              <img src="assets/ichigo-chan.png" alt="🍓" onerror="this.remove();">🍓
-            </div>
-            <div class="character-text">
-              <span class="character-name">🍓 いちごちゃん</span>
-              「そんな時はビクビクしないで、ドヤ顔でこの言葉を言えばバッチリだよ！」
-            </div>
-          </div>
-
-          <p>そんな時に大活躍するのが、今日覚えた <strong>Nhiêu tiền?</strong>（いくら？）です！食後におばちゃんとお会計をするとき、笑顔で堂々と聞いてみましょう！</p>
+          <p>ただ、ローカルなお店って看板すらなかったり、壁にメニュー表や値段が一切書いていないことがほとんどなんですよね。『美味しかった〜！』と大満足した後に、『これ、食べ終わったら一体いくら請求されるんだ！？』と毎回ちょっとドキドキしながら席を立っています（笑）。</p>
         </div>
-      </section>
 
-      <section>
-        <h2>🇻🇳 今日の一文</h2>
         <div class="card">
-          <div class="vn-text">Bát này nhiêu tiền? <span class="audio-btn" onclick="playAudio('Bát này nhiêu tiền?')">🔊 聴く</span></div>
-          <div class="jp-text">この一杯はいくらですか？</div>
+          <div class="vn-text">Bát này nhiêu tiền?</div>
+          <div><button class="audio-btn" onclick="playAudio('Bát này nhiêu tiền?')">🔊 音声を聞く</button></div>
+          <div class="jp-text" style="margin-top: 6px;">この一杯はいくらですか？</div>
+          <div class="desc-text" style="margin-top: 4px;">bát＝どんぶり・一杯 ／ này＝この ／ nhiêu＝どれくらい ／ tiền＝お金</div>
         </div>
       </section>
 
       <section>
-        <h2>🍓 今日の一語</h2>
-        <div class="card" style="background:#fff3e0; border-color:#ffe0b2;">
-          <div class="vn-text">nhiêu <span class="audio-btn" onclick="playAudio('nhiêu')">🔊 聴く</span></div>
-          <div class="jp-text">どれくらい、いくら</div>
+        <h2>🛵 看板もメニューもない！どうやって値段を聞く？</h2>
+        <div class="blog-story">
+          <p>日本だと壁やテーブルにメニューや価格が書いてあるのが当たり前だけど、ベトナムのローカル店では何も書いていないことが日常茶飯事。</p>
+          <p>『じゃあ、食べ終わったあとどうやって値段を聞けばいいの？』と最初は焦るけれど、指をさしながら笑顔でこう聞けば大丈夫！</p>
+        </div>
+
+        <div class="character-box">
+          <div class="character-avatar">
+            <img src="assets/ichigo-chan.png" alt="🍓" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.remove();">🍓
+          </div>
+          <div class="character-text">
+            <span class="character-name">🍓 いちごちゃん</span>
+            「そんな時はビクビクしないで、ドヤ顔でこの言葉を言えばバッチリだよ！」
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="vn-text">Bát này nhiêu tiền?</div>
+          <div><button class="audio-btn" onclick="playAudio('Bát này nhiêu tiền?')">🔊 音声を聞く</button></div>
+          <div class="jp-text" style="margin-top: 6px;">この一杯はいくらですか？</div>
+          <div class="desc-text" style="margin-top: 4px;">bát＝どんぶり ／ này＝この ／ nhiêu＝どれくらい ／ tiền＝お金</div>
         </div>
       </section>
 
       <section>
-        <h2>↕︎ 反対語で覚える！</h2>
+        <h2>💡 今日の学び：nhiêu は「いくら・どれくらい」</h2>
+        <div class="blog-story">
+          <p>ここが今日の大事なポイント！『値段や量』を尋ねるときに欠かせない重要単語が <strong>nhiêu</strong>。</p>
+          <p>これに『お金』を意味する <strong>tiền</strong> を組み合わせることで、<strong>nhiêu tiền?</strong>（いくら？）という定番フレーズになるよ！</p>
+        </div>
+
         <div class="opposites-box">
           <div>
-            <span class="vn-text">Mắc</span> <span class="jp-text">（高い）</span> <span class="audio-btn" onclick="playAudio('Mắc')">🔊 聴く</span>
+            <span class="vn-text">Mắc</span> <span class="jp-text">（高い）</span>
+            <button class="audio-btn" onclick="playAudio('Mắc')">🔊 音声を聞く</button>
           </div>
           <div class="arrow-down">↕︎</div>
           <div>
-            <span class="vn-text">Rẻ</span> <span class="jp-text">（安い）</span> <span class="audio-btn" onclick="playAudio('Rẻ')">🔊 聴く</span>
+            <span class="vn-text">Rẻ</span> <span class="jp-text">（安い）</span>
+            <button class="audio-btn" onclick="playAudio('Rẻ')">🔊 音声を聞く</button>
           </div>
         </div>
       </section>
 
       <section>
-        <h2>🐾 今日の一歩</h2>
-        <div class="step-box">
-          ベトナム語使うチャンスが来たらすぐにチャレンジ！<br>
-          <span style="font-size: 13px; color: #222222; font-weight: normal; display: inline-block; margin-top: 6px;">
-            お店で食べ終わったら、笑顔で「Nhiêu tiền?」とお会計を聞いてみよう！
-          </span>
-        </div>
-      </section>
-
-      <section>
-        <h2>📚 今日の単語</h2>
-        <div style="background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px;">
-          <div style="padding: 8px 12px; border-bottom: 1px solid #eee;">
-            <span class="vn-text">nhiêu</span> <span class="audio-btn" onclick="playAudio('nhiêu')">🔊 聴く</span><br>
-            <span class="jp-text">いくら、どれほど</span> <span class="desc-text">(疑問詞)</span>
-          </div>
-          <div style="padding: 8px 12px; border-bottom: 1px solid #eee;">
-            <span class="vn-text">tiền</span> <span class="audio-btn" onclick="playAudio('tiền')">🔊 聴く</span><br>
-            <span class="jp-text">お金</span> <span class="desc-text">(名詞)</span>
-          </div>
-          <div style="padding: 8px 12px;">
-            <span class="vn-text">ngàn</span> <span class="audio-btn" onclick="playAudio('ngàn')">🔊 聴く</span><br>
-            <span class="jp-text">千（ベトナムで値段を言う時の必須単位！）</span> <span class="desc-text">(名詞)</span>
-          </div>
+        <h2>😂 値段を聞いた後のリアルなやり取り</h2>
+        <div class="blog-story">
+          <p>お店のおばちゃんが『Hai mươi ngàn（2万ドン＝約120円）』と教えてくれたら大成功！</p>
+          <p>もし予想より少し高かったら <strong>Mắc quá!</strong>（高い〜！）、美味しくてお手頃だったら <strong>Rẻ quá!</strong>（安〜い！）と笑顔で返事してみよう。ローカル店での麺活がもっと楽しくなるよ！🍓</p>
         </div>
       </section>
 
       <section>
         <h2>🍓 今日の復習</h2>
         <div class="card">
-          <div class="vn-text">Bát này nhiêu tiền? <span class="audio-btn" onclick="playAudio('Bát này nhiêu tiền?')">🔊 聴く</span></div>
-          <div class="jp-text">この一杯はいくらですか？</div>
+          <div class="vn-text">Bát này nhiêu tiền? ＝ この一杯はいくらですか？</div>
+          <div class="vn-text" style="font-size:14px; margin-top:4px;">Mắc ＝ 高い ／ Rẻ ＝ 安い</div>
+          <div class="desc-text" style="margin-top: 6px;">bát＝どんぶり ／ này＝この ／ nhiêu＝どれくらい ／ tiền＝お金</div>
+        </div>
+      </section>
+
+      <section>
+        <h2>📚 いっしょに覚える単語</h2>
+        <div class="word-list-box">
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">bát</span> — <span class="jp-text" style="font-size:13px;">どんぶり、お椀</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">này</span> — <span class="jp-text" style="font-size:13px;">この</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">nhiêu</span> — <span class="jp-text" style="font-size:13px;">どれくらい、いくら</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">tiền</span> — <span class="jp-text" style="font-size:13px;">お金</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">mắc</span> — <span class="jp-text" style="font-size:13px;">高い</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">rẻ</span> — <span class="jp-text" style="font-size:13px;">安い</span></div>
         </div>
       </section>
     </article>
   </main>
 
-  <!-- 3つのナビゲーションボタン（過去記事一覧の直前に配置） -->
   <nav class="site-nav">
-    <a href="./index.html#today">🍓 今日覚えた</a>
-    <a href="./words.html">📚 これまでの一語</a>
-    <a href="./index.html#basic">🌱 ベトナム語の基礎</a>
+    <a href="./index.html">🍓 トップページへ</a>
+    <a href="./words.html">📚 単語帳へ</a>
   </nav>
 
-  <!-- 過去の記事一覧（別日のブログリンクを表示） -->
-  <section class="archive-section">
-    <h3>📚 過去の記事一覧</h3>
-    <ul id="archive-list">
-      <li><a href="./lesson-2026-10-06.html">2026年10月06日の記事</a></li>
-      <li><a href="./lesson-2026-10-05.html">2026年10月05日の記事</a></li>
-      <li><a href="./lesson-2026-10-04.html">2026年10月04日の記事</a></li>
-    </ul>
-  </section>
-
   <footer>
-    🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓
+    🍓 一期一語 - ベトナム語学習 🍓
   </footer>
 
 </div>
