@@ -168,15 +168,11 @@ jobs:
             </section>
           </article>`;
 
-          if (!fs.existsSync(pagePath)) {
-            const templatePath = 'lesson-2026-10-03.html';
-            if (!fs.existsSync(templatePath)) {
-              throw new Error(
-                'HTMLテンプレートが見つかりません: ' + templatePath
-              );
-            }
-            fs.copyFileSync(templatePath, pagePath);
+          const templatePath = 'lesson-2026-10-03.html';
+          if (!fs.existsSync(templatePath)) {
+            throw new Error('HTMLテンプレートが見つかりません: ' + templatePath);
           }
+          fs.copyFileSync(templatePath, pagePath);
 
           let html = fs.readFileSync(pagePath, 'utf8');
 
