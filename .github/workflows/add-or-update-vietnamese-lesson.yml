@@ -53,7 +53,11 @@ jobs:
           const [, year, month, day] = dateMatch;
           const isoDate =
             `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-          const pagePath = `lesson-${isoDate}.html`;  fs.appendFileSync( process.env.GITHUB_ENV, `TARGET_PAGE=${pagePath}\n`
+          const pagePath = `lesson-${isoDate}.html`;
+
+          fs.appendFileSync(
+            process.env.GITHUB_ENV,
+            `TARGET_PAGE=${pagePath}\n`
           );
 
           const esc = value => String(value ?? '')
