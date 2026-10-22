@@ -1,4 +1,4 @@
-name: Add or Update Vietnamese Lesson
+Name: Add or Update Vietnamese Lesson
 
 on:
   workflow_dispatch:
