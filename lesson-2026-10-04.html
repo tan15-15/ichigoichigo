@@ -96,7 +96,7 @@
       display: inline-block;
     }
 
-    /* 本文（黒文字） */
+    /* ブログ本文（黒文字） */
     .blog-story {
       font-size: 14px;
       color: #222222;
@@ -114,30 +114,45 @@
       margin-bottom: 0;
     }
 
-    /* キャラクター（いちごちゃん）吹き出し付きボックス */
+    /* キャラクター（いちごちゃん）吹き出しデザイン */
     .character-container {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 12px;
       background: #fff8e1;
-      border: 1px solid #ffe082;
-      padding: 10px 14px;
-      border-radius: 12px;
-      margin: 14px 0;
+      border: 2px solid #ffe082;
+      padding: 12px 14px;
+      border-radius: 14px;
+      margin: 16px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.03);
     }
 
-    .character-avatar {
-      width: 50px;
-      height: 50px;
+    .character-badge {
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #e83e8c;
+      background: #ff4081;
+      color: #ffffff;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(232,62,140,0.3);
+      border: 2px solid #ffffff;
+      overflow: hidden;
+    }
+
+    .character-badge img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .character-text {
       font-size: 13px;
       color: #222222;
+      line-height: 1.5;
     }
 
     .character-name {
@@ -145,9 +160,10 @@
       color: #e83e8c;
       display: block;
       margin-bottom: 2px;
+      font-size: 13px;
     }
 
-    /* 音声ボタン */
+    /* 音声再生ボタン */
     .audio-btn {
       font-size: 11px;
       font-weight: normal;
@@ -161,7 +177,7 @@
       margin-left: 6px;
     }
 
-    /* 文字色ルール */
+    /* 文字色ルール: ベトナム語赤太字 / 日本語緑字 / 補足黒字 */
     .vn-text {
       color: var(--vn-red);
       font-weight: bold;
@@ -215,7 +231,7 @@
       text-align: center;
     }
 
-    /* ナビボタン（過去記事一覧の直前） */
+    /* 3つのナビボタン（過去記事一覧の直前に配置） */
     nav.site-nav {
       display: flex;
       gap: 8px;
@@ -235,6 +251,7 @@
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
+    /* 過去の記事一覧（別日記事を網羅） */
     .archive-section {
       background: #ffffff;
       padding: 14px;
@@ -256,12 +273,13 @@
     }
 
     .archive-section li {
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .archive-section a {
       color: #1e88e5;
       text-decoration: none;
+      font-weight: bold;
     }
 
     footer {
@@ -278,7 +296,7 @@
 <div class="container">
 
   <header>
-    <img src="site-banner.jpg" alt="一期一語 バナー">
+    <img src="site-banner.jpg" alt="一期一語 バナー" onerror="this.style.display='none'">
   </header>
 
   <div class="visitor-counter">
@@ -294,19 +312,21 @@
       <section>
         <h2>🍓 今日の出来事</h2>
         <div class="blog-story">
-          <p>奥さんと一緒にバイクにまたがり、毎朝ローカルのお店へ麺を食べに行くのが我が家の日課です。フォー、ブンリュー、バインカン…どれも本当に激ウマ！</p>
-          <p>だけど、ローカルなお店ってメニュー表も無ければ値段も書いてないことがほとんどなんですよね。「これ、食べ終わったら一体いくら請求されるんだ！？」って毎回ちょっとドキドキします。</p>
+          <p>奥さんと一緒に愛車にまたがり、毎朝ローカルのお店へ麺を食べに行くのが我が家の最高の日課です。定番のフォーはもちろん、出汁の効いたブンリューやモチモチ食感のバインカンなど、ローカル店の味は本当に激ウマで毎日感動しています！</p>
+          <p>ただ、ローカルなお店って看板すらなかったり、壁にメニュー表も値段も一切書いていないことがほとんどなんですよね。「美味しかった〜！」と大満足した後に、「これ、食べ終わったら一体いくら請求されるんだ！？」と毎回ちょっとドキドキしながら席を立っています（笑）。</p>
 
-          <!-- キャラクターワンポイント表示 -->
+          <!-- キャラクターワンポイント表示（画像＋フォールバック文字） -->
           <div class="character-container">
-            <img src="assets/ichigo-chan.png" alt="いちごちゃん" class="character-avatar" onerror="this.style.display='none'">
+            <div class="character-badge">
+              <img src="assets/ichigo-chan.png" alt="🍓" onerror="this.remove();">🍓
+            </div>
             <div class="character-text">
               <span class="character-name">🍓 いちごちゃん</span>
-              「そんな時はビクビクしないで、ドヤ顔でこのひ文字を聞けばバッチリだよ！」
+              「そんな時はビクビクしないで、ドヤ顔でこの言葉を言えばバッチリだよ！」
             </div>
           </div>
 
-          <p>そんな時に使えるのが、今日覚えた <strong>Nhiêu tiền?</strong>（いくら？）です！お会計の時、笑顔で聞いてみましょう！</p>
+          <p>そんな時に大活躍するのが、今日覚えた <strong>Nhiêu tiền?</strong>（いくら？）です！食後におばちゃんとお会計をするとき、笑顔で堂々と聞いてみましょう！</p>
         </div>
       </section>
 
@@ -384,10 +404,12 @@
     <a href="./index.html#basic">🌱 ベトナム語の基礎</a>
   </nav>
 
-  <!-- 過去の記事一覧（lessons.jsによって自動読み込み＆手動表示の両方に対応） -->
+  <!-- 過去の記事一覧（別日のブログリンクを表示） -->
   <section class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list">
+      <li><a href="./lesson-2026-10-06.html">2026年10月06日の記事</a></li>
+      <li><a href="./lesson-2026-10-05.html">2026年10月05日の記事</a></li>
       <li><a href="./lesson-2026-10-04.html">2026年10月04日の記事</a></li>
     </ul>
   </section>
