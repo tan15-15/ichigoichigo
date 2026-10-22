@@ -116,44 +116,58 @@
       margin-bottom: 0;
     }
 
-    /* キャラクター（いちごちゃん）の吹き出し */
+    /* キャラクター（控えめで可愛いコンパクト枠） */
     .character-box {
       display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: #fff8e1;
-      border: 2px solid #ffe082;
-      padding: 12px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
       border-radius: 12px;
-      margin: 14px 0;
+      margin: 12px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
 
+    .character-box.ichigo {
+      background: #fff8e1;
+      border: 1.5px solid #ffe082;
+    }
+
+    .character-box.durian {
+      background: #f1f8e9;
+      border: 1.5px solid #c8e6c9;
+    }
+
+    /* 40pxの可愛い小さめアイコン */
     .character-avatar {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       object-fit: cover;
-      border: 2px solid #e83e8c;
       flex-shrink: 0;
-      background: #ff4081;
+      background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
-      font-size: 20px;
+      font-size: 18px;
+      border: 1.5px solid #ff80ab;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
 
     .character-text {
       font-size: 13px;
       color: #222222;
+      line-height: 1.4;
     }
 
     .character-name {
       font-weight: bold;
-      color: #e83e8c;
       display: block;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
+      font-size: 12px;
     }
+
+    .character-name.ichigo { color: #e83e8c; }
+    .character-name.durian { color: #558b2f; }
 
     /* 音声ボタン */
     .audio-btn {
@@ -228,7 +242,7 @@
       border-bottom: none;
     }
 
-    /* 3つのナビゲーションボタン（過去記事一覧の直前に配置） */
+    /* 🚥 信号機カラーのパステル3つナビボタン */
     nav.site-nav {
       display: flex;
       gap: 8px;
@@ -237,18 +251,47 @@
 
     nav.site-nav a {
       flex: 1;
-      background: var(--primary-color);
-      color: #ffffff;
       text-align: center;
-      padding: 12px 6px;
-      border-radius: 8px;
-      font-size: 13px;
+      padding: 10px 4px;
+      border-radius: 10px;
+      font-size: 12px;
       font-weight: bold;
       text-decoration: none;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: transform 0.1s ease;
     }
 
-    /* 過去の記事一覧（別日ブログリンク） */
+    nav.site-nav a:active {
+      transform: scale(0.98);
+    }
+
+    /* 🟥 パステルレッド（赤） */
+    .nav-red {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1.5px solid #ffcdd2;
+    }
+
+    /* 🟡 パステルイエロー（黄） */
+    .nav-yellow {
+      background-color: #fffde7;
+      color: #f57f17;
+      border: 1.5px solid #fff9c4;
+    }
+
+    /* 🟢 パステルグリーン（緑） */
+    .nav-green {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1.5px solid #c8e6c9;
+    }
+
+    /* 過去の記事一覧 */
     .archive-section {
       background: #ffffff;
       padding: 16px;
@@ -314,6 +357,17 @@
           <p>ただ、ローカルなお店って看板すらなかったり、壁にメニュー表や値段が一切書いていないことがほとんどなんですよね。『美味しかった〜！』と大満足した後に、『これ、食べ終わったら一体いくら請求されるんだ！？』と毎回ちょっとドキドキしながら席を立っています（笑）。</p>
         </div>
 
+        <!-- 🍓 いちごちゃん：フォーを食べてるミニキャラ -->
+        <div class="character-box ichigo">
+          <div class="character-avatar" style="border-color: #ff80ab;">
+            <img src="assets/ichigo-pho.png" alt="🍜" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.remove();">🍜
+          </div>
+          <div class="character-text">
+            <span class="character-name ichigo">🍓 いちごちゃん</span>
+            「フーフー…朝の熱々フォーは最高！でもお会計のドキドキもセットなんだよね♪」
+          </div>
+        </div>
+
         <div class="card">
           <div class="vn-text">Bát này nhiêu tiền?</div>
           <div><button class="audio-btn" onclick="playAudio('Bát này nhiêu tiền?')">🔊 音声を聞く</button></div>
@@ -329,13 +383,14 @@
           <p>『じゃあ、食べ終わったあとどうやって値段を聞けばいいの？』と最初は焦るけれど、指をさしながら笑顔でこう聞けば大丈夫！</p>
         </div>
 
-        <div class="character-box">
-          <div class="character-avatar">
-            <img src="assets/ichigo-chan.png" alt="🍓" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.remove();">🍓
+        <!-- 🍈 ドリアンくん：お金を払ってるミニキャラ -->
+        <div class="character-box durian">
+          <div class="character-avatar" style="border-color: #81c784;">
+            <img src="assets/durian-pay.png" alt="💵" style="width:100%; height:100%; border-radius:50%; object-fit:cover;" onerror="this.remove();">💵
           </div>
           <div class="character-text">
-            <span class="character-name">🍓 いちごちゃん</span>
-            「そんな時はビクビクしないで、ドヤ顔でこの言葉を言えばバッチリだよ！」
+            <span class="character-name durian">🍈 ドリアンくん</span>
+            「ビクビクしないで！指をさしながらドヤ顔で『Nhiêu tiền?』って聞けば完璧だよ！」
           </div>
         </div>
 
@@ -398,14 +453,20 @@
     </article>
   </main>
 
-  <!-- 3つのナビゲーションボタン（これまでの一語へのリンクなど） -->
+  <!-- 🚥 信号機カラー（パステル赤・黄・緑）× キャラ付き3つボタンナビ -->
   <nav class="site-nav">
-    <a href="./index.html#today">🍓 今日覚えた</a>
-    <a href="./words.html">📚 これまでの一語</a>
-    <a href="./index.html#basic">🌱 ベトナム語の基礎</a>
+    <a href="./index.html#today" class="nav-red">
+      <span>🍓 今日覚えた</span>
+    </a>
+    <a href="./words.html" class="nav-yellow">
+      <span>📚 これまでの一語</span>
+    </a>
+    <a href="./index.html#basic" class="nav-green">
+      <span>🌱 ベトナム語の基礎</span>
+    </a>
   </nav>
 
-  <!-- 過去の記事一覧（別日のブログリンク） -->
+  <!-- 過去の記事一覧（別日ブログリンク） -->
   <section class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list">
