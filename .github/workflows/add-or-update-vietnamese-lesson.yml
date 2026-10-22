@@ -123,12 +123,15 @@ jobs:
             </section>`;
           }).join('\n');
 
+          const sIcon = input.sceneIcon ? input.sceneIcon : '🍓';
+          const sTitle = input.sceneTitle ? input.sceneTitle : '今日の出来事';
+
           const articleHtml = `<article class="article">
             <p class="date">${esc(input.date)}</p>
             <h1>${esc(input.title)}</h1>
 
             <section class="step-box">
-              <h2>${esc(input.sceneIcon \vert{}\vert{} '🍓')} ${esc(input.sceneTitle || '今日の出来事')}</h2>
+              <h2>${esc(sIcon)}${esc(sTitle)}</h2>
               <p>${esc(input.scene)}</p>
             </section>
 
@@ -260,8 +263,8 @@ jobs:
           } else {
             lessons.push({
               ...input,
-              sceneIcon: input.sceneIcon || '🍓',
-              sceneTitle: input.sceneTitle || '今日の出来事',
+              sceneIcon: sIcon,
+              sceneTitle: sTitle,
               extraWords: input.extraWords || [],
               archiveWords: input.archiveWords ||
                 input.words.slice(0, 5).map(item =>
