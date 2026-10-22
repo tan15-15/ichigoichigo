@@ -1,4 +1,4 @@
-Name: Add or Update Vietnamese Lesson
+name: Add or Update Vietnamese Lesson
 
 on:
   workflow_dispatch:
@@ -78,15 +78,15 @@ jobs:
             (Array.isArray(items) ? items : []).map(item => {
               const v = Array.isArray(item)
                 ? item[0]
-                : (item.v ?? item.word ?? item.vietnamese ?? '');
+                : (item.v || item.word || item.vietnamese || '');
 
               const j = Array.isArray(item)
                 ? item[1]
-                : (item.j ?? item.meaning ?? item.translation ?? '');
+                : (item.j || item.meaning || item.translation || '');
 
               const w = Array.isArray(item)
                 ? ''
-                : (item.w ?? item.words ?? '');
+                : (item.w || item.words || '');
 
               return `<div class="step-box">
                 <p>${esc(v)}${speak(v)}</p>
@@ -278,7 +278,7 @@ jobs:
                 input.words.slice(0, 5).map(item =>
                   Array.isArray(item)
                     ? item[0]
-                    : (item.v ?? item.word ?? '')
+                    : (item.v || item.word || '')
                 ),
               articleSections: input.articleSections || []
             });
