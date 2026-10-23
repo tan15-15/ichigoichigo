@@ -1505,3 +1505,49 @@ document.addEventListener("click", e => {
 });
 
 document.addEventListener("DOMContentLoaded", renderLesson);
+
+
+let currentUtterance = null;
+
+function speakVietnamese(text) {
+  alert("クリックされたよ: " + text); // 動作確認用の仮アラート
+
+  if (!("speechSynthesis" in window)) {
+    alert("音声非対応ブラウザです");
+    return;
+  }
+  
+  window.speechSynthesis.cancel();
+  
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = "vi-VN";
+  currentUtterance.rate = 0.78;
+  currentUtterance.pitch = 1;
+  currentUtterance.volume = 1;
+
+  window.speechSynthesis.speak(currentUtterance);
+}
+
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
+}
+
+function renderExample(example) {
+  return `
+    <div class="lesson-example">
+      <div class="vietnamese">${esc(example.v)}</div>
+      <button class="glossary-audio" data-speak="${esc(example.v)}">🔊 音声</button>
+      <p>${esc(example.j)}</p>
+      <p class="example-words">${esc(example.w)}</p>
+    </div>`;
+}
+
+document.addEventListener("click", e => {
+  const button = e.target.closest("[data-speak]");
+  if (button) speakVietnamese(button.dataset.speak);
+});
+
+document.addEventListener("DOMContentLoaded", renderLesson);
+
