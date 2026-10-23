@@ -1438,7 +1438,15 @@ function renderLesson() {
           return `<div class="archive-item">
             <div class="archive-date">${esc(x.date.replace("年", "/").replace("月", "/").replace("日", ""))}</div>
             
-            <a href="./lesson-${x.date.replace("年", "-").replace("月", "-").replace("日", "").replace(/-(\d)(?=-|$)/g, "-0$1")}.html">
+                      const dateParam = encodeURIComponent(x.date);
+          return `<div class="archive-item">
+            <div class="archive-date">${esc(x.date)}</div>
+            <a href="./index.html?date=${dateParam}#today">
+              <span class="archive-title">${esc(x.title)}</span>
+              <span class="archive-words">${keyWords.map(esc).join(" ・ ")}</span>
+            </a>
+          </div>`;
+
 
               <span class="archive-title">${esc(x.title)}</span>
               <span class="archive-words">${keyWords.map(esc).join(" ・ ")}</span>
