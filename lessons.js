@@ -1540,7 +1540,52 @@ function renderExample(example) {
 
 document.addEventListener("click", e => {
   const button = e.target.closest("[data-speak]");
-  if (button) speakVietnamese(button.dataset.speak);
+  if (button) {
+    speakVietnamese(button.dataset.speak);
+  }
 });
 
-document.addEventListener("DOMContentLoaded", renderLesson);
+let currentUtterance = null;
+
+function speakVietnamese(text) {
+  if (!("speechSynthesis" in window)) {
+    alert("音声非対応ブラウザです");
+    return;
+  }
+
+  try {
+    window.speechSynthesis.cancel();
+  } catch (e) {}
+
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = "vi-VN";
+  utterance.rate = 0.78;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+
+  currentUtterance = utterance;
+  window.speechSynthesis.speak(utterance);
+}
+
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
+}
+
+function renderExample(example) {
+  return `
+    <div class="lesson-example">
+      <div class="vietnamese">${esc(example.v)}</div>
+      <button class="glossary-audio" data-speak="${esc(example.v)}">🔊 音声</button>
+      <p>${esc(example.j)}</p>
+      <p class="example-words">${esc(example.w)}</p>
+    </div>`;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (typeof renderLesson === "function") {
+    renderLesson();
+  }
+});
+
