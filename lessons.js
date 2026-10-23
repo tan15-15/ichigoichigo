@@ -1548,9 +1548,33 @@ function playAudio(text) {
   }
 }
 
+// 1. 10/6などのページで使われている speakVietnamese 関数
+function speakVietnamese(text) {
+  if (!text) return;
+  if (!('speechSynthesis' in window)) {
+    alert('お使いのブラウザは音声読み上げに対応していません。');
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'vi-VN';
+  utterance.rate = 0.78;
+
+  window.speechSynthesis.speak(utterance);
+}
+
+// 2. 10/4などで使われている playAudio 関数（互換性用）
+function playAudio(text) {
+  speakVietnamese(text);
+}
+
+// 3. data-speak 属性のボタン用（クリックイベント）
 document.addEventListener("click", e => {
   const button = e.target.closest("[data-speak]");
   if (button) {
-    playAudio(button.dataset.speak);
+    const text = button.dataset.speak || button.getAttribute("data-text");
+    if (text) speakVietnamese(text);
   }
 });
+
