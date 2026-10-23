@@ -1476,7 +1476,7 @@ function renderLesson() {
         <p class="archive-note">日付を押すとその日のレッスンを復習できます</p>
         ${[...lessons].reverse().map(x => {
           const keyWords = (x.archiveWords || x.words.slice(0, 5).map(w => w[0])).slice(0, 5);
-                const pastLessons = lessons.slice(1);
+                      const pastLessons = lessons.slice(1);
       const archiveHtml = pastLessons.map(x => {
         const keyWords = (x.words || []).map(w => w.v).filter(Boolean);
         const dateParam = encodeURIComponent(x.date);
