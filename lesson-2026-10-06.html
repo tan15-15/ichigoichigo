@@ -32,7 +32,6 @@
       margin: 0 auto;
     }
 
-    /* タイトル画像 */
     header {
       text-align: center;
       margin-bottom: 12px;
@@ -97,7 +96,6 @@
       display: inline-block;
     }
 
-    /* 本文（黒文字） */
     .blog-story {
       font-size: 14px;
       color: var(--text-main);
@@ -116,59 +114,6 @@
       margin-bottom: 0;
     }
 
-    /* キャラクター（控えめで可愛いコンパクト枠） */
-    .character-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      margin: 12px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-    }
-
-    .character-box.ichigo {
-      background: #fff8e1;
-      border: 1.5px solid #ffe082;
-    }
-
-    .character-box.durian {
-      background: #f1f8e9;
-      border: 1.5px solid #c8e6c9;
-    }
-
-    .character-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      border: 1.5px solid #ff80ab;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-
-    .character-text {
-      font-size: 13px;
-      color: #222222;
-      line-height: 1.4;
-    }
-
-    .character-name {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 1px;
-      font-size: 12px;
-    }
-
-    .character-name.ichigo { color: #e83e8c; }
-    .character-name.durian { color: #558b2f; }
-
-    /* 音声ボタン */
     .audio-btn {
       font-size: 12px;
       background: #e8f5e9;
@@ -182,7 +127,6 @@
       font-weight: normal;
     }
 
-    /* 文字色ルール: ベトナム語＝赤太字 / 日本語＝緑字 / 補足＝黒字 */
     .vn-text {
       color: var(--vn-red);
       font-weight: bold;
@@ -224,7 +168,6 @@
       border-bottom: none;
     }
 
-    /* 🚥 信号機カラーのパステル3つナビボタン */
     nav.site-nav {
       display: flex;
       gap: 8px;
@@ -251,7 +194,6 @@
     .nav-yellow { background-color: #fffde7; color: #f57f17; border: 1.5px solid #fff9c4; }
     .nav-green { background-color: #e8f5e9; color: #2e7d32; border: 1.5px solid #c8e6c9; }
 
-    /* 過去の記事一覧 */
     .archive-section {
       background: #ffffff;
       padding: 16px;
@@ -295,7 +237,6 @@
 
 <div class="container">
 
-  <!-- タイトルバナー画像 -->
   <header>
     <img src="site-banner.jpg" alt="一期一語 バナー" onerror="this.style.display='none'">
   </header>
@@ -377,7 +318,6 @@
     </article>
   </main>
 
-  <!-- 🚥 信号機カラーの3つボタンナビ -->
   <nav class="site-nav">
     <a href="./index.html#today" class="nav-red">
       <span>🍓 今日覚えた</span>
@@ -390,7 +330,6 @@
     </a>
   </nav>
 
-  <!-- 過去の記事一覧 -->
   <section class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list">
@@ -407,6 +346,17 @@
 
 </div>
 
-<script src="lessons.js"></script>
+<!-- 10/4と同じ確実な音声再生スクリプト -->
+<script>
+  function playAudio(text) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'vi-VN';
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert('お使いのブラウザは音声読み上げに対応していません。');
+    }
+  }
+</script>
 </body>
 </html>
