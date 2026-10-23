@@ -152,25 +152,7 @@ button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Goth
   <img src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" alt="訪問者数カウンター">
 </section>
 <div class="footer">🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓</div>
-<script>
-(function(){
-  function speakVietnamese(text, button){
-    if(!('speechSynthesis' in window)){alert('このブラウザでは音声読み上げに対応していません。');return;}
-    window.speechSynthesis.cancel();
-    var utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'vi-VN';
-    utterance.rate = 0.78;
-    var voices = window.speechSynthesis.getVoices();
-    var voice = voices.find(function(v){return /^vi(-|_)/i.test(v.lang);});
-    if(voice) utterance.voice = voice;
-    utterance.onerror = function(){ if(!voice) { /* Browser may not have a Vietnamese voice installed. */ } };
-    window.speechSynthesis.speak(utterance);
-  }
-  document.querySelectorAll('[data-speak]').forEach(function(button){
-    button.addEventListener('click', function(){ speakVietnamese(button.getAttribute('data-speak'), button); });
-  });
-})();
-</script>
+
 <nav class="ichigo-site-menu" aria-label="サイト内メニュー">
   <a href="./index.html#today">🍓 今日覚えた</a>
   <a href="./words.html">📚 これまでの一語</a>
