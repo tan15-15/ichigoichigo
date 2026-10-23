@@ -1476,49 +1476,43 @@ function renderLesson() {
         <p class="archive-note">日付を押すとその日のレッスンを復習できます</p>
         ${[...lessons].reverse().map(x => {
           const keyWords = (x.archiveWords || x.words.slice(0, 5).map(w => w[0])).slice(0, 5);
-          return `<div class="archive-item">
-            <div class="archive-date">${esc(x.date.replace("年", "/").replace("月", "/").replace("日", ""))}</div>
-            
-                      const dateParam = encodeURIComponent(x.date);
-          return `<div class="archive-item">
-            <div class="archive-date">${esc(x.date)}</div>
-            <a href="./index.html?date=${dateParam}#today">
-              <span class="archive-title">${esc(x.title)}</span>
-              <span class="archive-words">${keyWords.map(esc).join(" ・ ")}</span>
-            </a>
-          </div>`;
+                const pastLessons = lessons.slice(1);
+      const archiveHtml = pastLessons.map(x => {
+        const keyWords = (x.words || []).map(w => w.v).filter(Boolean);
+        const dateParam = encodeURIComponent(x.date);
+        return `<div class="archive-item">
+          <div class="archive-date">${esc(x.date)}</div>
+          <a href="./index.html?date=${dateParam}#today">
+            <span class="archive-title">${esc(x.title)}</span>
+            <span class="archive-words">${keyWords.map(esc).join(" ・ ")}</span>
+          </a>
+        </div>`;
+      }).join("");
 
+      archiveSection = `
+        <section class="lesson-section archive-section">
+          <h2>過去のレッスン</h2>
+          ${archiveHtml}
+          <p><a href="./words.html">📚 単語を検索・復習する</a></p>
+        </section>`;
+    }
 
-              <span class="archive-title">${esc(x.title)}</span>
-              <span class="archive-words">${keyWords.map(esc).join(" ・ ")}</span>
-            </a>
-          </div>`;
-        }).join("")}
-        <p><a href="./words.html">📚 単語を検索・復習する</a></p>
-      </section>
-    </article>`;
+    app.innerHTML = `
+      <article class="lesson-article">
+        ${todayHtml}
+        ${archiveSection}
+      </article>`;
+  } catch (err) {
+    console.error("renderLesson error:", err);
+  }
 }
-
-document.addEventListener("click", e => {
-  const button = e.target.closest("[data-speak]");
-  if (button) speakVietnamese(button.dataset.speak);
-});
-
-document.addEventListener("DOMContentLoaded", renderLesson);
-
 
 let currentUtterance = null;
 
 function speakVietnamese(text) {
-  alert("クリックされたよ: " + text); // 動作確認用の仮アラート
-
-  if (!("speechSynthesis" in window)) {
-    alert("音声非対応ブラウザです");
-    return;
-  }
-  
+  if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
-  
+
   currentUtterance = new SpeechSynthesisUtterance(text);
   currentUtterance.lang = "vi-VN";
   currentUtterance.rate = 0.78;
@@ -1550,4 +1544,3 @@ document.addEventListener("click", e => {
 });
 
 document.addEventListener("DOMContentLoaded", renderLesson);
-
