@@ -1538,20 +1538,19 @@ function renderExample(example) {
     </div>`;
 }
 
+function playAudio(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'vi-VN';
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert('お使いのブラウザは音声読み上げに対応していません。');
+  }
+}
+
 document.addEventListener("click", e => {
   const button = e.target.closest("[data-speak]");
-  if (!button) return;
-  
-  const text = button.dataset.speak;
-  if (!text) return;
-
-  if (!("speechSynthesis" in window)) return;
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "vi-VN";
-  utterance.rate = 0.78;
-  utterance.pitch = 1.0;
-  utterance.volume = 1.0;
-
-  window.speechSynthesis.speak(utterance);
+  if (button) {
+    playAudio(button.dataset.speak);
+  }
 });
