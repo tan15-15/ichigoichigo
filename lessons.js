@@ -1312,18 +1312,7 @@ const vocabulary = [
   {v:"mưa lớn",m:"大雨",p:"表現",o:"—",e:"Trời mưa lớn.",j:"大雨が降っている。"}
 ];
 
-function speakVietnamese(text) {
-  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
-    alert("このブラウザでは音声再生に対応していません。");
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "vi-VN";
-  utterance.rate = 0.78;
-  utterance.pitch = 1;
-  utterance.volume = 1;
-  let currentUtterance = null;
+let currentUtterance = null;
 
 function speakVietnamese(text) {
   if (!("speechSynthesis" in window)) {
@@ -1342,9 +1331,23 @@ function speakVietnamese(text) {
   window.speechSynthesis.speak(currentUtterance);
 }
 
-
-  window.speechSynthesis.speak(utterance);
+function esc(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  })[c]);
 }
+
+function renderExample(example) {
+  return `
+    <div class="lesson-example">
+      <div class="vietnamese">${esc(example.v)}</div>
+      <button class="glossary-audio" data-speak="${esc(example.v)}">🔊 音声</button>
+      <p>${esc(example.j)}</p>
+      <p class="example-words">${esc(example.w)}</p>
+    </div>`;
+}
+
+
 
 function esc(value) {
   return String(value ?? "").replace(/[&<>"']/g, c => ({
