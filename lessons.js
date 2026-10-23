@@ -1,3 +1,24 @@
+let currentUtterance = null;
+
+function speakVietnamese(text) {
+  // ① まずボタンが反応しているかテストするアラート
+  alert("クリックされたよ: " + text);
+
+  if (!("speechSynthesis" in window)) {
+    alert("音声非対応ブラウザです");
+    return;
+  }
+  
+  window.speechSynthesis.cancel();
+  
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = "vi-VN";
+  currentUtterance.rate = 0.78;
+  currentUtterance.pitch = 1;
+  currentUtterance.volume = 1;
+
+  window.speechSynthesis.speak(currentUtterance);
+}
 const lessons = [
   {
     "date": "2026年10月3日",
