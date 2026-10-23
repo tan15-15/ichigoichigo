@@ -1323,29 +1323,25 @@ function speakVietnamese(text) {
   utterance.rate = 0.78;
   utterance.pitch = 1;
   utterance.volume = 1;
-  function speakVietnamese(text) {
-  if (!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) {
+  let currentUtterance = null;
+
+function speakVietnamese(text) {
+  if (!("speechSynthesis" in window)) {
     alert("このブラウザでは音声再生に対応していません。");
     return;
   }
+  
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = "vi-VN";
-  utterance.rate = 0.78;
-  utterance.pitch = 1;
-  utterance.volume = 1;
+  
+  currentUtterance = new SpeechSynthesisUtterance(text);
+  currentUtterance.lang = "vi-VN";
+  currentUtterance.rate = 0.78;
+  currentUtterance.pitch = 1;
+  currentUtterance.volume = 1;
 
-  // iOSで音声リストが空のときに処理が止まるのを防ぐ安全な書き方
-  const voices = window.speechSynthesis.getVoices();
-  if (voices && voices.length > 0) {
-    const viVoice = voices.find(v => v.lang && v.lang.toLowerCase().includes("vi"));
-    if (viVoice) {
-      utterance.voice = viVoice;
-    }
-  }
-
-  window.speechSynthesis.speak(utterance);
+  window.speechSynthesis.speak(currentUtterance);
 }
+
 
   window.speechSynthesis.speak(utterance);
 }
