@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -286,6 +285,54 @@ body {
   font-weight: bold;
 }
 
+/* 📚 過去の記事一覧のスタイル（デザイン統一） */
+.archive-section {
+  margin: 25px 0;
+  padding: 22px 20px;
+  background: rgba(255,255,255,.88);
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(120,100,100,.07);
+}
+
+.archive-section h3 {
+  margin: 0 0 15px;
+  color: #df5c73;
+  font-size: 20px;
+}
+
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.archive-item {
+  background: #fff;
+  border: 1px solid #ffe1e8;
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.archive-item a {
+  text-decoration: none;
+  color: #4d6f91;
+  font-weight: 700;
+  font-size: 15px;
+  display: block;
+}
+
+.archive-item a:hover {
+  color: #e65470;
+}
+
+.archive-keywords {
+  font-size: 12px;
+  color: #8a7777;
+  margin-top: 4px;
+}
+
 .menu {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -438,7 +485,14 @@ body {
     </p>
   </section>
 
+  <!-- 今日のレッスンを表示する領域 -->
   <main id="lessons"></main>
+
+  <!-- 📚 過去の記事一覧（lessons.js から全自動生成） -->
+  <section class="archive-section">
+    <h3>📚 過去の記事一覧</h3>
+    <ul id="archive-list" class="archive-list"></ul>
+  </section>
 
   <nav class="menu">
     <a href="./index.html#today">
@@ -469,6 +523,40 @@ body {
 
 </div>
 
+<!-- データ読み込み & 過去記事自動生成プログラム -->
 <script src="lessons.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const archiveList = document.getElementById('archive-list');
+    if (!archiveList || typeof lessons === 'undefined') return;
+
+    // 最新日付順（新しい順）に並び替え
+    const sortedLessons = [...lessons].reverse();
+
+    archiveList.innerHTML = sortedLessons.map(lesson => {
+      // 日付からファイル名を生成 (例: "2026年10月7日" -> "lesson-2026-10-07.html")
+      const cleanDate = lesson.date.replace(/[^0-9]/g, '');
+      const year = cleanDate.substring(0, 4);
+      const month = cleanDate.substring(4, 6);
+      const day = cleanDate.substring(6, 8);
+      const fileName = `lesson-${year}-${month}-${day}.html`;
+
+      // 重要語の抽出（archiveWords または words から最大3つ）
+      let keywordsText = '';
+      if (lesson.archiveWords && lesson.archiveWords.length > 0) {
+        keywordsText = lesson.archiveWords.slice(0, 3).join(', ');
+      } else if (lesson.words && lesson.words.length > 0) {
+        keywordsText = lesson.words.slice(0, 3).map(w => w.v || w.vn).join(', ');
+      }
+
+      return `
+        <li class="archive-item">
+          <a href="./${fileName}">${lesson.date}：${lesson.title}</a>
+          ${keywordsText ? `<div class="archive-keywords">🔑 重要語: ${keywordsText}</div>` : ''}
+        </li>
+      `;
+    }).join('');
+  });
+</script>
 </body>
 </html>
