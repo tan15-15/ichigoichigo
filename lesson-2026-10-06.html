@@ -136,9 +136,6 @@ body {
   transition: .2s;
 }
 
-.voice-button:hover { transform: translateY(-2px); }
-.voice-button:active { transform: scale(.96); }
-
 .translation {
   margin-top: 17px;
   padding-top: 15px;
@@ -176,7 +173,6 @@ body {
   overflow-wrap: anywhere;
 }
 
-/* 📚 過去の記事一覧（lessons.js から全自動生成） */
 .archive-section {
   margin: 25px 0;
   padding: 22px 20px;
@@ -214,10 +210,6 @@ body {
   display: block;
 }
 
-.archive-item a:hover {
-  color: #e65470;
-}
-
 .archive-keywords {
   font-size: 12px;
   color: #8a7777;
@@ -239,10 +231,7 @@ body {
   padding: 17px 8px;
   text-align: center;
   box-shadow: 0 5px 18px rgba(100,80,80,.06);
-  transition: .2s;
 }
-
-.menu a:hover { transform: translateY(-3px); }
 
 .menu strong {
   display: block;
@@ -276,7 +265,6 @@ body {
     <p>南部ベトナムで暮らしながら、今日覚えた一語を大切に。</p>
   </header>
 
-  <!-- 10/6 本来の正しいメインコンテンツ -->
   <main>
     <article class="today-card">
       <span class="today-label">2026年10月6日</span>
@@ -322,7 +310,7 @@ body {
     </article>
   </main>
 
-  <!-- 📚 過去の記事一覧（lessons.js から全自動生成） -->
+  <!-- 📚 過去の記事一覧（自動生成用） -->
   <section class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list" class="archive-list"></ul>
@@ -350,48 +338,61 @@ body {
 
 </div>
 
-<!-- データ読み込み & 自動描画スクリプト（ES5互換・安全実装） -->
 <script src="lessons.js"></script>
 <script>
   function playAudio(filename) {
-    var audio = new Audio(filename);
-    audio.play().catch(function(e) {
-      console.log("Audio play failed:", e);
-    });
+    try {
+      var audio = new Audio(filename);
+      audio.play();
+    } catch (e) {
+      console.log(e);
+    }
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
+  function renderArchive() {
     var archiveList = document.getElementById('archive-list');
     if (!archiveList || typeof lessons === 'undefined') return;
 
-    var sortedLessons = lessons.slice().reverse();
-
+    var sorted = lessons.slice().reverse();
     var html = '';
-    for (var i = 0; i < sortedLessons.length; i++) {
-      var lesson = sortedLessons[i];
-      var cleanDate = lesson.date.replace(/[^0-9]/g, '');
-      var year = cleanDate.substring(0, 4);
-      var month = cleanDate.substring(4, 6);
-      var day = cleanDate.substring(6, 8);
-      var fileName = 'lesson-' + year + '-' + month + '-' + day + '.html';
 
-      var keywordsText = '';
-      if (lesson.archiveWords && lesson.archiveWords.length > 0) {
-        keywordsText = lesson.archiveWords.slice(0, 3).join(', ');
-      } else if (lesson.words && lesson.words.length > 0) {
-        keywordsText = lesson.words.slice(0, 3).map(function(w) { return w.v || w.vn; }).join(', ');
+    for (var i = 0; i < sorted.length; i++) {
+      var item = sorted[i];
+      var digits = item.date.replace(/[^0-9]/g, '');
+      if (digits.length < 8) continue;
+
+      var y = digits.substring(0, 4);
+      var m = digits.substring(4, 6);
+      var d = digits.substring(6, 8);
+      var file = 'lesson-' + y + '-' + m + '-' + d + '.html';
+
+      var kw = '';
+      if (item.archiveWords && item.archiveWords.length > 0) {
+        kw = item.archiveWords.slice(0, 3).join(', ');
+      } else if (item.words && item.words.length > 0) {
+        var arr = [];
+        for (var j = 0; j < Math.min(item.words.length, 3); j++) {
+          arr.push(item.words[j].v || item.words[j].vn || '');
+        }
+        kw = arr.join(', ');
       }
 
       html += '<li class="archive-item">';
-      html += '  <a href="./' + fileName + '">' + lesson.date + '：' + lesson.title + '</a>';
-      if (keywordsText) {
-        html += '  <div class="archive-keywords">🔑 重要語: ' + keywordsText + '</div>';
+      html += '<a href="./' + file + '">' + item.date + '：' + item.title + '</a>';
+      if (kw) {
+        html += '<div class="archive-keywords">🔑 重要語: ' + kw + '</div>';
       }
       html += '</li>';
     }
 
     archiveList.innerHTML = html;
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderArchive);
+  } else {
+    renderArchive();
+  }
 </script>
 </body>
 </html>
