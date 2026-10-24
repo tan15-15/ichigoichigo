@@ -179,4 +179,202 @@ body {
   padding: 22px 20px;
   background: rgba(255,255,255,.88);
   border-radius: 25px;
-  box-shadow
+  box-shadow: 0 8px 25px rgba(120,100,100,.07);
+}
+
+.archive-section h3 {
+  margin: 0 0 15px;
+  color: #df5c73;
+  font-size: 20px;
+}
+
+.archive-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.archive-item {
+  background: #fff;
+  border: 1px solid #ffe1e8;
+  border-radius: 16px;
+  padding: 12px 16px;
+}
+
+.archive-item a {
+  text-decoration: none;
+  color: #4d6f91;
+  font-weight: 700;
+  font-size: 15px;
+  display: block;
+}
+
+.archive-keywords {
+  font-size: 12px;
+  color: #8a7777;
+  margin-top: 4px;
+}
+
+.menu {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #5b5555;
+  background: white;
+  border-radius: 20px;
+  padding: 17px 8px;
+  text-align: center;
+  box-shadow: 0 5px 18px rgba(100,80,80,.06);
+}
+
+.menu strong {
+  display: block;
+  color: #df5c73;
+  font-size: 14px;
+}
+
+.menu small {
+  font-size: 11px;
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  .page { padding: 10px 10px 30px; }
+  .today-card { padding: 23px 14px 28px; }
+  .vietnamese { font-size: 22px; }
+  .menu { gap: 7px; }
+  .menu a { padding: 13px 4px; }
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+
+  <header class="header">
+    <h1>
+      ベトナム暮らし、ベトナム語は今日も<br>
+      <span>🍓一期一語🍓</span>【いちごいちご】
+    </h1>
+    <p>南部ベトナムで暮らしながら、今日覚えた一語を大切に。</p>
+  </header>
+
+  <!-- 10/6 正しいメインコンテンツ -->
+  <main>
+    <article class="today-card">
+      <span class="today-label">2026年10月6日</span>
+      <h2>😴 ゴちゃんが寝た！？音を立てたら即終了ミッション</h2>
+
+      <div class="scene">
+        <div class="scene-icon">🤫</div>
+        <h3>【場面】赤ちゃんが寝静まったあとのリビング</h3>
+        <p>抱っこでようやく寝かしつけたゴちゃんを、そーっとベビーベッドへ移動。</p>
+        <p>足を忍ばせながら奥さんに「静かに歩いてね！」と伝えたい時のフレーズです。</p>
+      </div>
+
+      <div class="vietnamese-card">
+        <div class="vietnamese-label">🔊 ベトナム語（南部発音）</div>
+        <div class="vietnamese">Đi nhẹ thôi, Baby đang ngủ!</div>
+        <button class="voice-button" onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('Đi nhẹ thôi, Baby đang ngủ!'))">
+          🔊 音声を聞く
+        </button>
+        <div class="translation">日本語訳：そっと歩いてね、赤ちゃんが寝てるから！</div>
+      </div>
+
+      <div class="word-section">
+        <h3>📝 今日の重要単語</h3>
+        <div class="word-list">
+          <div class="word">
+            <strong style="color:#ed607a;">Đi</strong>
+            <div class="word-japanese">行く / 歩く</div>
+          </div>
+          <div class="word">
+            <strong style="color:#ed607a;">nhẹ</strong>
+            <div class="word-japanese">軽い / そっと・静かに</div>
+          </div>
+          <div class="word">
+            <strong style="color:#ed607a;">thôi</strong>
+            <div class="word-japanese">〜だけ / 〜してね（語尾をやわらかくする）</div>
+          </div>
+          <div class="word">
+            <strong style="color:#ed607a;">đang ngủ</strong>
+            <div class="word-japanese">寝ている（進行形）</div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </main>
+
+  <!-- 📚 過去の記事一覧（lessons.js から全自動生成） -->
+  <section class="archive-section">
+    <h3>📚 過去の記事一覧</h3>
+    <ul id="archive-list" class="archive-list"></ul>
+  </section>
+
+  <nav class="menu">
+    <a href="./index.html#today">
+      🍓
+      <strong>今日覚えた</strong>
+      <small>今日のベトナム語</small>
+    </a>
+
+    <a href="words.html">
+      📚
+      <strong>これまでの一語</strong>
+      <small>復習しよう</small>
+    </a>
+
+    <a href="./index.html#basic">
+      🌱
+      <strong>ベトナム語の基礎</strong>
+      <small>母音・子音・声調</small>
+    </a>
+  </nav>
+
+</div>
+
+<!-- データ読み込み & 自動描画スクリプト -->
+<script src="lessons.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var archiveList = document.getElementById('archive-list');
+    if (!archiveList || typeof lessons === 'undefined') return;
+
+    var sortedLessons = lessons.slice().reverse();
+
+    var html = '';
+    for (var i = 0; i < sortedLessons.length; i++) {
+      var lesson = sortedLessons[i];
+      var cleanDate = lesson.date.replace(/[^0-9]/g, '');
+      var year = cleanDate.substring(0, 4);
+      var month = cleanDate.substring(4, 6);
+      var day = cleanDate.substring(6, 8);
+      var fileName = 'lesson-' + year + '-' + month + '-' + day + '.html';
+
+      var keywordsText = '';
+      if (lesson.archiveWords && lesson.archiveWords.length > 0) {
+        keywordsText = lesson.archiveWords.slice(0, 3).join(', ');
+      } else if (lesson.words && lesson.words.length > 0) {
+        keywordsText = lesson.words.slice(0, 3).map(function(w) { return w.v || w.vn; }).join(', ');
+      }
+
+      html += '<li class="archive-item">';
+      html += '  <a href="./' + fileName + '">' + lesson.date + '：' + lesson.title + '</a>';
+      if (keywordsText) {
+        html += '  <div class="archive-keywords">🔑 重要語: ' + keywordsText + '</div>';
+      }
+      html += '</li>';
+    }
+
+    archiveList.innerHTML = html;
+  });
+</script>
+</body>
+</html>
