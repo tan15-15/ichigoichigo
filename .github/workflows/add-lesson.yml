@@ -120,10 +120,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          # 大文字ファイルが存在していれば強制削除して小文字に統一
           find . -maxdepth 1 -name "Lesson-*.html" -exec git rm -f {} \; || true
-          
           git add .
           if git diff --cached --quiet; then
             echo "変更はありません"
