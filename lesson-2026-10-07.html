@@ -3,362 +3,475 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ゴちゃんと覚える基本動詞＆お昼寝バトル！ - 一期一語</title>
+  <title>🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）｜一期一語</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* 10/4基準の完全内蔵デザインスタイル */
+    :root {
+      --primary-color: #e83e8c;
+      --bg-color: #fcf8f2;
+      --card-bg: #ffffff;
+      --text-main: #222222;
+      --vn-red: #d32f2f;
+      --jp-green: #2e7d32;
+      --border-color: #f8bbd0;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: #fff9fa;
-      color: #333;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       margin: 0;
-      padding: 0;
-      line-height: 1.6;
+      padding: 12px;
+      line-height: 1.7;
     }
-    .header {
-      background-color: #ffb7c5;
-      color: white;
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    header {
       text-align: center;
-      padding: 20px;
+      margin-bottom: 12px;
     }
-    .site-title {
-      margin: 0;
-      font-size: 1.8rem;
+
+    header img {
+      width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      display: block;
     }
-    .site-subtitle {
-      margin: 5px 0 0;
-      font-size: 0.9rem;
+
+    .visitor-counter {
+      text-align: center;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 16px;
+      background: #ffffff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid #ffe0b2;
+      display: inline-block;
+      width: 100%;
+      box-sizing: border-box;
     }
-    .main-content {
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 15px;
+
+    article {
+      background: var(--card-bg);
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
     }
-    .lesson-card {
-      background: white;
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 4px 15px rgba(255, 183, 197, 0.2);
-      border: 2px solid #ffe4e9;
+
+    .date {
+      font-size: 13px;
+      color: #888888;
+      margin-bottom: 4px;
     }
-    .lesson-date {
-      color: #ff7f93;
-      font-weight: bold;
-      font-size: 0.9rem;
+
+    h1 {
+      font-size: 18px;
+      color: var(--vn-red);
+      margin: 0 0 16px 0;
+      line-height: 1.4;
+      border-bottom: 2px dashed var(--border-color);
+      padding-bottom: 10px;
     }
-    .lesson-title {
-      font-size: 1.4rem;
-      color: #444;
-      margin-top: 5px;
+
+    section {
+      margin-bottom: 24px;
     }
+
+    h2 {
+      font-size: 15px;
+      color: #c2185b;
+      margin: 0 0 10px 0;
+      background: #fff0f3;
+      padding: 6px 12px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .blog-story {
+      font-size: 14px;
+      color: var(--text-main);
+      background: #fafafa;
+      padding: 14px;
+      border-radius: 10px;
+      border-left: 4px solid var(--border-color);
+      margin-bottom: 12px;
+    }
+
+    .blog-story p {
+      margin: 0 0 12px 0;
+    }
+
+    .blog-story p:last-child {
+      margin-bottom: 0;
+    }
+
     .character-box {
       display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin: 20px 0;
-      background: #fff0f3;
-      padding: 15px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
       border-radius: 12px;
+      margin: 12px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
-    .character {
+
+    .character-box.ichigo {
+      background: #fff8e1;
+      border: 1.5px solid #ffe082;
+    }
+
+    .character-box.durian {
+      background: #f1f8e9;
+      border: 1.5px solid #c8e6c9;
+    }
+
+    .character-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #ffffff;
       display: flex;
       align-items: center;
-      gap: 15px;
+      justify-content: center;
+      font-size: 18px;
+      border: 1.5px solid #ff80ab;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
     }
-    .char-img {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
+
+    .character-text {
+      font-size: 13px;
+      color: #222222;
+      line-height: 1.4;
     }
-    .speech-bubble {
-      background: white;
-      padding: 10px 15px;
-      border-radius: 10px;
-      border: 1px solid #ffccd5;
-      flex-grow: 1;
-      margin: 0;
-    }
-    .speech-bubble p {
-      margin: 0;
-    }
-    .word-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
-      margin-top: 10px;
-    }
-    .word-card {
-      background: #fdf2f4;
-      border: 1px solid #ffccd5;
-      border-radius: 10px;
-      padding: 15px;
-      text-align: center;
-    }
-    .vn-word {
-      font-size: 1.2rem;
+
+    .character-name {
       font-weight: bold;
-      color: #d6336c;
+      display: block;
+      margin-bottom: 1px;
+      font-size: 12px;
     }
+
+    .character-name.ichigo { color: #e83e8c; }
+    .character-name.durian { color: #558b2f; }
+
     .audio-btn {
-      background: #ff7f93;
-      border: none;
-      color: white;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
+      font-size: 12px;
+      background: #e8f5e9;
+      color: var(--jp-green);
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #a5d6a7;
       cursor: pointer;
-      margin-left: 8px;
-    }
-    .jp-meaning {
-      font-weight: bold;
-      margin: 5px 0 0;
-    }
-    .pronunciation {
-      font-size: 0.85rem;
-      color: #666;
-      margin: 2px 0 0;
-    }
-    .example-section, .contrast-section {
-      margin-top: 30px;
-    }
-    .example-card {
-      background: #f8f9fa;
-      border-left: 4px solid #ff7f93;
-      padding: 12px 15px;
-      margin-bottom: 10px;
-      border-radius: 0 8px 8px 0;
-    }
-    .vn-sentence {
-      font-weight: bold;
-      color: #2b2b2b;
-      margin: 0;
-    }
-    .jp-sentence {
-      margin: 3px 0;
-      color: #555;
-    }
-    .word-breakdown {
-      font-size: 0.85rem;
-      color: #777;
-    }
-    .contrast-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .contrast-card {
-      background: #fff;
-      border: 1px solid #e0e0e0;
-      padding: 12px;
-      border-radius: 8px;
-    }
-    .status-tag {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
+      margin-top: 6px;
+      font-weight: normal;
+    }
+
+    .vn-text {
+      color: var(--vn-red);
       font-weight: bold;
-      color: white;
-      margin-bottom: 5px;
+      font-size: 16px;
     }
-    .status-tag.ongoing { background-color: #3b82f6; }
-    .status-tag.not-yet { background-color: #ef4444; }
-    .status-tag.still { background-color: #10b981; }
-    .status-tag.done { background-color: #8b5cf6; }
-    .lesson-nav {
-      margin-top: 40px;
-      border-top: 2px dashed #ffccd5;
-      padding-top: 20px;
+
+    .jp-text {
+      color: var(--jp-green);
+      font-weight: bold;
+      font-size: 14px;
     }
-    .nav-container {
+
+    .desc-text {
+      color: var(--text-main);
+      font-size: 13px;
+    }
+
+    .card {
+      background: #f1f8e9;
+      padding: 14px;
+      border-radius: 10px;
+      border: 1px solid #c8e6c9;
+      margin-bottom: 12px;
+    }
+
+    .opposites-box {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      border: 2px solid var(--border-color);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .arrow-down {
+      font-size: 20px;
+      color: #e91e63;
+      font-weight: bold;
+      margin: 8px 0;
+    }
+
+    .word-list-box {
+      background: #fafafa;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .word-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .word-item:last-child {
+      border-bottom: none;
+    }
+
+    nav.site-nav {
       display: flex;
-      justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
+      margin-bottom: 20px;
     }
-    .nav-btn {
+
+    nav.site-nav a {
       flex: 1;
       text-align: center;
-      padding: 10px;
-      border-radius: 8px;
+      padding: 10px 4px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: bold;
       text-decoration: none;
-      font-size: 0.9rem;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      transition: transform 0.1s ease;
+    }
+
+    nav.site-nav a:active {
+      transform: scale(0.98);
+    }
+
+    .nav-red {
+      background-color: #ffebee;
+      color: #c62828;
+      border: 1.5px solid #ffcdd2;
+    }
+
+    .nav-yellow {
+      background-color: #fffde7;
+      color: #f57f17;
+      border: 1.5px solid #fff9c4;
+    }
+
+    .nav-green {
+      background-color: #e8f5e9;
+      color: #2e7d32;
+      border: 1.5px solid #c8e6c9;
+    }
+
+    .archive-section {
+      background: #ffffff;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid #e0e0e0;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .archive-section h3 {
+      margin: 0 0 10px 0;
+      color: #c2185b;
+      font-size: 14px;
+    }
+
+    .archive-section ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .archive-section li {
+      margin-bottom: 6px;
+    }
+
+    .archive-section a {
+      color: #1e88e5;
+      text-decoration: none;
       font-weight: bold;
     }
-    .prev-btn { background-color: #fee2e2; color: #b91c1c; }
-    .home-btn { background-color: #f3f4f6; color: #374151; }
-    .nav-btn.disabled { background-color: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+
+    footer {
+      text-align: center;
+      font-size: 12px;
+      color: #777777;
+      margin-top: 20px;
+      padding-bottom: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- ヘッダー -->
-  <header class="header">
-    <div class="header-container">
-      <h1 class="site-title"><a href="index.html" style="color: inherit; text-decoration: none;">一期一語 🍓</a></h1>
-      <p class="site-subtitle">ベトナム語（南部弁）をゴちゃんと楽しく学ぼう！</p>
-    </div>
+<div class="container">
+
+  <header>
+    <img src="site-banner.jpg" alt="一期一語 バナー" onerror="this.style.display='none'">
   </header>
 
-  <main class="main-content">
-    <article class="lesson-card">
-      <div class="lesson-header">
-        <span class="lesson-date">2026年10月7日</span>
-        <h2 class="lesson-title">ゴちゃんと覚える基本動詞＆お昼寝バトル！ 🍼😴</h2>
-      </div>
+  <div class="visitor-counter">
+    🍓 このサイトを訪れた人 🍓<br>
+    <img alt="訪問者数カウンター" src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" style="margin-top:4px;">
+  </div>
 
-      <!-- キャラクターオープニング会話 -->
-      <div class="character-box">
-        <div class="character">
-          <img src="assets/ichigo.png" alt="いちごちゃん" class="char-img">
-          <div class="speech-bubble">
-            <p>みんな〜！今日のゴちゃんは食欲旺盛＆眠気との戦いで大忙しだよ！基本動詞を一緒に覚えちゃおう！</p>
+  <main>
+    <article>
+      <div class="date">2026年10月07日</div>
+      <h1>🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）</h1>
+
+      <section>
+        <h2>今日の出来事</h2>
+        <div class="blog-story">
+          <p>ゴちゃんの毎日の様子を観察していると、ベトナム語の基本動詞（飲む・食べる・眠い）を覚えるのにぴったりのシチュエーションばかり！</p>
+          <p>今回は、赤ちゃんの日常の動作を通して、主語＋動詞＋目的語のシンプルな文の作り方と、状態を表す言葉をまとめてみましょう。🍓</p>
+        </div>
+
+        <div class="character-box ichigo">
+          <div class="character-avatar" style="border-color: #ff80ab;">🍼</div>
+          <div class="character-text">
+            <span class="character-name ichigo">🍓 いちごちゃん</span>
+            「『ゴちゃんはミルクを飲む』『ご飯を食べたい』など、毎日の出来事をベトナム語にしてみよう！」
           </div>
         </div>
-        <div class="character">
-          <img src="assets/go.png" alt="ゴちゃん" class="char-img">
-          <div class="speech-bubble">
-            <p>Gô muốn ăn cơm! Gô buồn ngủ rồi... 🍼😴（ご飯食べたい！もう眠い〜！）</p>
-          </div>
+
+        <div class="card">
+          <div class="vn-text">Gô uống sữa.</div>
+          <div><button class="audio-btn" onclick="playAudio('Gô uống sữa.')">🔊 音声を聞く</button></div>
+          <div class="jp-text" style="margin-top: 6px;">ゴちゃんはミルクを飲む。</div>
+          <div class="desc-text" style="margin-top: 4px;">Gô＝ゴちゃん ／ uống＝飲む ／ sữa＝ミルク</div>
         </div>
-      </div>
 
-      <!-- メイン単語セクション -->
-      <section class="word-section">
-        <h3>🌱 今日の基本動詞</h3>
-        <div class="word-grid">
-          
-          <div class="word-card">
-            <div class="word-header">
-              <span class="vn-word">uống</span>
-              <button class="audio-btn" onclick="audioPlay('audio/uong.mp3')">🔊</button>
-            </div>
-            <p class="jp-meaning">飲む</p>
-            <p class="pronunciation">【ウオン】</p>
-          </div>
+        <div class="card">
+          <div class="vn-text">Muốn ăn cơm.</div>
+          <div><button class="audio-btn" onclick="playAudio('Muốn ăn cơm.')">🔊 音声を聞く</button></div>
+          <div class="jp-text" style="margin-top: 6px;">ご飯を食べたい。</div>
+          <div class="desc-text" style="margin-top: 4px;">muốn＝〜したい ／ ăn＝食べる ／ cơm＝ご飯</div>
+        </div>
 
-          <div class="word-card">
-            <div class="word-header">
-              <span class="vn-word">ăn</span>
-              <button class="audio-btn" onclick="audioPlay('audio/an.mp3')">🔊</button>
-            </div>
-            <p class="jp-meaning">食べる</p>
-            <p class="pronunciation">【アン】</p>
-          </div>
-
-          <div class="word-card">
-            <div class="word-header">
-              <span class="vn-word">buồn ngủ</span>
-              <button class="audio-btn" onclick="audioPlay('audio/buon_ngu.mp3')">🔊</button>
-            </div>
-            <p class="jp-meaning">眠い</p>
-            <p class="pronunciation">【ブオン グー】</p>
-          </div>
-
+        <div class="card">
+          <div class="vn-text">Gô buồn ngủ.</div>
+          <div><button class="audio-btn" onclick="playAudio('Gô buồn ngủ.')">🔊 音声を聞く</button></div>
+          <div class="jp-text" style="margin-top: 6px;">ゴちゃんは眠い。</div>
+          <div class="desc-text" style="margin-top: 4px;">Gô＝ゴちゃん ／ buồn ngủ＝眠い・眠気がある</div>
         </div>
       </section>
 
-      <!-- 例文＆会話セクション -->
-      <section class="example-section">
-        <h3>💬 ゴちゃんのリアル日常フレーズ</h3>
-        
-        <div class="example-card">
-          <p class="vn-sentence">Gô uống sữa.</p>
-          <p class="jp-sentence">ゴちゃんはミルクを飲む。🍼</p>
-          <div class="word-breakdown">
-            <span><strong>Gô</strong>: ゴちゃん</span> | 
-            <span><strong>uống</strong>: 飲む</span> | 
-            <span><strong>sữa</strong>: ミルク</span>
-          </div>
+      <section>
+        <h2>💡 今日の学び：睡眠状態（時制・状態）の言い分け</h2>
+        <div class="blog-story">
+          <p>「寝る（ngủ）」という動詞の前に一言添えるだけで、現在の状態や過去・未来のニュアンスを簡単に言い分けることができます。</p>
+          <p>ゴちゃんの睡眠状況に合わせて使い分けてみましょう！</p>
         </div>
 
-        <div class="example-card">
-          <p class="vn-sentence">Muốn ăn cơm.</p>
-          <p class="jp-sentence">ご飯を食べたい！（腹ペコアピール）🍚</p>
-          <div class="word-breakdown">
-            <span><strong>muốn</strong>: 〜したい</span> | 
-            <span><strong>ăn</strong>: 食べる</span> | 
-            <span><strong>cơm</strong>: ご飯</span>
+        <!-- 睡眠状態の比較カード -->
+        <div class="word-list-box" style="margin-bottom: 12px;">
+          <div class="word-item">
+            <span class="vn-text" style="font-size:15px;">Gô chưa ngủ.</span>
+            <button class="audio-btn" onclick="playAudio('Gô chưa ngủ.')">🔊 音声を聞く</button>
+            <div class="jp-text" style="font-size:13px; margin-top:2px;">ゴちゃんはまだ寝ていない。</div>
           </div>
-        </div>
-
-        <div class="example-card">
-          <p class="vn-sentence">Gô buồn ngủ.</p>
-          <p class="jp-sentence">ゴちゃんは眠い。（目がとろん…）😴</p>
-          <div class="word-breakdown">
-            <span><strong>Gô</strong>: ゴちゃん</span> | 
-            <span><strong>buồn ngủ</strong>: 眠い</span>
+          <div class="word-item">
+            <span class="vn-text" style="font-size:15px;">Gô đang ngủ.</span>
+            <button class="audio-btn" onclick="playAudio('Gô đang ngủ.')">🔊 音声を聞く</button>
+            <div class="jp-text" style="font-size:13px; margin-top:2px;">ゴちゃんは今寝ている。（進行形）</div>
+          </div>
+          <div class="word-item">
+            <span class="vn-text" style="font-size:15px;">Gô còn ngủ.</span>
+            <button class="audio-btn" onclick="playAudio('Gô còn ngủ.')">🔊 音声を聞く</button>
+            <div class="jp-text" style="font-size:13px; margin-top:2px;">ゴちゃんはまだ寝ている（継続中）。</div>
+          </div>
+          <div class="word-item">
+            <span class="vn-text" style="font-size:15px;">Gô ngủ rồi.</span>
+            <button class="audio-btn" onclick="playAudio('Gô ngủ rồi.')">🔊 音声を聞く</button>
+            <div class="jp-text" style="font-size:13px; margin-top:2px;">ゴちゃんはもう寝た。（完了）</div>
           </div>
         </div>
       </section>
 
-      <!-- 対比・状態変化セクション -->
-      <section class="contrast-section">
-        <h3>⚡️ 徹底対比！ゴちゃんは今寝てる？寝てない？</h3>
-        <p class="section-desc">「寝る（ngủ）」の前に一言つけるだけで、ゴちゃんのお昼寝状態がバッチリ分かっちゃうよ！</p>
-
-        <div class="contrast-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-          <div class="contrast-card">
-            <span class="status-tag ongoing">đang（進行）</span>
-            <p class="vn-sentence">Gô đang ngủ.</p>
-            <p class="jp-sentence">ゴちゃんは<strong>今寝ている</strong>最中だよ 💤</p>
-          </div>
-
-          <div class="contrast-card">
-            <span class="status-tag not-yet">chưa（未完了）</span>
-            <p class="vn-sentence">Gô chưa ngủ.</p>
-            <p class="jp-sentence">ゴちゃんは<strong>まだ寝ていない</strong>！（目がギンギン）👀</p>
-          </div>
-
-          <div class="contrast-card">
-            <span class="status-tag still">còn（継続）</span>
-            <p class="vn-sentence">Gô còn ngủ.</p>
-            <p class="jp-sentence">ゴちゃんは<strong>まだ（ずっと）寝ている</strong>よ 🛌</p>
-          </div>
-
-          <div class="contrast-card">
-            <span class="status-tag done">rồi（完了）</span>
-            <p class="vn-sentence">Gô ngủ rồi.</p>
-            <p class="jp-sentence">ゴちゃんは<strong>もう寝ちゃった</strong>！💤</p>
-          </div>
+      <section>
+        <h2>🍓 今日の復習</h2>
+        <div class="card">
+          <div class="vn-text">uống ＝ 飲む ／ ăn ＝ 食べる ／ buồn ngủ ＝ 眠い</div>
+          <div class="vn-text" style="font-size:14px; margin-top:4px;">chưa ＝ まだ〜ない ／ đang ＝ 〜している ／ rồi ＝ もう〜した</div>
+          <div class="desc-text" style="margin-top: 6px;">身近な動作と時制表現をセットで覚えると会話が一気にスムーズになります！</div>
         </div>
       </section>
 
-      <!-- キャラクターエンディング -->
-      <div class="character-box closing">
-        <div class="character">
-          <img src="assets/go.png" alt="ゴちゃん" class="char-img">
-          <div class="speech-bubble">
-            <p>Khò... khò... (Gô ngủ rồi〜💤)</p>
-          </div>
+      <section>
+        <h2>📚 いっしょに覚える単語</h2>
+        <div class="word-list-box">
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">uống</span> — <span class="jp-text" style="font-size:13px;">飲む</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">sữa</span> — <span class="jp-text" style="font-size:13px;">ミルク、牛乳</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">ăn</span> — <span class="jp-text" style="font-size:13px;">食べる</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">cơm</span> — <span class="jp-text" style="font-size:13px;">ご飯</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">buồn ngủ</span> — <span class="jp-text" style="font-size:13px;">眠い</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">chưa</span> — <span class="jp-text" style="font-size:13px;">まだ（未完了）</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">đang</span> — <span class="jp-text" style="font-size:13px;">今〜している（進行形）</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">còn</span> — <span class="jp-text" style="font-size:13px;">まだ〜である（継続）</span></div>
+          <div class="word-item"><span class="vn-text" style="font-size:14px;">rồi</span> — <span class="jp-text" style="font-size:13px;">もう〜した（完了）</span></div>
         </div>
-        <div class="character">
-          <img src="assets/ichigo.png" alt="いちごちゃん" class="char-img">
-          <div class="speech-bubble">
-            <p>あはは、お腹いっぱいになってついに寝ちゃった！みんなも đang や chưa の使い分け、しっかり覚えてね！</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- ナビゲーション -->
-      <nav class="lesson-nav">
-        <div class="nav-container">
-          <a href="lesson-2026-10-06.html" class="nav-btn prev-btn">
-            <span>👈 前のレッスン (10/6)</span>
-          </a>
-          <a href="index.html" class="nav-btn home-btn">🏠 一覧へ</a>
-          <div class="nav-btn disabled">
-            <span>最新のレッスンです</span>
-          </div>
-        </div>
-      </nav>
-
+      </section>
     </article>
   </main>
 
-  <script>
-    function audioPlay(audioSrc) {
-      const audio = new Audio(audioSrc);
-      audio.play().catch(e => console.log("音声再生エラー:", e));
+  <nav class="site-nav">
+    <a href="./index.html#today" class="nav-red">
+      <span>🍓 今日覚えた</span>
+    </a>
+    <a href="./words.html" class="nav-yellow">
+      <span>📚 これまでの一語</span>
+    </a>
+    <a href="./index.html#basic" class="nav-green">
+      <span>🌱 ベトナム語の基礎</span>
+    </a>
+  </nav>
+
+  <section class="archive-section">
+    <h3>📚 過去の記事一覧</h3>
+    <ul id="archive-list">
+      <li><a href="./lesson-2026-10-13.html">2026年10月13日の記事</a></li>
+      <li><a href="./lesson-2026-10-07.html">2026年10月07日の記事</a></li>
+      <li><a href="./lesson-2026-10-06.html">2026年10月06日の記事</a></li>
+      <li><a href="./lesson-2026-10-05.html">2026年10月05日の記事</a></li>
+      <li><a href="./lesson-2026-10-04.html">2026年10月04日の記事</a></li>
+    </ul>
+  </section>
+
+  <footer>
+    🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓
+  </footer>
+
+</div>
+
+<script>
+  function playAudio(text) {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'vi-VN';
+      window.speechSynthesis.speak(utterance);
+    } else {
+      alert('お使いのブラウザは音声読み上げに対応していません。');
     }
-  </script>
+  }
+</script>
+<script src="lessons.js"></script>
 </body>
 </html>
