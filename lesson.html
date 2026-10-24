@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">一期一語 - ベトナム語学習ブログ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ヘッダー -->
+  <header class="header">
+    <div class="header-container">
+      <h1 class="site-title"><a href="index.html" style="color: inherit; text-decoration: none;">一期一語 🍓</a></h1>
+      <p class="site-subtitle">ベトナム語（南部弁）をゴちゃんと楽しく学ぼう！</p>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <article class="lesson-card" id="lesson-container">
+      
+      <!-- レッスンヘッダー -->
+      <div class="lesson-header">
+        <span class="lesson-date" id="lesson-date">----年--月--日</span>
+        <h2 class="lesson-title" id="lesson-main-title">読み込み中...</h2>
+      </div>
+
+      <!-- キャラクターオープニング会話 -->
+      <div class="character-box" id="character-opening">
+        <!-- JSで動的に表示 -->
+      </div>
+
+      <!-- メイン単語セクション -->
+      <section class="word-section">
+        <h3>🌱 今日の基本単語・表現</h3>
+        <div class="word-grid" id="word-grid">
+          <!-- JSで動的に表示 -->
+        </div>
+      </section>
+
+      <!-- 例文＆会話セクション -->
+      <section class="example-section" id="example-section">
+        <h3>💬 ゴちゃんのリアル日常フレーズ</h3>
+        <div id="example-list">
+          <!-- JSで動的に表示 -->
+        </div>
+      </section>
+
+      <!-- 対比・文法セクション（データがある場合のみ表示） -->
+      <section class="contrast-section" id="contrast-section" style="display: none;">
+        <h3 id="contrast-title">⚡️ ポイント解説・徹底対比！</h3>
+        <p class="section-desc" id="contrast-desc"></p>
+        <div class="contrast-grid" id="contrast-grid">
+          <!-- JSで動的に表示 -->
+        </div>
+      </section>
+
+      <!-- キャラクターエンディング -->
+      <div class="character-box closing" id="character-closing">
+        <!-- JSで動的に表示 -->
+      </div>
+
+      <!-- 信号機カラーのナビゲーション（タイトル＋重要単語付きで自動生成） -->
+      <nav class="lesson-nav" id="lesson-nav">
+        <!-- JSで自動生成 -->
+      </nav>
+
+    </article>
+  </main>
+
+  <script src="lessons.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // URLのパラメーター(?id=lesson-2026-10-07)から該当レッスンを表示する処理
+    document.addEventListener("DOMContentLoaded", () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      let lessonId = urlParams.get('id');
+
+      // IDがない場合は最新のレッスンを表示
+      if (!lessonId && typeof lessonsData !== 'undefined' && lessonsData.length > 0) {
+        lessonId = lessonsData[0].id;
+      }
+
+      const lesson = lessonsData.find(item => item.id === lessonId);
+      if (!lesson) {
+        document.getElementById('lesson-main-title').innerText = "記事が見つかりませんでした。";
+        return;
+      }
+
+      // ページタイトル & ヘッダー
+      document.title = `${lesson.title} - 一期一語`;
+      document.getElementById('lesson-date').innerText = lesson.date;
+      document.getElementById('lesson-main-title').innerText = lesson.title;
+
+      // オープニング会話
+      if (lesson.opening && lesson.opening.length > 0) {
+        const openingContainer = document.getElementById('character-opening');
+        openingContainer.innerHTML = lesson.opening.map(char => `
+          <div class="character ${char.role}">
+            <img src="images/${char.image}" alt="${char.name}" class="char-img ${char.action || ''}">
+            <div class="speech-bubble"><p>${char.text}</p></div>
+          </div>
+        `).join('');
+      }
+
+      // 単語カード
+      if (lesson.words && lesson.words.length > 0) {
+        const wordGrid = document.getElementById('word-grid');
+        wordGrid.innerHTML = lesson.words.map(w => `
+          <div class="word-card">
+            <div class="word-header">
+              <span class="vn-word">${w.vietnamese}</span>
+              <button class="audio-btn" onclick="playAudio('${w.audio}')">🔊</button>
+            </div>
+            <p class="jp-meaning">${w.japanese}</p>
+            <p class="pronunciation">【${w.pronunciation}】</p>
+          </div>
+        `).join('');
+      }
+
+      // 例文リスト
+      if (lesson.examples && lesson.examples.length > 0) {
+        const exampleList = document.getElementById('example-list');
+        exampleList.innerHTML = lesson.examples.map(ex => `
+          <div class="example-card">
+            <p class="vn-sentence">${ex.vietnamese}</p>
+            <p class="jp-sentence">${ex.japanese}</p>
+            ${ex.breakdown ? `<div class="word-breakdown">${ex.breakdown}</div>` : ''}
+          </div>
+        `).join('');
+      }
+
+      // 対比・文法セクション
+      if (lesson.contrast) {
+        const contrastSection = document.getElementById('contrast-section');
+        contrastSection.style.display = 'block';
+        if (lesson.contrast.title) document.getElementById('contrast-title').innerText = lesson.contrast.title;
+        if (lesson.contrast.desc) document.getElementById('contrast-desc').innerText = lesson.contrast.desc;
+
+        const contrastGrid = document.getElementById('contrast-grid');
+        contrastGrid.innerHTML = lesson.contrast.items.map(item => `
+          <div class="contrast-card">
+            <span class="status-tag ${item.tagClass}">${item.tag}</span>
+            <p class="vn-sentence">${item.vietnamese}</p>
+            <p class="jp-sentence">${item.japanese}</p>
+          </div>
+        `).join('');
+      }
+
+      // エンディング会話
+      if (lesson.closing && lesson.closing.length > 0) {
+        const closingContainer = document.getElementById('character-closing');
+        closingContainer.innerHTML = lesson.closing.map(char => `
+          <div class="character ${char.role}">
+            <img src="images/${char.image}" alt="${char.name}" class="char-img ${char.action || ''}">
+            <div class="speech-bubble"><p>${char.text}</p></div>
+          </div>
+        `).join('');
+      }
+
+      // 信号機ナビ（全ページ一元管理＆タイトル・重要単語を自動挿入）
+      renderNavigation(lesson.id);
+    });
+
+    // 信号機カラーのナビ生成関数
+    function renderNavigation(currentId) {
+      const nav = document.getElementById('lesson-nav');
+      const currentIndex = lessonsData.findIndex(item => item.id === currentId);
+      if (currentIndex === -1) return;
+
+      const prevLesson = lessonsData[currentIndex + 1]; // 古い記事
+      const nextLesson = lessonsData[currentIndex - 1]; // 新しい記事
+
+      let html = '<div class="nav-container">';
+      
+      // 前の記事（赤/黄）
+      if (prevLesson) {
+        html += `
+          <a href="lesson.html?id=${prevLesson.id}" class="nav-btn prev-btn">
+            <span class="nav-label">👈 前のレッスン (${prevLesson.date})</span>
+            <strong class="nav-title">${prevLesson.title}</strong>
+            <span class="nav-keywords">🔑 ${prevLesson.keywords.join(', ')}</span>
+          </a>
+        `;
+      } else {
+        html += '<div class="nav-btn disabled"><span>最初のレッスンです</span></div>';
+      }
+
+      // ホームへ戻る（信号機真ん中）
+      html += `<a href="index.html" class="nav-btn home-btn">🏠 一覧へ</a>`;
+
+      // 次の記事（緑）
+      if (nextLesson) {
+        html += `
+          <a href="lesson.html?id=${nextLesson.id}" class="nav-btn next-btn">
+            <span class="nav-label">次のレッスン (${nextLesson.date}) 👉</span>
+            <strong class="nav-title">${nextLesson.title}</strong>
+            <span class="nav-keywords">🔑 ${nextLesson.keywords.join(', ')}</span>
+          </a>
+        `;
+      } else {
+        html += '<div class="nav-btn disabled"><span>最新のレッスンです</span></div>';
+      }
+
+      html += '</div>';
+      nav.innerHTML = html;
+    }
+  </script>
+</body>
+</html>
