@@ -7,6 +7,7 @@ function speakVietnamese(text) {
     alert("お使いのブラウザは音声読み上げに対応していません。");
     return;
   }
+
   
   window.speechSynthesis.cancel();
   
