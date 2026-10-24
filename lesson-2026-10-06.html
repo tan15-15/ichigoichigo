@@ -136,6 +136,9 @@ body {
   transition: .2s;
 }
 
+.voice-button:hover { transform: translateY(-2px); }
+.voice-button:active { transform: scale(.96); }
+
 .translation {
   margin-top: 17px;
   padding-top: 15px;
@@ -173,7 +176,7 @@ body {
   overflow-wrap: anywhere;
 }
 
-/* 📚 過去の記事一覧（自動生成用スタイル） */
+/* 📚 過去の記事一覧（lessons.js から全自動生成） */
 .archive-section {
   margin: 25px 0;
   padding: 22px 20px;
@@ -211,6 +214,10 @@ body {
   display: block;
 }
 
+.archive-item a:hover {
+  color: #e65470;
+}
+
 .archive-keywords {
   font-size: 12px;
   color: #8a7777;
@@ -232,7 +239,10 @@ body {
   padding: 17px 8px;
   text-align: center;
   box-shadow: 0 5px 18px rgba(100,80,80,.06);
+  transition: .2s;
 }
+
+.menu a:hover { transform: translateY(-3px); }
 
 .menu strong {
   display: block;
@@ -266,7 +276,7 @@ body {
     <p>南部ベトナムで暮らしながら、今日覚えた一語を大切に。</p>
   </header>
 
-  <!-- 10/6 正しいメインコンテンツ -->
+  <!-- 10/6 本来の正しいメインコンテンツ -->
   <main>
     <article class="today-card">
       <span class="today-label">2026年10月6日</span>
@@ -282,7 +292,7 @@ body {
       <div class="vietnamese-card">
         <div class="vietnamese-label">🔊 ベトナム語（南部発音）</div>
         <div class="vietnamese">Đi nhẹ thôi, Baby đang ngủ!</div>
-        <button class="voice-button" onclick="speechSynthesis.speak(new SpeechSynthesisUtterance('Đi nhẹ thôi, Baby đang ngủ!'))">
+        <button class="voice-button" onclick="playAudio('lesson-2026-10-06.mp3')">
           🔊 音声を聞く
         </button>
         <div class="translation">日本語訳：そっと歩いてね、赤ちゃんが寝てるから！</div>
@@ -340,9 +350,16 @@ body {
 
 </div>
 
-<!-- データ読み込み & 自動描画スクリプト -->
+<!-- データ読み込み & 自動描画スクリプト（ES5互換・安全実装） -->
 <script src="lessons.js"></script>
 <script>
+  function playAudio(filename) {
+    var audio = new Audio(filename);
+    audio.play().catch(function(e) {
+      console.log("Audio play failed:", e);
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function() {
     var archiveList = document.getElementById('archive-list');
     if (!archiveList || typeof lessons === 'undefined') return;
