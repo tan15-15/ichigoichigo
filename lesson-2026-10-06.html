@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="canonical" href="https://tan15-15.github.io/ichigoichigo/lesson-2026-10-06.html">
-<meta name="description" content="2026年10月6日のベトナム語レッスン。ゴちゃんが寝た！？音を立てたら即終了ミッション。日常会話で使えるベトナム語フレーズを音声・解説付きで学べます。">
+<meta name="description" content="2026年10月6日のベトナム語レッスン。ゴちゃんが寝た！？音を立てたら即終了ミッション。関連単語や対比表現もまとめて学べます。">
 <title>2026年10月6日：😴 ゴちゃんが寝た！？音を立てたら即終了ミッション | 一期一語</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -84,7 +84,6 @@ body {
   color: #5b4b4b;
 }
 
-/* キャラクター会話エリア */
 .char-dialogue {
   display: flex;
   align-items: flex-start;
@@ -170,9 +169,6 @@ body {
   transition: .2s;
 }
 
-.voice-button:hover { transform: translateY(-2px); }
-.voice-button:active { transform: scale(.96); }
-
 .translation {
   margin-top: 17px;
   padding-top: 15px;
@@ -211,7 +207,56 @@ body {
   overflow-wrap: anywhere;
 }
 
-/* 📚 過去の記事一覧（自動生成用スタイル） */
+/* 🔄 対比・関連単語セクション */
+.extra-section {
+  margin-top: 30px;
+  background: #f0f7ff;
+  border: 2px solid #d0e3ff;
+  border-radius: 25px;
+  padding: 22px 20px;
+}
+
+.extra-section h3 {
+  margin: 0 0 15px;
+  color: #2b6cb0;
+  font-size: 19px;
+  text-align: center;
+}
+
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.compare-box {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+}
+
+.compare-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #718096;
+  margin-bottom: 6px;
+}
+
+.compare-vn {
+  font-size: 18px;
+  font-weight: bold;
+  color: #2b6cb0;
+}
+
+.compare-jp {
+  font-size: 13px;
+  color: #4a5568;
+}
+
+/* 📚 過去の記事一覧 */
 .archive-section {
   margin: 25px 0;
   padding: 22px 20px;
@@ -248,8 +293,6 @@ body {
   font-size: 15px;
   display: block;
 }
-
-.archive-item a:hover { color: #e65470; }
 
 .archive-keywords {
   font-size: 12px;
@@ -289,6 +332,7 @@ body {
   .page { padding: 10px 10px 30px; }
   .today-card { padding: 23px 14px 28px; }
   .vietnamese { font-size: 22px; }
+  .compare-grid { grid-template-columns: 1fr; }
   .menu { gap: 7px; }
   .menu a { padding: 13px 4px; }
 }
@@ -354,12 +398,38 @@ body {
             <strong style="color:#ed607a;">đang ngủ</strong>
             <div class="word-japanese">寝ている（進行形）</div>
           </div>
-          <div class="word">
-            <strong style="color:#ed607a;">im lặng</strong>
-            <div class="word-japanese">静かにする / 黙る</div>
-          </div>
         </div>
       </div>
+
+      <!-- 💡 対比表現・関連単語セクション -->
+      <section class="extra-section">
+        <h3>🔄 対比表現 &amp; 関連単語で覚える</h3>
+        
+        <div class="compare-grid">
+          <div class="compare-box">
+            <div class="compare-title">対比：静か ↔ うるさい</div>
+            <div class="compare-vn">im lặng ↔ ồn ào</div>
+            <div class="compare-jp">静かにする ↔ うるさい・騒がしい</div>
+          </div>
+          <div class="compare-box">
+            <div class="compare-title">対比：寝る ↔ 起きる</div>
+            <div class="compare-vn">ngủ ↔ thức dậy</div>
+            <div class="compare-jp">寝る ↔ 起きる</div>
+          </div>
+        </div>
+
+        <div class="word-list">
+          <div class="word" style="background:#fff;">
+            <strong style="color:#2b6cb0;">tiếng động</strong>
+            <div class="word-japanese">物音・音</div>
+          </div>
+          <div class="word" style="background:#fff;">
+            <strong style="color:#2b6cb0;">nói nhỏ</strong>
+            <div class="word-japanese">小声で話す</div>
+          </div>
+        </div>
+      </section>
+
     </article>
   </main>
 
@@ -397,7 +467,6 @@ body {
     try {
       var audio = new Audio(filename);
       audio.play().catch(function(e) {
-        // フォールバック（Web Speech API）
         if ('speechSynthesis' in window) {
           var u = new SpeechSynthesisUtterance('Đi nhẹ thôi, Baby đang ngủ!');
           u.lang = 'vi-VN';
