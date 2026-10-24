@@ -51,7 +51,7 @@ jobs:
               raise SystemExit("words は単語と意味のリストにしてください")
 
           lesson.setdefault("extraWords", [])
-          date_str = lesson["date"]  # 例: "2026-10-09"
+          date_str = lesson["date"]
 
           # 1. lessons.js への追加処理
           path = Path("lessons.js")
@@ -89,29 +89,26 @@ jobs:
               path.write_text(updated, encoding="utf-8")
               print("lessons.js にレッスンを追加しました")
 
-          # 2. 小文字で確実に個別HTMLファイル（例: lesson-2026-10-09.html）を生成する処理
+          # 2. 小文字で個別HTMLファイルを確実に生成
           html_filename = f"lesson-{date_str}.html"
           html_path = Path(html_filename)
 
-          # すでに存在していなければ、テンプレートからHTMLを自動生成
           if not html_path.exists():
-              # 既存の別のレッスンHTMLがあればそこからテンプレートを流用、なければ標準テンプレートを作成
               template_html = f"""<!DOCTYPE html>
-          <html lang="ja">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>{lesson['title']} - 一期一語</title>
-              <link rel="stylesheet" href="style.css">
-          </head>
-          <body>
-              <!-- レッスン詳細ページのテンプレート -->
-              <div id="app" data-date="{date_str}"></div>
-              <script src="lessons.js"></script>
-              <script src="app.js"></script>
-          </body>
-          </html>
-          """
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{lesson['title']} - 一期一語</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app" data-date="{date_str}"></div>
+    <script src="lessons.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+"""
               html_path.write_text(template_html, encoding="utf-8")
               print(f"個別HTMLファイルを作成しました: {html_filename}")
           else:
@@ -123,10 +120,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 大文字ファイルが存在していれば強制削除して小文字に統一
+          find . -maxdepth 1 -name "Lesson-*.html" -exec git rm -f {} \; || true
+          
           git add .
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
-            git commit -m "Add Vietnamese lesson and HTML automatically"
+            git commit -m "Add Vietnamese lesson and ensure lowercase html filename"
             git push
           fi
