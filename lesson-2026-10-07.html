@@ -6,7 +6,7 @@
   <title>ゴちゃんと覚える基本動詞＆お昼寝バトル！ - 一期一語</title>
   <link rel="stylesheet" href="style.css">
 </head>
-<body data-lesson-id="lesson-2026-10-07">
+<body>
 
   <!-- ヘッダー -->
   <header class="header">
@@ -111,7 +111,7 @@
       <!-- 対比・状態変化セクション -->
       <section class="contrast-section">
         <h3>⚡️ 徹底対比！ゴちゃんは今寝てる？寝てない？</h3>
-        <p class="section-desc"> প্রস্তুত（「寝る（ngủ）」の前に一言つけるだけで、ゴちゃんのお昼寝状態がバッチリ分かっちゃうよ！</p>
+        <p class="section-desc">「寝る（ngủ）」の前に一言つけるだけで、ゴちゃんのお昼寝状態がバッチリ分かっちゃうよ！</p>
 
         <div class="contrast-grid">
           <div class="contrast-card">
@@ -156,15 +156,26 @@
         </div>
       </div>
 
-      <!-- 信号機カラーのナビゲーション -->
-      <nav class="lesson-nav" id="lesson-nav">
-        <!-- 自動生成されます -->
+      <!-- ナビゲーション -->
+      <nav class="lesson-nav">
+        <div class="nav-container">
+          <a href="lesson-2026-10-06.html" class="nav-btn prev-btn">
+            <span class="nav-label">👈 前のレッスン</span>
+            <strong class="nav-title">10月6日のレッスン</strong>
+          </a>
+          <a href="index.html" class="nav-btn home-btn">🏠 一覧へ</a>
+          <div class="nav-btn disabled"><span>最新のレッスンです</span></div>
+        </div>
       </nav>
 
     </article>
   </main>
 
-  <script src="lessons.js"></script>
-  <script src="script.js"></script>
+  <script>
+    function audioPlay(audioSrc) {
+      const audio = new Audio(audioSrc);
+      audio.play().catch(e => console.log("音声再生エラー:", e));
+    }
+  </script>
 </body>
 </html>
