@@ -84,6 +84,40 @@ body {
   color: #5b4b4b;
 }
 
+/* キャラクター会話エリア */
+.char-dialogue {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin: 20px 0;
+  background: #fff5f7;
+  padding: 15px 18px;
+  border-radius: 20px;
+  border: 1px solid #ffe1e8;
+}
+
+.char-img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid #ed607a;
+}
+
+.char-bubble {
+  flex: 1;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.char-name {
+  font-weight: bold;
+  color: #ed607a;
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+
 .scene {
   background: #fff8f3;
   border-radius: 22px;
@@ -120,7 +154,7 @@ body {
   font-size: clamp(22px, 5vw, 32px);
   line-height: 1.5;
   font-weight: 700;
-  color: #4d6f91;
+  color: #ed5470;
 }
 
 .voice-button {
@@ -145,6 +179,7 @@ body {
   border-top: 1px dashed #e9cbd2;
   font-size: 16px;
   font-weight: bold;
+  color: #2e7d32;
 }
 
 .word-section { margin-top: 25px; }
@@ -214,6 +249,8 @@ body {
   display: block;
 }
 
+.archive-item a:hover { color: #e65470; }
+
 .archive-keywords {
   font-size: 12px;
   color: #8a7777;
@@ -274,6 +311,14 @@ body {
       <span class="today-label">2026年10月6日</span>
       <h2>😴 ゴちゃんが寝た！？音を立てたら即終了ミッション</h2>
 
+      <div class="char-dialogue">
+        <img src="images/ichigo-chan.png" alt="いちごちゃん" class="char-img" onerror="this.style.display='none'">
+        <div class="char-bubble">
+          <div class="char-name">🍓 いちごちゃん</div>
+          シーッ！抱っこでようやくゴちゃんが寝たよ…！音を立てずにベッドへ移動させないと起きちゃう！
+        </div>
+      </div>
+
       <div class="scene">
         <div class="scene-icon">🤫</div>
         <h3>【場面】赤ちゃんが寝静まったあとのリビング</h3>
@@ -284,7 +329,7 @@ body {
       <div class="vietnamese-card">
         <div class="vietnamese-label">🔊 ベトナム語（南部発音）</div>
         <div class="vietnamese">Đi nhẹ thôi, Baby đang ngủ!</div>
-        <button class="voice-button" onclick="playAudio('lesson-2026-10-06.mp3')">
+        <button class="voice-button" onclick="playAudio('audio/lesson-2026-10-06.mp3')">
           🔊 音声を聞く
         </button>
         <div class="translation">日本語訳：そっと歩いてね、赤ちゃんが寝てるから！</div>
@@ -308,6 +353,10 @@ body {
           <div class="word">
             <strong style="color:#ed607a;">đang ngủ</strong>
             <div class="word-japanese">寝ている（進行形）</div>
+          </div>
+          <div class="word">
+            <strong style="color:#ed607a;">im lặng</strong>
+            <div class="word-japanese">静かにする / 黙る</div>
           </div>
         </div>
       </div>
@@ -347,7 +396,14 @@ body {
   function playAudio(filename) {
     try {
       var audio = new Audio(filename);
-      audio.play();
+      audio.play().catch(function(e) {
+        // フォールバック（Web Speech API）
+        if ('speechSynthesis' in window) {
+          var u = new SpeechSynthesisUtterance('Đi nhẹ thôi, Baby đang ngủ!');
+          u.lang = 'vi-VN';
+          speechSynthesis.speak(u);
+        }
+      });
     } catch (e) {
       console.log(e);
     }
