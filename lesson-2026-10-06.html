@@ -265,7 +265,6 @@ body {
     <p>南部ベトナムで暮らしながら、今日覚えた一語を大切に。</p>
   </header>
 
-  <!-- 正しいメインコンテンツ（ゴちゃんが寝た！？） -->
   <main>
     <article class="today-card">
       <span class="today-label">2026年10月6日</span>
@@ -311,7 +310,6 @@ body {
     </article>
   </main>
 
-  <!-- 📚 過去の記事一覧（lessons.js から全自動生成） -->
   <section class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list" class="archive-list"></ul>
@@ -357,4 +355,43 @@ body {
     var sorted = lessons.slice().reverse();
     var html = '';
 
-    for (var
+    for (var i = 0; i < sorted.length; i++) {
+      var item = sorted[i];
+      var digits = item.date.replace(/[^0-9]/g, '');
+      if (digits.length < 8) continue;
+
+      var y = digits.substring(0, 4);
+      var m = digits.substring(4, 6);
+      var d = digits.substring(6, 8);
+      var file = 'lesson-' + y + '-' + m + '-' + d + '.html';
+
+      var kw = '';
+      if (item.archiveWords && item.archiveWords.length > 0) {
+        kw = item.archiveWords.slice(0, 3).join(', ');
+      } else if (item.words && item.words.length > 0) {
+        var arr = [];
+        for (var j = 0; j < Math.min(item.words.length, 3); j++) {
+          arr.push(item.words[j].v || item.words[j].vn || '');
+        }
+        kw = arr.join(', ');
+      }
+
+      html += '<li class="archive-item">';
+      html += '<a href="./' + file + '">' + item.date + '：' + item.title + '</a>';
+      if (kw) {
+        html += '<div class="archive-keywords">🔑 重要語: ' + kw + '</div>';
+      }
+      html += '</li>';
+    }
+
+    archiveList.innerHTML = html;
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderArchive);
+  } else {
+    renderArchive();
+  }
+</script>
+</body>
+</html>
