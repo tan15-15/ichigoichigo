@@ -4,7 +4,189 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ゴちゃんと覚える基本動詞＆お昼寝バトル！ - 一期一語</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    /* 10/4基準の完全内蔵デザインスタイル */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #fff9fa;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+    .header {
+      background-color: #ffb7c5;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    .site-title {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+    .site-subtitle {
+      margin: 5px 0 0;
+      font-size: 0.9rem;
+    }
+    .main-content {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+    }
+    .lesson-card {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      box-shadow: 0 4px 15px rgba(255, 183, 197, 0.2);
+      border: 2px solid #ffe4e9;
+    }
+    .lesson-date {
+      color: #ff7f93;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .lesson-title {
+      font-size: 1.4rem;
+      color: #444;
+      margin-top: 5px;
+    }
+    .character-box {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin: 20px 0;
+      background: #fff0f3;
+      padding: 15px;
+      border-radius: 12px;
+    }
+    .character {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .char-img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+    }
+    .speech-bubble {
+      background: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      border: 1px solid #ffccd5;
+      flex-grow: 1;
+      margin: 0;
+    }
+    .speech-bubble p {
+      margin: 0;
+    }
+    .word-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .word-card {
+      background: #fdf2f4;
+      border: 1px solid #ffccd5;
+      border-radius: 10px;
+      padding: 15px;
+      text-align: center;
+    }
+    .vn-word {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #d6336c;
+    }
+    .audio-btn {
+      background: #ff7f93;
+      border: none;
+      color: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      margin-left: 8px;
+    }
+    .jp-meaning {
+      font-weight: bold;
+      margin: 5px 0 0;
+    }
+    .pronunciation {
+      font-size: 0.85rem;
+      color: #666;
+      margin: 2px 0 0;
+    }
+    .example-section, .contrast-section {
+      margin-top: 30px;
+    }
+    .example-card {
+      background: #f8f9fa;
+      border-left: 4px solid #ff7f93;
+      padding: 12px 15px;
+      margin-bottom: 10px;
+      border-radius: 0 8px 8px 0;
+    }
+    .vn-sentence {
+      font-weight: bold;
+      color: #2b2b2b;
+      margin: 0;
+    }
+    .jp-sentence {
+      margin: 3px 0;
+      color: #555;
+    }
+    .word-breakdown {
+      font-size: 0.85rem;
+      color: #777;
+    }
+    .contrast-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .contrast-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      padding: 12px;
+      border-radius: 8px;
+    }
+    .status-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+    }
+    .status-tag.ongoing { background-color: #3b82f6; }
+    .status-tag.not-yet { background-color: #ef4444; }
+    .status-tag.still { background-color: #10b981; }
+    .status-tag.done { background-color: #8b5cf6; }
+    .lesson-nav {
+      margin-top: 40px;
+      border-top: 2px dashed #ffccd5;
+      padding-top: 20px;
+    }
+    .nav-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .nav-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: bold;
+    }
+    .prev-btn { background-color: #fee2e2; color: #b91c1c; }
+    .home-btn { background-color: #f3f4f6; color: #374151; }
+    .nav-btn.disabled { background-color: #f9fafb; color: #9ca3af; cursor: not-allowed; }
+  </style>
 </head>
 <body>
 
@@ -25,14 +207,14 @@
 
       <!-- キャラクターオープニング会話 -->
       <div class="character-box">
-        <div class="character ichigo">
-          <img src="assets/ichigo.png" alt="いちごちゃん" class="char-img bounce">
+        <div class="character">
+          <img src="assets/ichigo.png" alt="いちごちゃん" class="char-img">
           <div class="speech-bubble">
             <p>みんな〜！今日のゴちゃんは食欲旺盛＆眠気との戦いで大忙しだよ！基本動詞を一緒に覚えちゃおう！</p>
           </div>
         </div>
-        <div class="character go">
-          <img src="assets/go.png" alt="ゴちゃん" class="char-img wiggle">
+        <div class="character">
+          <img src="assets/go.png" alt="ゴちゃん" class="char-img">
           <div class="speech-bubble">
             <p>Gô muốn ăn cơm! Gô buồn ngủ rồi... 🍼😴（ご飯食べたい！もう眠い〜！）</p>
           </div>
@@ -47,7 +229,7 @@
           <div class="word-card">
             <div class="word-header">
               <span class="vn-word">uống</span>
-              <button class="audio-btn" onclick="playAudio('audio/uong.mp3')">🔊</button>
+              <button class="audio-btn" onclick="audioPlay('audio/uong.mp3')">🔊</button>
             </div>
             <p class="jp-meaning">飲む</p>
             <p class="pronunciation">【ウオン】</p>
@@ -56,7 +238,7 @@
           <div class="word-card">
             <div class="word-header">
               <span class="vn-word">ăn</span>
-              <button class="audio-btn" onclick="playAudio('audio/an.mp3')">🔊</button>
+              <button class="audio-btn" onclick="audioPlay('audio/an.mp3')">🔊</button>
             </div>
             <p class="jp-meaning">食べる</p>
             <p class="pronunciation">【アン】</p>
@@ -65,7 +247,7 @@
           <div class="word-card">
             <div class="word-header">
               <span class="vn-word">buồn ngủ</span>
-              <button class="audio-btn" onclick="playAudio('audio/buon_ngu.mp3')">🔊</button>
+              <button class="audio-btn" onclick="audioPlay('audio/buon_ngu.mp3')">🔊</button>
             </div>
             <p class="jp-meaning">眠い</p>
             <p class="pronunciation">【ブオン グー】</p>
@@ -113,7 +295,7 @@
         <h3>⚡️ 徹底対比！ゴちゃんは今寝てる？寝てない？</h3>
         <p class="section-desc">「寝る（ngủ）」の前に一言つけるだけで、ゴちゃんのお昼寝状態がバッチリ分かっちゃうよ！</p>
 
-        <div class="contrast-grid">
+        <div class="contrast-grid" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
           <div class="contrast-card">
             <span class="status-tag ongoing">đang（進行）</span>
             <p class="vn-sentence">Gô đang ngủ.</p>
@@ -142,16 +324,16 @@
 
       <!-- キャラクターエンディング -->
       <div class="character-box closing">
-        <div class="character go">
-          <img src="assets/go.png" alt="ゴちゃん" class="char-img sleep">
+        <div class="character">
+          <img src="assets/go.png" alt="ゴちゃん" class="char-img">
           <div class="speech-bubble">
             <p>Khò... khò... (Gô ngủ rồi〜💤)</p>
           </div>
         </div>
-        <div class="character ichigo">
-          <img src="assets/ichigo.png" alt="いちごちゃん" class="char-img smile">
+        <div class="character">
+          <img src="assets/ichigo.png" alt="いちごちゃん" class="char-img">
           <div class="speech-bubble">
-            <p>あはは、お腹いっぱいになってついに寝ちゃった！みんなも `đang` や `chưa` の使い分け、しっかり覚えてね！</p>
+            <p>あはは、お腹いっぱいになってついに寝ちゃった！みんなも đang や chưa の使い分け、しっかり覚えてね！</p>
           </div>
         </div>
       </div>
@@ -160,11 +342,12 @@
       <nav class="lesson-nav">
         <div class="nav-container">
           <a href="lesson-2026-10-06.html" class="nav-btn prev-btn">
-            <span class="nav-label">👈 前のレッスン</span>
-            <strong class="nav-title">10月6日のレッスン</strong>
+            <span>👈 前のレッスン (10/6)</span>
           </a>
           <a href="index.html" class="nav-btn home-btn">🏠 一覧へ</a>
-          <div class="nav-btn disabled"><span>最新のレッスンです</span></div>
+          <div class="nav-btn disabled">
+            <span>最新のレッスンです</span>
+          </div>
         </div>
       </nav>
 
