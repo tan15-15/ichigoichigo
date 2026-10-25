@@ -26,23 +26,44 @@
     <main class="archive-page-container">
         <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
         
-        <div class="archive-list">
-            <!-- 10月4日の記事（最新を上） -->
-            <a class="archive-item" href="./lesson-2026-10-04.html">
-                <div class="archive-date">📅 2026年10月4日</div>
-                <div class="archive-item-title">🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く</div>
-                <div class="archive-item-words">主要単語：bát, này, nhiêu, tiền, mắc, rẻ</div>
-            </a>
-
-            <!-- 10月3日の記事 -->
-            <a class="archive-item" href="./lesson-2026-10-03.html">
-                <div class="archive-date">📅 2026年10月3日</div>
-                <div class="archive-item-title">市場に行きたい！ ベトナム語を覚えて、いざ出発！</div>
-                <div class="archive-item-words">主要単語：hôm nay, muốn, đi chợ, về nhà</div>
-            </a>
-        </div>
+        <!-- 自動でリストが生成される場所 -->
+        <div id="archive-container" class="archive-list"></div>
 
         <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
     </main>
+
+    <!-- 記事データファイルの読み込み -->
+    <script src="lessons.js"></script>
+
+    <script>
+    (function(){
+        var container = document.getElementById('archive-container');
+        if (typeof lessons !== 'undefined' && Array.isArray(lessons)) {
+            // 新しい日付順（降順）に自動並び替え
+            var sorted = lessons.slice().sort(function(a, b) {
+                return b.date.localeCompare(a.date);
+            });
+
+            var html = '';
+            sorted.forEach(function(item) {
+                // 日付を「2026年10月5日」の形に変換
+                var p = item.date.split('-');
+                var dateText = p[0] + '年' + parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
+                var linkUrl = './lesson-' + item.date + '.html';
+
+                html += '<a class="archive-item" href="' + linkUrl + '">';
+                html += '  <div class="archive-date">📅 ' + dateText + '</div>';
+                html += '  <div class="archive-item-title">' + item.title + '</div>';
+                if (item.words) {
+                    html += '  <div class="archive-item-words">主要単語：' + item.words + '</div>';
+                }
+                html += '</a>';
+            });
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = '<p style="text-align:center; color:#888;">記事データを読み込めませんでした。</p>';
+        }
+    })();
+    </script>
 </body>
 </html>
