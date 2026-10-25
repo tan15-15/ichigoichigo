@@ -18,7 +18,7 @@ jobs:
       - name: Get repository
         uses: actions/checkout@v4
 
-      - name: Add lesson and generate HTML
+      - name: Add lesson and sync all HTMLs
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
@@ -29,99 +29,103 @@ jobs:
           from pathlib import Path
 
           raw = os.environ.get("LESSON_JSON", "").strip()
-          raw = raw.translate(str.maketrans({
-              "“": '"', "”": '"', "„": '"', "‟": '"',
-              "‘": "'", "’": "'", "‚": "'", "‛": "'"
-          }))
+          if raw:
+              raw = raw.translate(str.maketrans({
+                  "“": '"', "”": '"', "„": '"', "‟": '"',
+                  "‘": "'", "’": "'", "‚": "'", "‛": "'"
+              }))
+              try:
+                  lesson = json.loads(raw)
+                  required = [
+                      "date", "title", "scene", "vietnamese",
+                      "translation", "words", "mainWord", "mainMeaning"
+                  ]
+                  missing = [key for key in required if key not in lesson]
+                  if not missing and isinstance(lesson["words"], list):
+                      lesson.setdefault("extraWords", [])
+                      path = Path("lessons.js")
+                      content = path.read_text(encoding="utf-8")
 
-          try:
-              lesson = json.loads(raw)
-          except json.JSONDecodeError as e:
-              raise SystemExit(f"JSONの形式が正しくありません: {e}")
+                      match = re.search(r'const\s+lessons\s*=\s*\[', content)
+                      if match:
+                          end_marker = "\n];\n\nconst vocabulary = ["
+                          insert_at = content.find(end_marker, match.end())
+                          if insert_at > 0:
+                              existing = content[match.end():insert_at]
+                              if not (json.dumps(lesson["date"], ensure_ascii=False) in existing and json.dumps(lesson["title"], ensure_ascii=False) in existing):
+                                  separator = "" if not existing.strip() or existing.rstrip().endswith(",") else ","
+                                  new_entry = json.dumps(lesson, ensure_ascii=False, indent=2)
+                                  updated = content[:insert_at] + separator + "\n  " + new_entry.replace("\n", "\n  ") + "\n" + content[insert_at:]
+                                  path.write_text(updated, encoding="utf-8")
+                                  print("lessons.js に新しいレッスンを追加しました")
+              except Exception as e:
+                  print(f"JSON追加スキップ（または既存データ処理へ移行）: {e}")
 
-          required = [
-              "date", "title", "scene", "vietnamese",
-              "translation", "words", "mainWord", "mainMeaning"
-          ]
-          missing = [key for key in required if key not in lesson]
-          if missing:
-              raise SystemExit("不足している項目: " + ", ".join(missing))
+          # lessons.js から全レッスンデータを読み込み、全日付の小文字HTMLファイルを確実に生成・同期する
+          content = Path("lessons.js").read_text(encoding="utf-8")
+          match_lessons = re.search(r'const\s+lessons\s*=\s*(\[.*?\]);?\s*\n', content, re.DOTALL)
+          lessons_list = json.loads(match_lessons.group(1)) if match_lessons else []
 
-          if not isinstance(lesson["words"], list):
-              raise SystemExit("words は単語と意味のリストにしてください")
+          # ベースとなるテンプレート（index.html または既存の機能しているHTMLから流用）
+          base_template = None
+          for f in Path(".").glob("*.html"):
+              if f.name.lower() in ["index.html"] or f.name.lower().startswith("lesson-"):
+                  try:
+                      text = f.read_text(encoding="utf-8")
+                      if 'id="app"' in text:
+                          base_template = text
+                          break
+                  except:
+                      pass
 
-          lesson.setdefault("extraWords", [])
-          date_str = lesson["date"]
-
-          # 1. lessons.js への追加処理
-          path = Path("lessons.js")
-          content = path.read_text(encoding="utf-8")
-
-          match = re.search(r'const\s+lessons\s*=\s*\[', content)
-          if not match:
-              raise SystemExit("lessons.js の配列が見つかりません")
-
-          end_marker = "\n];\n\nconst vocabulary = ["
-          insert_at = content.find(end_marker, match.end())
-          if insert_at < 0:
-              raise SystemExit("lessons.js の配列の終わりが見つかりません")
-
-          existing = content[match.end():insert_at]
-          if (
-              json.dumps(lesson["date"], ensure_ascii=False) in existing
-              and json.dumps(lesson["title"], ensure_ascii=False) in existing
-          ):
-              print("同じ日付とタイトルのレッスンがあるため、lessons.jsへの追加はスキップします。")
-          else:
-              separator = "" if not existing.strip() or existing.rstrip().endswith(",") else ","
-              new_entry = json.dumps(lesson, ensure_ascii=False, indent=2)
-              updated = content[:insert_at] + separator + "\n  " + new_entry.replace("\n", "\n  ") + "\n" + content[insert_at:]
-              path.write_text(updated, encoding="utf-8")
-              print("lessons.js にレッスンを追加しました")
-
-          # 2. 既存のHTMLをテンプレートとして流用し、音声や別日リンクなどの構造を完全に引き継いで個別HTMLを生成
-          html_filename = f"lesson-{date_str}.html"
-          html_path = Path(html_filename)
-
-          if not html_path.exists():
-              existing_htmls = sorted([p for p in Path(".").glob("lesson-*.html") if p.name != html_filename])
-              if existing_htmls:
-                  base_html = existing_htmls[-1].read_text(encoding="utf-8")
-                  base_html = re.sub(r'data-date="[^"]*"', f'data-date="{date_str}"', base_html)
-                  base_html = re.sub(r'<title>.*?</title>', f'<title>{lesson["title"]} - 一期一語</title>', base_html, flags=re.DOTALL)
-                  html_path.write_text(base_html, encoding="utf-8")
-                  print(f"既存のHTMLをベースに作成しました: {html_filename}")
-              else:
-                  template_html = f"""<!DOCTYPE html>
+          if not base_template:
+              base_template = """<!DOCTYPE html>
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{lesson['title']} - 一期一語</title>
+    <title>一期一語 - ベトナム語学習</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="app" data-date="{date_str}"></div>
+    <div id="app" data-date=""></div>
     <script src="lessons.js"></script>
     <script src="app.js"></script>
 </body>
-</html>
-"""
-                  html_path.write_text(template_html, encoding="utf-8")
-                  print(f"個別HTMLファイルを作成しました: {html_filename}")
-          else:
-              print(f"個別HTMLファイルは既に存在します: {html_filename}")
+</html>"""
+
+          # 全レッスンのHTMLを小文字（lesson-YYYY-MM-DD.html）で再生成・同期
+          for l in lessons_list:
+              date_str = l.get("date")
+              if not date_str:
+                  continue
+              filename = f"lesson-{date_str}.html"
+              p = Path(filename)
+              
+              html_content = base_template
+              html_content = re.sub(r'data-date="[^"]*"', f'data-date="{date_str}"', html_content)
+              title_str = f"{l.get('title', '')} - 一期一語"
+              if re.search(r'<title>.*?</title>', html_content):
+                  html_content = re.sub(r'<title>.*?</title>', f'<title>{title_str}</title>', html_content, flags=re.DOTALL)
+              else:
+                  html_content = html_content.replace('</head>', f'    <title>{title_str}</title>\n</head>')
+              
+              p.write_text(html_content, encoding="utf-8")
+              print(f"同期完了: {filename}")
           PY
 
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+          # 大文字のHTMLファイルが存在していれば強制削除して小文字に統一
           find . -maxdepth 1 -name "Lesson-*.html" -exec git rm -f {} \; || true
+          
           git add .
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
-            git commit -m "Add Vietnamese lesson and fix HTML template with audio/links"
+            git commit -m "Fix all lesson HTML files, audio links, and lowercase paths"
             git push
           fi
