@@ -26,76 +26,71 @@
     <main class="archive-page-container">
         <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
         
-        <!-- 自動生成される一覧エリア -->
         <div id="auto-archive-list" class="archive-list"></div>
 
         <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
     </main>
 
-    <!-- 記事データを管理するファイル -->
     <script src="lessons.js"></script>
 
     <script>
     (function(){
       var container = document.getElementById('auto-archive-list');
+      
       if (typeof lessons !== 'undefined' && Array.isArray(lessons) && lessons.length > 0) {
-        
-        // 最新日付が一番上に来るように降順ソート
+        // 1. 日付で最新順（降順）にソートする処理
         var sorted = lessons.slice().sort(function(a, b){
-          var getDateStr = function(item) {
-            if (item.date) return item.date;
-            if (item.id) return item.id;
-            if (item.url) {
-              var m = item.url.match(/(\d{4}-\d{2}-\d{2})/);
-              if (m) return m[1];
-            }
-            return '';
+          var getNum = function(item) {
+            var raw = item.date || item.id || item.url || '';
+            var m = raw.match(/\d{4}-\d{2}-\d{2}/);
+            return m ? m[0].replace(/-/g, '') : '0';
           };
-          return getDateStr(b).localeCompare(getDateStr(a));
+          return parseInt(getNum(b), 10) - parseInt(getNum(a), 10);
         });
 
         var html = '';
         sorted.forEach(function(item){
-          var dateStr = item.date || item.id || '';
-          if (!dateStr && item.url) {
-            var m = item.url.match(/(\d{4}-\d{2}-\d{2})/);
-            if (m) dateStr = m[1];
+          // 日付文字列の抽出（例: 2026-10-04）
+          var rawDate = item.date || item.id || '';
+          if(!rawDate && item.url) {
+            var m = item.url.match(/\d{4}-\d{2}-\d{2}/);
+            if(m) rawDate = m[0];
           }
 
-          var dateText = item.dateDisplay;
-          if (!dateText && dateStr) {
-            var parts = dateStr.split('-');
-            if (parts.length === 3) {
-              dateText = parts[0] + '年' + parseInt(parts[1], 10) + '月' + parseInt(parts[2], 10) + '日';
-            } else {
-              dateText = dateStr;
+          // 表示用の日付形式（例: 2026年10月4日）
+          var displayDate = item.dateDisplay;
+          if(!displayDate && rawDate) {
+            var p = rawDate.split('-');
+            if(p.length === 3) {
+              displayDate = p[0] + '年' + parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
             }
           }
-          if (!dateText) dateText = '日付なし';
+          if(!displayDate) displayDate = '日付未設定';
 
-          // 正しい個別記事へのURLを構築
-          var url = item.url;
-          if (!url && dateStr) {
-            url = './lesson-' + dateStr + '.html';
+          // 遷移先URLの確定（lesson-YYYY-MM-DD.html への直接リンク）
+          var linkUrl = item.url;
+          if(!linkUrl && rawDate) {
+            linkUrl = 'lesson-' + rawDate + '.html';
           }
-          if (url && !url.startsWith('./') && !url.startsWith('http')) {
-            url = './' + url;
+          if(linkUrl && !linkUrl.startsWith('./') && !linkUrl.startsWith('http')) {
+            linkUrl = './' + linkUrl;
           }
 
-          var title = item.title || '無題';
-          var words = item.words || item.keywords || '';
+          var titleText = item.title || '無題のブログ';
+          var wordText = item.words || item.keywords || '';
 
-          html += '<a class="archive-item" href="' + url + '">';
-          html += '  <div class="archive-date">📅 ' + dateText + '</div>';
-          html += '  <div class="archive-item-title">' + title + '</div>';
-          if(words) {
-            html += '  <div class="archive-item-words">主要単語：' + words + '</div>';
+          html += '<a class="archive-item" href="' + linkUrl + '">';
+          html += '  <div class="archive-date">📅 ' + displayDate + '</div>';
+          html += '  <div class="archive-item-title">' + titleText + '</div>';
+          if(wordText) {
+            html += '  <div class="archive-item-words">主要単語：' + wordText + '</div>';
           }
           html += '</a>';
         });
+
         container.innerHTML = html;
       } else {
-        // バックアップ用（最新の10/4が一番上）
+        // 万が一lessons.jsの読み込みに失敗した場合の固定HTML
         container.innerHTML = `
             <a class="archive-item" href="./lesson-2026-10-04.html">
                 <div class="archive-date">📅 2026年10月4日</div>
