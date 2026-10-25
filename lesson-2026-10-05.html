@@ -1,447 +1,211 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>👶 お母さん、ゴを抱っこしてくれる？｜一期一語</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-color: #e83e8c;
-      --bg-color: #fcf8f2;
-      --card-bg: #ffffff;
-      --text-main: #222222;
-      --vn-red: #d32f2f;
-      --jp-green: #2e7d32;
-      --border-color: #f8bbd0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ff6f9f">
+<title>👶 お母さん、ゴを抱っこしてくれる？｜一期一語</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--pink:#ff6f9f;--deep:#d83d76;--pale:#fff0f5;--red:#e84361;--cream:#fffaf4;--ink:#514047;--line:#ffd0df;--green:#5c9b69}
+*{box-sizing:border-box;font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif !important}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#fff4f8 0,#fffaf4 55%,#fff1f5 100%);color:var(--ink);font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;line-height:1.95}
+header{position:relative;overflow:hidden;padding:0;text-align:center;background:#fff5e9;border-bottom:5px solid #d83d63;box-shadow:0 5px 0 #fff0c4}
+.site-banner{display:block;width:100%;height:auto;max-height:540px;object-fit:contain;margin:0 auto}
+main{width:min(900px,calc(100% - 22px));margin:22px auto 38px}.article{background:#fff;border:2px solid var(--line);border-radius:24px;padding:clamp(16px,4vw,38px);box-shadow:0 8px 22px #e94d8314}
 
-    body {
-      font-family: 'M PLUS Rounded 1c', sans-serif;
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      margin: 0;
-      padding: 12px;
-      line-height: 1.7;
-    }
+.date{text-align:center;color:#ba7c91;font-size:14px;font-weight:700;margin-bottom:12px;line-height:1.6;}
+.date-main{font-size:16px;color:#d83d76;}
 
-    .container {
-      max-width: 600px;
-      margin: 0 auto;
-    }
+.article h1{font-size:clamp(20px,4.6vw,32px);line-height:1.45;text-align:center;color:var(--deep);margin:0 auto 22px;max-width:19em;text-wrap:pretty;line-break:strict;word-break:normal}
+.article h2{font-size:clamp(17px,3.9vw,23px);color:var(--deep);line-height:1.5;margin:30px 0 14px;padding:10px 13px;border-radius:12px;background:linear-gradient(90deg,#fff0f5,#fffaf4);border-left:5px solid var(--pink);text-wrap:pretty;line-break:strict;word-break:normal}.article h3{font-size:clamp(15px,3.8vw,18px);color:#b83c69;margin:22px 0 10px;text-wrap:pretty;line-break:strict;word-break:normal}.article p{margin:0 0 1.15em;text-wrap:pretty;line-break:strict;word-break:normal;overflow-wrap:break-word}.intro{background:var(--pale);border-radius:16px;padding:16px 18px;margin:18px 0 24px;border-left:5px solid var(--pink)}.divider{border:0;text-align:center;margin:28px 0;color:#ef8eae;letter-spacing:4px}.divider:after{content:'🍓　🍓　🍓'}
+.viet-card{background:#fff9fb;border:1.5px solid #ffc7d9;border-radius:18px;padding:16px;margin:15px 0}.viet-line{font-size:clamp(20px,4.5vw,27px);font-weight:800;color:#a92758;line-height:1.65;overflow-wrap:anywhere}.translation{color:#80616e;margin-top:4px}.speak{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:8px 13px;margin:7px 5px 4px 0;background:#ffdfeb;color:#92244d;font:700 14px 'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;cursor:pointer;box-shadow:0 2px 0 #f5b5cb}.speak:hover{background:#ffc6dc}.speak:active{transform:translateY(1px);box-shadow:none}.speak:focus-visible{outline:3px solid #a92758;outline-offset:3px}.word-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:11px;margin:15px 0 22px}.word{border:1px solid #ffd5e1;background:#fffdfd;border-radius:14px;padding:12px}.word .vn{font-size:21px;font-weight:800;color:#a92758;overflow-wrap:anywhere}.word .jp{font-size:14px}.note{font-size:14px;background:#f3fbf1;border:1px solid #d1e9cd;border-radius:14px;padding:14px 16px;margin:16px 0}.tip{background:#fff7e9;border:1px solid #ffe0a6;border-radius:14px;padding:14px 16px;margin:16px 0}.conclusion{margin-top:30px;padding:19px;border-radius:18px;background:linear-gradient(135deg,#fff0f5,#fff6e9);border:2px dashed #ff9dbb;font-weight:700;color:#a92758} .step-box{margin:20px 0 10px;padding:clamp(17px,4vw,25px) 14px;border:2px solid #f3a0ba;border-radius:22px;background:radial-gradient(circle at top right,#fff0b8 0,transparent 40%),linear-gradient(135deg,#fff0f5 0%,#fffaf0 100%);box-shadow:0 5px 0 #f7d4df,0 8px 18px #b82f5710;text-align:center;color:#782b48}.step-box h2{margin:0 0 10px;padding:0;border:0;background:transparent;color:#bd315e;font-size:clamp(20px,5vw,26px);line-height:1.45;text-wrap:pretty;line-break:strict;word-break:normal}.step-box p{max-width:30em;margin:0 auto;font-weight:800;font-size:clamp(15px,3.8vw,18px);line-height:1.85;text-wrap:pretty;line-break:strict;word-break:normal;overflow-wrap:normal}.site-links{max-width:900px;margin:22px auto;padding:0 11px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.site-links a{display:block;text-align:center;text-decoration:none;color:#a92758;background:#fff;border:2px solid #ffd0df;border-radius:16px;padding:13px 8px;font-size:clamp(12px,2.4vw,15px);line-height:1.55;font-weight:700;box-shadow:0 4px 12px #e94d8310;overflow-wrap:normal;word-break:normal;line-break:strict;text-wrap:pretty}.site-links a:hover{background:#fff0f5}.visitor-counter{max-width:900px;margin:25px auto 0;padding:20px 12px;text-align:center;background:rgba(255,255,255,.88);border:2px dashed #ffc6d3;border-radius:22px;color:#d95370;font-size:14px;font-weight:700}.visitor-counter img{display:inline-block;margin-top:10px;max-width:100%;min-height:24px}.footer{margin-top:18px}.footer{text-align:center;color:#b77990;font-size:13px;padding:20px 10px}.small{font-size:13px;color:#967682}table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:15px}th,td{padding:10px 12px;border:1px solid #ffd3e0;text-align:left}th{background:#fff0f5;color:#a92758}td{background:#fffdfd}.list-tight li{margin:3px 0}.audio-help{font-size:12px;color:#987b87;margin-top:10px}
 
-    header {
-      text-align: center;
-      margin-bottom: 12px;
-    }
+/* キャラクター枠 */
+.character-box{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;margin:12px 0;box-shadow:0 2px 6px rgba(0,0,0,0.03)}
+.character-box.ichigo{background:#fff8e1;border:1.5px solid #ffe082}
+.character-box.durian{background:#f1f8e9;border:1.5px solid #c8e6c9}
+.character-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#ffffff;display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid #ff80ab;box-shadow:0 2px 4px rgba(0,0,0,0.08)}
+.character-text{font-size:13px;color:#222222;line-height:1.4}
+.character-name{font-weight:bold;display:block;margin-bottom:1px;font-size:12px}
+.character-name.ichigo{color:#e83e8c}
+.character-name.durian{color:#558b2f}
 
-    header img {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-      display: block;
-    }
+/* 反対語 */
+.opposites-box{background:#ffffff;padding:16px;border-radius:10px;border:2px solid var(--line);text-align:center;margin-bottom:12px}
+.arrow-down{font-size:20px;color:#e91e63;font-weight:bold;margin:8px 0}
 
-    .visitor-counter {
-      text-align: center;
-      font-size: 13px;
-      color: #666;
-      margin-bottom: 16px;
-      background: #ffffff;
-      padding: 8px 16px;
-      border-radius: 20px;
-      border: 1px solid #ffe0b2;
-      display: inline-block;
-      width: 100%;
-      box-sizing: border-box;
-    }
+/* 前後のブログ */
+.archive{background:#fff8fb;border:1.5px solid #ffc7d9;border-radius:18px;padding:18px;margin:28px 0 5px}.archive h2{margin-top:0}
+.archive-links{display:flex;flex-direction:column;gap:10px}
+.archive-item-link{display:block;text-decoration:none;color:#a92758;background:#fff;border:1px solid #ffd5e1;border-radius:12px;padding:12px 14px;transition:background 0.2s}
+.archive-item-link:hover{background:#ffe8f0}
+.archive-item-date{font-size:13px;color:#ba7c91;font-weight:bold;margin-bottom:2px;}
+.archive-item-title{font-size:15px;font-weight:bold;color:#a92758;}
+.archive-item-words{font-size:13px;color:#80616e;margin-top:2px;}
 
-    article {
-      background: var(--card-bg);
-      padding: 18px;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-    }
+.archive-home{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.archive-home a{display:block;text-decoration:none;color:#a92758;background:#fff;border:1px solid #ffd5e1;border-radius:12px;padding:10px 12px}
+.archive-home a:hover{background:#ffe8f0}
 
-    .date {
-      font-size: 13px;
-      color: #888888;
-      margin-bottom: 4px;
-    }
-
-    h1 {
-      font-size: 18px;
-      color: var(--vn-red);
-      margin: 0 0 16px 0;
-      line-height: 1.4;
-      border-bottom: 2px dashed var(--border-color);
-      padding-bottom: 10px;
-    }
-
-    section {
-      margin-bottom: 24px;
-    }
-
-    h2 {
-      font-size: 15px;
-      color: #c2185b;
-      margin: 0 0 10px 0;
-      background: #fff0f3;
-      padding: 6px 12px;
-      border-radius: 6px;
-      display: inline-block;
-    }
-
-    .blog-story {
-      font-size: 14px;
-      color: var(--text-main);
-      background: #fafafa;
-      padding: 14px;
-      border-radius: 10px;
-      border-left: 4px solid var(--border-color);
-      margin-bottom: 12px;
-    }
-
-    .blog-story p {
-      margin: 0 0 12px 0;
-    }
-
-    .blog-story p:last-child {
-      margin-bottom: 0;
-    }
-
-    .character-box {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-radius: 12px;
-      margin: 12px 0;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-    }
-
-    .character-box.ichigo {
-      background: #fff8e1;
-      border: 1.5px solid #ffe082;
-    }
-
-    .character-box.durian {
-      background: #f1f8e9;
-      border: 1.5px solid #c8e6c9;
-    }
-
-    .character-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      flex-shrink: 0;
-      background: #ffffff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      border: 1.5px solid #ff80ab;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
-    }
-
-    .character-text {
-      font-size: 13px;
-      color: #222222;
-      line-height: 1.4;
-    }
-
-    .character-name {
-      font-weight: bold;
-      display: block;
-      margin-bottom: 1px;
-      font-size: 12px;
-    }
-
-    .character-name.ichigo { color: #e83e8c; }
-    .character-name.durian { color: #558b2f; }
-
-    .audio-btn {
-      font-size: 12px;
-      background: #e8f5e9;
-      color: var(--jp-green);
-      padding: 3px 8px;
-      border-radius: 6px;
-      border: 1px solid #a5d6a7;
-      cursor: pointer;
-      display: inline-block;
-      margin-top: 6px;
-      font-weight: normal;
-    }
-
-    .vn-text {
-      color: var(--vn-red);
-      font-weight: bold;
-      font-size: 16px;
-    }
-
-    .jp-text {
-      color: var(--jp-green);
-      font-weight: bold;
-      font-size: 14px;
-    }
-
-    .desc-text {
-      color: var(--text-main);
-      font-size: 13px;
-    }
-
-    .card {
-      background: #f1f8e9;
-      padding: 14px;
-      border-radius: 10px;
-      border: 1px solid #c8e6c9;
-      margin-bottom: 12px;
-    }
-
-    .opposites-box {
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 10px;
-      border: 2px solid var(--border-color);
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .arrow-down {
-      font-size: 20px;
-      color: #e91e63;
-      font-weight: bold;
-      margin: 8px 0;
-    }
-
-    .word-list-box {
-      background: #fafafa;
-      border: 1px solid #e0e0e0;
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    .word-item {
-      padding: 10px 14px;
-      border-bottom: 1px solid #eee;
-    }
-
-    .word-item:last-child {
-      border-bottom: none;
-    }
-
-    nav.site-nav {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    nav.site-nav a {
-      flex: 1;
-      text-align: center;
-      padding: 10px 4px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: bold;
-      text-decoration: none;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      transition: transform 0.1s ease;
-    }
-
-    nav.site-nav a:active {
-      transform: scale(0.98);
-    }
-
-    .nav-red {
-      background-color: #ffebee;
-      color: #c62828;
-      border: 1.5px solid #ffcdd2;
-    }
-
-    .nav-yellow {
-      background-color: #fffde7;
-      color: #f57f17;
-      border: 1.5px solid #fff9c4;
-    }
-
-    .nav-green {
-      background-color: #e8f5e9;
-      color: #2e7d32;
-      border: 1.5px solid #c8e6c9;
-    }
-
-    .archive-section {
-      background: #ffffff;
-      padding: 16px;
-      border-radius: 10px;
-      border: 1px solid #e0e0e0;
-      font-size: 13px;
-      margin-bottom: 20px;
-    }
-
-    .archive-section h3 {
-      margin: 0 0 10px 0;
-      color: #c2185b;
-      font-size: 14px;
-    }
-
-    .archive-section ul {
-      margin: 0;
-      padding-left: 20px;
-    }
-
-    .archive-section li {
-      margin-bottom: 6px;
-    }
-
-    .archive-section a {
-      color: #1e88e5;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    footer {
-      text-align: center;
-      font-size: 12px;
-      color: #777777;
-      margin-top: 20px;
-      padding-bottom: 20px;
-    }
-  </style>
+button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Yu Gothic",sans-serif !important}
+@media(min-width:700px){.article{padding:42px 52px}.intro{padding:20px 24px}}@media(max-width:600px){header{padding:0}.site-banner{max-height:none}.step-box{padding:17px 12px}.step-box p{font-size:16px}.site-links{grid-template-columns:1fr;gap:8px}.site-links a{padding:11px 12px;font-size:14px}.article h1{font-size:clamp(19px,5.2vw,25px);line-height:1.42}.article h2{font-size:clamp(17px,4.4vw,21px);padding:9px 10px}}@media(max-width:420px){th,td{padding:8px;font-size:14px}.speak{padding:7px 11px}}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
+<header aria-label="一期一語のサイトタイトル">
+<img class="site-banner" src="site-banner.jpg" alt="ベトナム暮らし、ベトナム語は今日も。一期一語【いちごいちご】。ベトナム語の旅。ゼロから、少しだけ日常会話へ。楽しく覚える南部ベトナム語。">
+</header>
+<main><article class="article">
 
-<div class="container">
-
-  <header>
-    <img src="site-banner.jpg" alt="一期一語 バナー" onerror="this.style.display='none'">
-  </header>
-
-  <div class="visitor-counter">
-    🍓 このサイトを訪れた人 🍓<br>
-    <img alt="訪問者数カウンター" src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" style="margin-top:4px;">
-  </div>
-
-  <main>
-    <article>
-      <div class="date">2026年10月05日</div>
-      <h1>👶 お母さん、ゴを抱っこしてくれる？</h1>
-
-      <section>
-        <h2>今日の出来事</h2>
-        <div class="blog-story">
-          <p>ベトナムでの育児生活。家事や作業で手が離せないとき、奥さん（お母さん）に「ちょっとゴちゃんを抱っこして助けて〜！」とお願いしたい場面がよくあります。</p>
-          <p>家庭内で自然に使えるベトナム語の呼びかけと抱っこの表現を覚えると、毎日の育児コミュニケーションがぐっと楽しくスムーズになります！🍓</p>
-        </div>
-
-        <div class="character-box ichigo">
-          <div class="character-avatar" style="border-color: #ff80ab;">👶</div>
-          <div class="character-text">
-            <span class="character-name ichigo">🍓 いちごちゃん</span>
-            「ママにお願いする時は、愛情を込めて優しく声をかけるのがコツだよ！」
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="vn-text">Mẹ, ẵm Gô giùm anh!</div>
-          <div><button class="audio-btn" onclick="playAudio('Mẹ, ẵm Gô giùm anh!')">🔊 音声を聞く</button></div>
-          <div class="jp-text" style="margin-top: 6px;">お母さん、ゴを抱っこしてくれる？</div>
-          <div class="desc-text" style="margin-top: 4px;">mẹ＝お母さん・妻 ／ ẵm＝抱っこする ／ giùm＝〜の代わりに・手伝う ／ anh＝僕</div>
-        </div>
-      </section>
-
-      <section>
-        <h2>💡 今日の学び：ẵm と giùm の使い方</h2>
-        <div class="blog-story">
-          <p>ベトナム語で赤ん坊や子供を「抱っこする」ときは <strong>ẵm</strong>（南部でよく使われる表現）を使います。</p>
-          <p>さらに動詞の後に <strong>giùm</strong>（〜の代わりに・手伝って）を添えることで、「〜してくれる？」という頼み方のニュアンスが綺麗に出せます！</p>
-        </div>
-
-        <div class="opposites-box">
-          <div>
-            <span class="vn-text">Ẵm</span> <span class="jp-text">（抱っこする）</span>
-            <button class="audio-btn" onclick="playAudio('Ẵm')">🔊 音声を聞く</button>
-          </div>
-          <div class="arrow-down">↕︎</div>
-          <div>
-            <span class="vn-text">Cõng</span> <span class="jp-text">（おんぶする）</span>
-            <button class="audio-btn" onclick="playAudio('Cõng')">🔊 音声を聞く</button>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <h2>🍓 今日の復習</h2>
-        <div class="card">
-          <div class="vn-text">Mẹ, ẵm Gô giùm anh! ＝ お母さん、ゴを抱っこしてくれる？</div>
-          <div class="vn-text" style="font-size:14px; margin-top:4px;">Ẵm ＝ 抱っこする ／ Cõng ＝ おんぶする</div>
-          <div class="desc-text" style="margin-top: 6px;">mẹ＝お母さん ／ ẵm＝抱っこ ／ giùm＝助ける・〜してあげる ／ anh＝僕</div>
-        </div>
-      </section>
-
-      <section>
-        <h2>📚 いっしょに覚える単語</h2>
-        <div class="word-list-box">
-          <div class="word-item"><span class="vn-text" style="font-size:14px;">mẹ</span> — <span class="jp-text" style="font-size:13px;">お母さん、妻</span></div>
-          <div class="word-item"><span class="vn-text" style="font-size:14px;">ẵm</span> — <span class="jp-text" style="font-size:13px;">抱っこする（赤ん坊など）</span></div>
-          <div class="word-item"><span class="vn-text" style="font-size:14px;">giùm</span> — <span class="jp-text" style="font-size:13px;">〜の代わりに、手伝う</span></div>
-          <div class="word-item"><span class="vn-text" style="font-size:14px;">anh</span> — <span class="jp-text" style="font-size:13px;">僕、年上の男性</span></div>
-          <div class="word-item"><span class="vn-text" style="font-size:14px;">cõng</span> — <span class="jp-text" style="font-size:13px;">おんぶする</span></div>
-          <div class="word-item"><span class="vn-text" style="font-size:14px;">chăm sóc</span> — <span class="jp-text" style="font-size:13px;">世話をする</span></div>
-        </div>
-      </section>
-    </article>
-  </main>
-
-  <nav class="site-nav">
-    <a href="./index.html#today" class="nav-red">
-      <span>🍓 今日覚えた</span>
-    </a>
-    <a href="./words.html" class="nav-yellow">
-      <span>📚 これまでの一語</span>
-    </a>
-    <a href="./index.html#basic" class="nav-green">
-      <span>🌱 ベトナム語の基礎</span>
-    </a>
-  </nav>
-
-  <section class="archive-section">
-    <h3>📚 過去の記事一覧</h3>
-    <ul id="archive-list">
-      <li><a href="./lesson-2026-10-13.html">2026年10月13日の記事</a></li>
-      <li><a href="./lesson-2026-10-06.html">2026年10月06日の記事</a></li>
-      <li><a href="./lesson-2026-10-05.html">2026年10月05日の記事</a></li>
-      <li><a href="./lesson-2026-10-04.html">2026年10月04日の記事</a></li>
-    </ul>
-  </section>
-
-  <footer>
-    🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓
-  </footer>
-
+<!-- 2行構成の日付 -->
+<div class="date">
+  <div class="date-main">🍓 2026年10月5日</div>
+  <div>ベトナム語の旅 🍓 もっと一期一語</div>
 </div>
 
+<!-- 2行構成のタイトル -->
+<h1>👶 お母さん、ゴを抱っこしてくれる？</h1>
+
+<div class="intro">
+<p>ベトナムでの育児生活。家事や作業で手が離せないとき、奥さん（お母さん）に「ちょっとゴちゃんを抱っこして助けて〜！」とお願いしたい場面がよくあります。</p>
+<p>家庭内で自然に使えるベトナム語の呼びかけと抱っこの表現を覚えると、毎日の育児コミュニケーションがぐっと楽しくスムーズになります！🍓</p>
+</div>
+
+<!-- キャラクター会話（いちごちゃん） -->
+<div class="character-box ichigo">
+  <div class="character-avatar" style="border-color: #ff80ab;">👶</div>
+  <div class="character-text">
+    <span class="character-name ichigo">🍓 いちごちゃん</span>
+    「ママにお願いする時は、愛情を込めて優しく声をかけるのがコツだよ！」
+  </div>
+</div>
+
+<hr class="divider">
+<h2>🇻🇳 1．今日のメインフレーズ</h2>
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Mẹ, ẵm Gô giùm anh!</div>
+  <div class="translation">日本語：お母さん、ゴを抱っこしてくれる？</div>
+  <button class="speak" type="button" data-speak="Mẹ, ẵm Gô giùm anh!">🔊 文を聞く</button>
+</div>
+<p class="small">mẹ＝お母さん・妻 ／ ẵm＝抱っこする ／ giùm＝〜の代わりに・手伝う ／ anh＝僕</p>
+
+<hr class="divider">
+<h2>💡 2．今日の学び：ẵm と giùm の使い方</h2>
+<p>ベトナム語で赤ん坊や子供を「抱っこする」ときは <strong>ẵm</strong>（南部でよく使われる表現）を使います。</p>
+<p>さらに動詞の後に <strong>giùm</strong>（〜の代わりに・手伝って）を添えることで、「〜してくれる？」という頼み方のニュアンスが綺麗に出せます！</p>
+
+<div class="opposites-box">
+  <div>
+    <span class="vn" lang="vi" style="font-size:21px; font-weight:800; color:#a92758;">Ẵm</span> 
+    <span class="jp" style="font-size:14px; color:#514047;">（抱っこする）</span>
+    <button class="speak" data-speak="Ẵm">🔊</button>
+  </div>
+  <div class="arrow-down">↕︎</div>
+  <div>
+    <span class="vn" lang="vi" style="font-size:21px; font-weight:800; color:#a92758;">Cõng</span> 
+    <span class="jp" style="font-size:14px; color:#514047;">（おんぶする）</span>
+    <button class="speak" data-speak="Cõng">🔊</button>
+  </div>
+</div>
+
+<hr class="divider">
+<h2>🍓 3．今日の復習</h2>
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Mẹ, ẵm Gô giùm anh!</div>
+  <div class="translation">日本語：お母さん、ゴを抱っこしてくれる？</div>
+  <p style="margin-top:8px; font-weight:bold; color:#a92758;">Ẵm ＝ 抱っこする ／ Cõng ＝ おんぶする</p>
+</div>
+
+<hr class="divider">
+<h2>📚 4．いっしょに覚える単語</h2>
+<div class="word-list">
+  <div class="word"><div class="vn" lang="vi">mẹ</div><div class="jp">お母さん、妻</div><button class="speak" data-speak="mẹ">🔊</button></div>
+  <div class="word"><div class="vn" lang="vi">ẵm</div><div class="jp">抱っこする（赤ん坊など）</div><button class="speak" data-speak="ẵm">🔊</button></div>
+  <div class="word"><div class="vn" lang="vi">giùm</div><div class="jp">〜の代わりに、手伝う</div><button class="speak" data-speak="giùm">🔊</button></div>
+  <div class="word"><div class="vn" lang="vi">anh</div><div class="jp">僕、年上の男性</div><button class="speak" data-speak="anh">🔊</button></div>
+  <div class="word"><div class="vn" lang="vi">cõng</div><div class="jp">おんぶする</div><button class="speak" data-speak="cõng">🔊</button></div>
+  <div class="word"><div class="vn" lang="vi">chăm sóc</div><div class="jp">世話をする</div><button class="speak" data-speak="chăm sóc">🔊</button></div>
+</div>
+
+<section class="step-box" aria-label="今日の一歩"><h2>🐾 今日の一歩</h2><p>家庭で「Mẹ, ẵm Gô giùm anh!」と優しく声をかけてみよう！</p></section>
+<p class="audio-help">※ 音声ボタンは、お使いの端末・ブラウザに搭載されたベトナム語音声を利用します。</p>
+
+<!-- 前後3日分の別日リンク ＆ 一覧ボタン -->
+<section class="archive" aria-label="別の日のブログ">
+  <h2>📅 前後のブログ</h2>
+  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>
+  <div class="archive-links">
+    <a href="./lesson-2026-10-02.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月2日</div>
+      <div class="archive-item-title">（10月2日のブログタイトル）</div>
+      <div class="archive-item-words">主要単語：...</div>
+    </a>
+    <a href="./lesson-2026-10-03.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月3日</div>
+      <div class="archive-item-title">市場に行きたい！ ベトナム語を覚えて、いざ出発！</div>
+      <div class="archive-item-words">主要単語：hôm nay, muốn, đi chợ, về nhà</div>
+    </a>
+    <a href="./lesson-2026-10-04.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月4日</div>
+      <div class="archive-item-title">🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く</div>
+      <div class="archive-item-words">主要単語：bát, này, nhiêu, tiền, mắc, rẻ</div>
+    </a>
+    <a href="./lesson-2026-10-06.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月6日</div>
+      <div class="archive-item-title">（10月6日のブログタイトル）</div>
+      <div class="archive-item-words">主要単語：...</div>
+    </a>
+    <a href="./lesson-2026-10-07.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月7日</div>
+      <div class="archive-item-title">（10月7日のブログタイトル）</div>
+      <div class="archive-item-words">主要単語：...</div>
+    </a>
+  </div>
+  <div style="margin-top: 15px; text-align: center;">
+    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>
+  </div>
+  <p class="archive-home" style="text-align: center; margin-top: 15px;">
+    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>
+  </p>
+</section>
+
+</article></main>
+
+<nav class="site-links" aria-label="サイトメニュー">
+  <a href="./index.html#today">🍓 今日覚えた<br>今日のベトナム語</a>
+  <a href="./words.html">📚 これまでの一語<br>復習しよう</a>
+  <a href="./index.html#basic">🌱 ベトナム語の基礎<br>母音・子音・声調</a>
+</nav>
+
+<section class="visitor-counter" aria-label="訪問者数">
+  🍓 このサイトを訪れた人 🍓<br>
+  <img src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" alt="訪問者数カウンター">
+</section>
+
+<div class="footer">🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓</div>
+
 <script>
-  function playAudio(text) {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'vi-VN';
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert('お使いのブラウザは音声読み上げに対応していません。');
-    }
+(function(){
+  function speakVietnamese(text, button){
+    if(!('speechSynthesis' in window)){alert('このブラウザでは音声読み上げに対応していません。');return;}
+    window.speechSynthesis.cancel();
+    var utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'vi-VN';
+    utterance.rate = 0.78;
+    var voices = window.speechSynthesis.getVoices();
+    var voice = voices.find(function(v){return /^vi(-|_)/i.test(v.lang);});
+    if(voice) utterance.voice = voice;
+    utterance.onerror = function(){ if(!voice) { /* Browser may not have a Vietnamese voice installed. */ } };
+    window.speechSynthesis.speak(utterance);
   }
+  document.querySelectorAll('[data-speak]').forEach(function(button){
+    button.addEventListener('click', function(){ speakVietnamese(button.getAttribute('data-speak'), button); });
+  });
+})();
 </script>
-<script src="lessons.js"></script>
+
 </body>
 </html>
