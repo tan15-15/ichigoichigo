@@ -20,10 +20,20 @@ main{width:min(900px,calc(100% - 22px));margin:22px auto 38px}.article{backgroun
 .date-main{font-size:16px;color:#d83d76;}
 
 .article h1{font-size:clamp(20px,4.6vw,32px);line-height:1.45;text-align:center;color:var(--deep);margin:0 auto 22px;max-width:19em;text-wrap:pretty;line-break:strict;word-break:normal}
-
 .article h2{font-size:clamp(17px,3.9vw,23px);color:var(--deep);line-height:1.5;margin:30px 0 14px;padding:10px 13px;border-radius:12px;background:linear-gradient(90deg,#fff0f5,#fffaf4);border-left:5px solid var(--pink);text-wrap:pretty;line-break:strict;word-break:normal}.article h3{font-size:clamp(15px,3.8vw,18px);color:#b83c69;margin:22px 0 10px;text-wrap:pretty;line-break:strict;word-break:normal}.article p{margin:0 0 1.15em;text-wrap:pretty;line-break:strict;word-break:normal;overflow-wrap:break-word}.intro{background:var(--pale);border-radius:16px;padding:16px 18px;margin:18px 0 24px;border-left:5px solid var(--pink)}.divider{border:0;text-align:center;margin:28px 0;color:#ef8eae;letter-spacing:4px}.divider:after{content:'🍓　🍓　🍓'}
 .viet-card{background:#fff9fb;border:1.5px solid #ffc7d9;border-radius:18px;padding:16px;margin:15px 0}.viet-line{font-size:clamp(20px,4.5vw,27px);font-weight:800;color:#a92758;line-height:1.65;overflow-wrap:anywhere}.translation{color:#80616e;margin-top:4px}.speak{display:inline-flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:8px 13px;margin:7px 5px 4px 0;background:#ffdfeb;color:#92244d;font:700 14px 'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;cursor:pointer;box-shadow:0 2px 0 #f5b5cb}.speak:hover{background:#ffc6dc}.speak:active{transform:translateY(1px);box-shadow:none}.speak:focus-visible{outline:3px solid #a92758;outline-offset:3px}.word-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:11px;margin:15px 0 22px}.word{border:1px solid #ffd5e1;background:#fffdfd;border-radius:14px;padding:12px}.word .vn{font-size:21px;font-weight:800;color:#a92758;overflow-wrap:anywhere}.word .jp{font-size:14px}.note{font-size:14px;background:#f3fbf1;border:1px solid #d1e9cd;border-radius:14px;padding:14px 16px;margin:16px 0}.tip{background:#fff7e9;border:1px solid #ffe0a6;border-radius:14px;padding:14px 16px;margin:16px 0}.conclusion{margin-top:30px;padding:19px;border-radius:18px;background:linear-gradient(135deg,#fff0f5,#fff6e9);border:2px dashed #ff9dbb;font-weight:700;color:#a92758} .step-box{margin:20px 0 10px;padding:clamp(17px,4vw,25px) 14px;border:2px solid #f3a0ba;border-radius:22px;background:radial-gradient(circle at top right,#fff0b8 0,transparent 40%),linear-gradient(135deg,#fff0f5 0%,#fffaf0 100%);box-shadow:0 5px 0 #f7d4df,0 8px 18px #b82f5710;text-align:center;color:#782b48}.step-box h2{margin:0 0 10px;padding:0;border:0;background:transparent;color:#bd315e;font-size:clamp(20px,5vw,26px);line-height:1.45;text-wrap:pretty;line-break:strict;word-break:normal}.step-box p{max-width:30em;margin:0 auto;font-weight:800;font-size:clamp(15px,3.8vw,18px);line-height:1.85;text-wrap:pretty;line-break:strict;word-break:normal;overflow-wrap:normal}.site-links{max-width:900px;margin:22px auto;padding:0 11px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.site-links a{display:block;text-align:center;text-decoration:none;color:#a92758;background:#fff;border:2px solid #ffd0df;border-radius:16px;padding:13px 8px;font-size:clamp(12px,2.4vw,15px);line-height:1.55;font-weight:700;box-shadow:0 4px 12px #e94d8310;overflow-wrap:normal;word-break:normal;line-break:strict;text-wrap:pretty}.site-links a:hover{background:#fff0f5}.visitor-counter{max-width:900px;margin:25px auto 0;padding:20px 12px;text-align:center;background:rgba(255,255,255,.88);border:2px dashed #ffc6d3;border-radius:22px;color:#d95370;font-size:14px;font-weight:700}.visitor-counter img{display:inline-block;margin-top:10px;max-width:100%;min-height:24px}.footer{margin-top:18px}.footer{text-align:center;color:#b77990;font-size:13px;padding:20px 10px}.small{font-size:13px;color:#967682}table{width:100%;border-collapse:collapse;margin:12px 0 20px;font-size:15px}th,td{padding:10px 12px;border:1px solid #ffd3e0;text-align:left}th{background:#fff0f5;color:#a92758}td{background:#fffdfd}.list-tight li{margin:3px 0}.audio-help{font-size:12px;color:#987b87;margin-top:10px}
 
+/* キャラクター枠 */
+.character-box{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;margin:12px 0;box-shadow:0 2px 6px rgba(0,0,0,0.03)}
+.character-box.ichigo{background:#fff8e1;border:1.5px solid #ffe082}
+.character-box.durian{background:#f1f8e9;border:1.5px solid #c8e6c9}
+.character-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#ffffff;display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid #ff80ab;box-shadow:0 2px 4px rgba(0,0,0,0.08)}
+.character-text{font-size:13px;color:#222222;line-height:1.4}
+.character-name{font-weight:bold;display:block;margin-bottom:1px;font-size:12px}
+.character-name.ichigo{color:#e83e8c}
+.character-name.durian{color:#558b2f}
+
+/* 前後のブログ */
 .archive{background:#fff8fb;border:1.5px solid #ffc7d9;border-radius:18px;padding:18px;margin:28px 0 5px}.archive h2{margin-top:0}
 .archive-links{display:flex;flex-direction:column;gap:10px}
 .archive-item-link{display:block;text-decoration:none;color:#a92758;background:#fff;border:1px solid #ffd5e1;border-radius:12px;padding:12px 14px;transition:background 0.2s}
@@ -45,146 +55,40 @@ button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Goth
 <img class="site-banner" src="site-banner.jpg" alt="ベトナム暮らし、ベトナム語は今日も。一期一語【いちごいちご】。ベトナム語の旅。ゼロから、少しだけ日常会話へ。楽しく覚える南部ベトナム語。">
 </header>
 <main><article class="article">
-  <p class="date">2026年10月7日</p>
-  <h1>🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）</h1>
 
-  <section class="step-box">
-    <h2>🍓今日のテーマ</h2>
-    <p>ゴちゃんの日常を例にして、「飲む」「食べる」「眠い」と、ベトナム語で「まだ」「今〜している」「もう〜した」を表す言い方を学びます。</p>
-  </section>
+<!-- 2行構成の日付 -->
+<div class="date">
+  <div class="date-main">🍓 2026年10月7日</div>
+  <div>ベトナム語の旅 🍓 もっと一期一語</div>
+</div>
 
-  <section>
-    <h2>🇻🇳 今日の一文</h2>
-    <p class="viet-card">Gô đang ngủ hả? <button class="speak" type="button" data-text="Gô đang ngủ hả?" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-    <p class="translation">ゴちゃん、いま寝てる？</p>
-  </section>
+<!-- タイトル -->
+<h1>🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）</h1>
 
-  <section>
-    <h2>🍓 今日の一語</h2>
-    <p class="viet-card">chưa <button class="speak" type="button" data-text="chưa" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-    <p class="translation">まだ～していない（時制）</p>
-  </section>
+<div class="intro">
+<p>ゴちゃんの日常を例にして、「飲む」「食べる」「眠い」と、ベトナム語で「まだ」「今〜している」「もう〜した」を表す言い方を学びます。赤ちゃんの毎日の動きと結びつけるとスッと頭に入ります！🍓</p>
+</div>
 
-  <section>
-    <h2>🍓 1．基本の動詞を覚える</h2>
-    <p>Gô uống sữa. <button class="speak" type="button" data-text="Gô uống sữa." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ゴちゃんはミルクを飲む）</p>
-<p>Muốn ăn cơm. <button class="speak" type="button" data-text="Muốn ăn cơm." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ご飯を食べたい）</p>
-<p>Gô buồn ngủ. <button class="speak" type="button" data-text="Gô buồn ngủ." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ゴちゃんは眠い）</p>
-<p>ベトナム語では、動詞の前後に単語を置いて、短い文を作ることができます。</p>
-  </section>
-<section>
-    <h2>🍓 2．「まだ」「今」「もう」の時制の違い</h2>
-    <p>■ chưa（まだ～していない） <button class="speak" type="button" data-text="■ chưa（まだ～していない）" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>Gô chưa ngủ. <button class="speak" type="button" data-text="Gô chưa ngủ." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ゴちゃんはまだ寝ていない。）</p>
-<p>■ đang（今～している） <button class="speak" type="button" data-text="■ đang（今～している）" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>Gô đang ngủ. <button class="speak" type="button" data-text="Gô đang ngủ." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ゴちゃんは今寝ている。）</p>
-<p>■ còn（まだ～の状態が続いている） <button class="speak" type="button" data-text="■ còn（まだ～の状態が続いている）" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>Gô còn ngủ. <button class="speak" type="button" data-text="Gô còn ngủ." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ゴちゃんはまだ寝ている。）</p>
-<p>■ rồi（もう～した、すでに） <button class="speak" type="button" data-text="■ rồi（もう～した、すでに）" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>Gô ngủ rồi. <button class="speak" type="button" data-text="Gô ngủ rồi." onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-<p>（ゴちゃんはもう寝た。）</p>
-<p>※ rồi は文によって「もう」「すでに」「～になった」などの意味になります。 <button class="speak" type="button" data-text="※ rồi は文によって「もう」「すでに」「～になった」などの意味になります。" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-  </section>
+<!-- キャラクター会話（いちごちゃん） -->
+<div class="character-box ichigo">
+  <div class="character-avatar" style="border-color: #ff80ab;">🍓</div>
+  <div class="character-text">
+    <span class="character-name ichigo">🍓 いちごちゃん</span>
+    「まだ？今してる？もう終わった？日常会話で一番よく使う時制の表現だよ！」
+  </div>
+</div>
 
-  <section>
-    <h2>📚 今日の単語</h2>
-    <div class="step-box">
-      <p>uống <button class="speak" type="button" data-text="uống" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">飲む</p>
-    </div>
-<div class="step-box">
-      <p>sữa <button class="speak" type="button" data-text="sữa" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">ミルク、牛乳</p>
-    </div>
-<div class="step-box">
-      <p>ăn <button class="speak" type="button" data-text="ăn" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">食べる</p>
-    </div>
-<div class="step-box">
-      <p>cơm <button class="speak" type="button" data-text="cơm" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">ご飯</p>
-    </div>
-<div class="step-box">
-      <p>buồn ngủ <button class="speak" type="button" data-text="buồn ngủ" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">眠い</p>
-    </div>
-<div class="step-box">
-      <p>chưa <button class="speak" type="button" data-text="chưa" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">まだ～していない（これからする可能性がある）</p>
-    </div>
-<div class="step-box">
-      <p>đang <button class="speak" type="button" data-text="đang" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">今～している（場所に注意・進行中）</p>
-    </div>
-<div class="step-box">
-      <p>còn <button class="speak" type="button" data-text="còn" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">まだ～の状態が続いている</p>
-    </div>
-<div class="step-box">
-      <p>rồi <button class="speak" type="button" data-text="rồi" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">もう、すでに（終わった感覚）</p>
-    </div>
-<div class="step-box">
-      <p>muốn <button class="speak" type="button" data-text="muốn" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">～したい</p>
-    </div>
-  </section>
+<hr class="divider">
+<h2>🇻🇳 1．今日のメインフレーズ</h2>
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô đang ngủ hả?</div>
+  <div class="translation">日本語：ゴちゃん、いま寝てる？</div>
+  <button class="speak" type="button" data-speak="Gô đang ngủ hả?">🔊 文を聞く</button>
+</div>
+<p class="small">Gô＝ゴちゃん ／ đang＝今〜している ／ ngủ＝寝る ／ hả＝〜なの？</p>
 
-  
-    <section>
-      <h2>➕ 関連する言葉</h2>
-      <div class="step-box">
-      <p>em bé <button class="speak" type="button" data-text="em bé" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-      <p class="translation">赤ちゃん</p>
-    </div>
-    </section>
+<hr class="divider">
+<h2>💡 2．基本の動詞を覚える</h2>
+<p>ゴちゃんの日常の動きに合わせて、基本の動詞を確認しましょう。</p>
 
-  <section>
-    <h2>🍓 今日の復習</h2>
-    <p class="viet-card">Gô đang ngủ hả? <button class="speak" type="button" data-text="Gô đang ngủ hả?" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button></p>
-    <p class="translation">ゴちゃん、いま寝てる？</p>
-    <p>chưa＝まだ～していない（時制）</p>
-  </section>
-</article></main>
-
-<nav class="site-links" aria-label="サイトメニュー">
-  <a href="./index.html#today">🍓 今日覚えた<br>今日のベトナム語</a>
-  <a href="./words.html">📚 これまでの一語<br>復習しよう</a>
-  <a href="./index.html#basic">🌱 ベトナム語の基礎<br>母音・子音・声調</a>
-</nav>
-
-<section class="visitor-counter" aria-label="訪問者数">
-  🍓 このサイトを訪れた人 🍓<br>
-  <img src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" alt="訪問者数カウンター">
-</section>
-
-<div class="footer">🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓</div>
-
-<script>
-(function(){
-  function speakVietnamese(text, button){
-    if(!('speechSynthesis' in window)){alert('このブラウザでは音声読み上げに対応していません。');return;}
-    window.speechSynthesis.cancel();
-    var utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = 'vi-VN';
-    utterance.rate = 0.78;
-    var voices = window.speechSynthesis.getVoices();
-    var voice = voices.find(function(v){return /^vi(-|_)/i.test(v.lang);});
-    if(voice) utterance.voice = voice;
-    utterance.onerror = function(){ if(!voice) { /* Browser may not have a Vietnamese voice installed. */ } };
-    window.speechSynthesis.speak(utterance);
-  }
-  document.querySelectorAll('[data-speak]').forEach(function(button){
-    button.addEventListener('click', function(){ speakVietnamese(button.getAttribute('data-speak'), button); });
-  });
-})();
-</script>
-
-</body>
-</html>
+<div class="viet-card">
