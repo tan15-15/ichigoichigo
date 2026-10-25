@@ -26,12 +26,10 @@ main{width:min(900px,calc(100% - 22px));margin:22px auto 38px}.article{backgroun
 /* キャラクター枠 */
 .character-box{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;margin:12px 0;box-shadow:0 2px 6px rgba(0,0,0,0.03)}
 .character-box.ichigo{background:#fff8e1;border:1.5px solid #ffe082}
-.character-box.durian{background:#f1f8e9;border:1.5px solid #c8e6c9}
 .character-avatar{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#ffffff;display:flex;align-items:center;justify-content:center;font-size:18px;border:1.5px solid #ff80ab;box-shadow:0 2px 4px rgba(0,0,0,0.08)}
 .character-text{font-size:13px;color:#222222;line-height:1.4}
 .character-name{font-weight:bold;display:block;margin-bottom:1px;font-size:12px}
 .character-name.ichigo{color:#e83e8c}
-.character-name.durian{color:#558b2f}
 
 /* 前後のブログ */
 .archive{background:#fff8fb;border:1.5px solid #ffc7d9;border-radius:18px;padding:18px;margin:28px 0 5px}.archive h2{margin-top:0}
@@ -66,29 +64,209 @@ button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Goth
 <h1>🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）</h1>
 
 <div class="intro">
-<p>ゴちゃんの日常を例にして、「飲む」「食べる」「眠い」と、ベトナム語で「まだ」「今〜している」「もう〜した」を表す言い方を学びます。赤ちゃんの毎日の動きと結びつけるとスッと頭に入ります！🍓</p>
+<p>この記事は、ゴちゃんの日常を例にして、「飲む」「食べる」「眠い」と、ベトナム語で「まだ」「今〜している」「もう〜した」を表す言い方を学ぶ内容です。</p>
 </div>
 
-<!-- キャラクター会話（いちごちゃん） -->
-<div class="character-box ichigo">
-  <div class="character-avatar" style="border-color: #ff80ab;">🍓</div>
-  <div class="character-text">
-    <span class="character-name ichigo">🍓 いちごちゃん</span>
-    「まだ？今してる？もう終わった？日常会話で一番よく使う時制の表現だよ！」
+<hr class="divider">
+<h2>🍓 1. 基本の動詞を覚える</h2>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô uống sữa.</div>
+  <div class="translation">ゴちゃんはミルクを飲む。</div>
+  <p class="small">Gô ＝ ゴちゃん ／ uống ＝ 飲む ／ sữa ＝ ミルク</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Gô uống sữa.')">🔊 聴く</button>
+</div>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Muốn ăn cơm.</div>
+  <div class="translation">ご飯を食べたい。</div>
+  <p class="small">muốn ＝ ～したい ／ ăn ＝ 食べる ／ cơm ＝ ご飯</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Muốn ăn cơm.')">🔊 聴く</button>
+</div>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô buồn ngủ.</div>
+  <div class="translation">ゴちゃんは眠い。</div>
+  <p class="small">Gô ＝ ゴちゃん ／ buồn ngủ ＝ 眠い、眠気がある</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Gô buồn ngủ.')">🔊 聴く</button>
+</div>
+
+<div class="tip">
+  <strong>覚えるポイント：</strong> ベトナム語では、動詞の前後に単語を置いて、短い文を作れます。<br>
+  なお、Muốn ăn cơm. は「ご飯を食べたい」という意味ですが、誰が食べたいのかは文の中に書かれていません。ゴちゃんについて話すなら、主語を付けるかどうかを場面に応じて考えます。
+</div>
+
+<hr class="divider">
+<h2>🍓 2. 「まだ寝ていない」「今寝ている」「まだ寝ている」「もう寝た」の違い</h2>
+<p>この記事の中心は、この4つの表現です。</p>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô chưa ngủ.</div>
+  <div class="translation">ゴちゃんはまだ寝ていない。</div>
+  <p class="small">Gô ＝ ゴちゃん ／ chưa ＝ まだ～していない ／ ngủ ＝ 寝る</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Gô chưa ngủ.')">🔊 聴く</button>
+</div>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô đang ngủ.</div>
+  <div class="translation">ゴちゃんは今寝ている。</div>
+  <p class="small">Gô ＝ ゴちゃん ／ đang ＝ 今～している ／ ngủ ＝ 寝る</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Gô đang ngủ.')">🔊 聴く</button>
+</div>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô còn ngủ.</div>
+  <div class="translation">ゴちゃんはまだ寝ている。</div>
+  <p class="small">Gô ＝ ゴちゃん ／ còn ＝ まだ～の状態が続いている ／ ngủ ＝ 寝る</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Gô còn ngủ.')">🔊 聴く</button>
+</div>
+
+<div class="viet-card">
+  <div class="viet-line" lang="vi">Gô ngủ rồi.</div>
+  <div class="translation">ゴちゃんはもう寝た。</div>
+  <p class="small">Gô ＝ ゴちゃん ／ ngủ ＝ 寝る ／ rồi ＝ もう～した、すでに</p>
+  <button class="speak" type="button" onclick="speakVietnamese('Gô ngủ rồi.')">🔊 聴く</button>
+</div>
+
+<div class="note">
+  <strong>ここは大切なので、違いを簡単に整理します。</strong><br>
+  ・<strong>chưa</strong>：まだしていない。これからする可能性がある。<br>
+  ・<strong>đang</strong>：今まさにしている最中。<br>
+  ・<strong>còn</strong>：その状態がまだ続いている。<br>
+  ・<strong>rồi</strong>：もう起きた、すでに終わったという感覚。<br>
+  ※ rồi はいつも「過去形」という意味ではありません。文によって「もう」「すでに」「～になった」などの意味になります。
+</div>
+
+<hr class="divider">
+<h2>🍓 3. 今日の復習と単語一覧</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>ベトナム語</th>
+      <th>日本語</th>
+      <th>音声</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>uống</strong></td>
+      <td>飲む</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('uống')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>sữa</strong></td>
+      <td>ミルク、牛乳</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('sữa')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>ăn</strong></td>
+      <td>食べる</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('ăn')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>cơm</strong></td>
+      <td>ご飯</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('cơm')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>buồn ngủ</strong></td>
+      <td>眠い</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('buồn ngủ')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>chưa</strong></td>
+      <td>まだ～していない</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('chưa')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>đang</strong></td>
+      <td>今～している</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('đang')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>còn</strong></td>
+      <td>まだ～の状態が続いている</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('còn')">🔊 聴く</button></td>
+    </tr>
+    <tr>
+      <td><strong>rồi</strong></td>
+      <td>もう、すでに</td>
+      <td><button class="speak" type="button" onclick="speakVietnamese('rồi')">🔊 聴く</button></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="tip">
+  <strong>補足：</strong> この記事は「飲む・食べる・眠い」と時制表現を扱っていますが、Muốn ăn cơm.（ご飯を食べたい）は主語が省略されています。また、赤ちゃんのゴちゃんはミルクを飲む時期なので、実生活で使う例文としては「ゴちゃんはミルクを飲みたい？」などに置き換えると、より家庭で使いやすい内容になります。
+</div>
+
+<p class="audio-help">※ 音声ボタンは、お使いの端末・ブラウザに搭載されたベトナム語音声を利用します。</p>
+
+<!-- 前後のブログ -->
+<section class="archive" aria-label="別の日のブログ">
+  <h2>📅 前後のブログ</h2>
+  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>
+  <div class="archive-links">
+    <a href="./lesson-2026-10-05.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月5日</div>
+      <div class="archive-item-title">👶 お母さん、ゴを抱っこしてくれる？</div>
+      <div class="archive-item-words">主要単語：mẹ, ẵm, giùm, anh, cõng, chăm sóc</div>
+    </a>
+    <a href="./lesson-2026-10-06.html" class="archive-item-link">
+      <div class="archive-item-date">2026年10月6日</div>
+      <div class="archive-item-title">👶 4ヶ月のゴちゃんが寝た！音を立てたら即終了ミッション</div>
+      <div class="archive-item-words">主要単語：ru, ngủ, im, im lặng, xin</div>
+    </a>
   </div>
-</div>
+  <div style="margin-top: 15px; text-align: center;">
+    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>
+  </div>
+  <p class="archive-home" style="text-align: center; margin-top: 15px;">
+    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>
+  </p>
+</section>
 
-<hr class="divider">
-<h2>🇻🇳 1．今日のメインフレーズ</h2>
-<div class="viet-card">
-  <div class="viet-line" lang="vi">Gô đang ngủ hả?</div>
-  <div class="translation">日本語：ゴちゃん、いま寝てる？</div>
-  <button class="speak" type="button" data-speak="Gô đang ngủ hả?">🔊 文を聞く</button>
-</div>
-<p class="small">Gô＝ゴちゃん ／ đang＝今〜している ／ ngủ＝寝る ／ hả＝〜なの？</p>
+</article></main>
 
-<hr class="divider">
-<h2>💡 2．基本の動詞を覚える</h2>
-<p>ゴちゃんの日常の動きに合わせて、基本の動詞を確認しましょう。</p>
+<nav class="site-links" aria-label="サイトメニュー">
+  <a href="./index.html#today">🍓 今日覚えた<br>今日のベトナム語</a>
+  <a href="./words.html">📚 これまでの一語<br>復習しよう</a>
+  <a href="./index.html#basic">🌱 ベトナム語の基礎<br>母音・子音・声調</a>
+</nav>
 
-<div class="viet-card">
+<section class="visitor-counter" aria-label="訪問者数">
+  🍓 このサイトを訪れた人 🍓<br>
+  <img src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" alt="訪問者数カウンター">
+</section>
+
+<div class="footer">🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓</div>
+
+<script>
+function speakVietnamese(text) {
+  if (!('speechSynthesis' in window)) {
+    alert('このブラウザでは音声読み上げに対応していません。');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  var utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'vi-VN';
+  utterance.rate = 0.78;
+  
+  var voices = window.speechSynthesis.getVoices();
+  var voice = voices.find(function(v) { return /^vi(-|_)/i.test(v.lang); });
+  if (voice) utterance.voice = voice;
+  
+  window.speechSynthesis.speak(utterance);
+}
+
+// iPhone Safari等で最初の音声読み上げ音声をあらかじめ読み込む処理
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = function() {
+    window.speechSynthesis.getVoices();
+  };
+}
+</script>
+
+</body>
+</html>
