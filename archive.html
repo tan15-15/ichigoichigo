@@ -39,16 +39,24 @@
     (function(){
       var container = document.getElementById('auto-archive-list');
       if (typeof lessons !== 'undefined' && Array.isArray(lessons) && lessons.length > 0) {
-        // 新しい日付順に並び替え
-        var sorted = lessons.slice().sort(function(a,b){
-          var dateA = a.date || '';
-          var dateB = b.date || '';
-          return dateB.localeCompare(dateA);
+        
+        // 日付を数値（タイムスタンプ）に変換して確実に降順（新しい順）ソート
+        var sorted = lessons.slice().sort(function(a, b){
+          var parseDate = function(item) {
+            if (item.date) {
+              return new Date(item.date).getTime() || 0;
+            }
+            if (item.url) {
+              var m = item.url.match(/lesson-(\d{4}-\d{2}-\d{2})\.html/);
+              if (m) return new Date(m[1]).getTime() || 0;
+            }
+            return 0;
+          };
+          return parseDate(b) - parseDate(a); // 新しい順 (降順)
         });
 
         var html = '';
         sorted.forEach(function(item){
-          // 日初表記の調整（dateDisplayがなければdateから変換）
           var dateText = item.dateDisplay;
           if (!dateText && item.date) {
             var parts = item.date.split('-');
@@ -56,6 +64,12 @@
               dateText = parts[0] + '年' + parseInt(parts[1], 10) + '月' + parseInt(parts[2], 10) + '日';
             } else {
               dateText = item.date;
+            }
+          }
+          if (!dateText && item.url) {
+            var m = item.url.match(/lesson-(\d{4})-(\d{2})-(\d{2})\.html/);
+            if (m) {
+              dateText = m[1] + '年' + parseInt(m[2], 10) + '月' + parseInt(m[3], 10) + '日';
             }
           }
           if (!dateText) dateText = '日付なし';
