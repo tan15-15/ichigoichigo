@@ -18,103 +18,57 @@ jobs:
       - name: Get repository
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
       - name: Add lesson and generate HTML
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
-          python3 <<'PY'
-          import json
-          import re
-          import os
+          python3 -c '
+          import json, re, os
           from pathlib import Path
 
           raw = os.environ.get("LESSON_JSON", "").strip()
-          raw = raw.translate(str.maketrans({
-              "“": '"', "”": '"', "„": '"', "‟": '"',
-              "‘": "'", "’": "'", "‚": "'", "‛": "'"
-          }))
-
-          try:
-              lesson = json.loads(raw)
-          except json.JSONDecodeError as e:
-              raise SystemExit(f"JSONの形式が正しくありません: {e}")
-
-          required = [
-              "date", "title", "scene", "vietnamese",
-              "translation", "words", "mainWord", "mainMeaning"
-          ]
-          missing = [key for key in required if key not in lesson]
-          if missing:
-              raise SystemExit("不足している項目: " + ", ".join(missing))
-
-          if not isinstance(lesson["words"], list):
-              raise SystemExit("words は単語と意味のリストにしてください")
-
-          lesson.setdefault("extraWords", [])
+          raw = raw.translate(str.maketrans({"“": "\"", "”": "\"", "„": "\"", "‟": "\"", "‘": "\'", "’": "\'", "‚": "\'", "‛": "\'"}))
+          lesson = json.loads(raw)
           date_str = lesson["date"]
 
-          # 1. lessons.js への追加処理
           path = Path("lessons.js")
           content = path.read_text(encoding="utf-8")
-
-          match = re.search(r'const\s+lessons\s*=\s*\[', content)
-          if not match:
-              raise SystemExit("lessons.js の配列が見つかりません")
-
+          match = re.search(r"const\s+lessons\s*=\s*\[", content)
           end_marker = "\n];\n\nconst vocabulary = ["
           insert_at = content.find(end_marker, match.end())
-          if insert_at < 0:
-              raise SystemExit("lessons.js の配列の終わりが見つかりません")
-
+          
           existing = content[match.end():insert_at]
-          if (
-              json.dumps(lesson["date"], ensure_ascii=False) in existing
-              and json.dumps(lesson["title"], ensure_ascii=False) in existing
-          ):
-              print("同じ日付とタイトルのレッスンがあるため、lessons.jsへの追加はスキップします。")
-          else:
-              separator = (
-                  "" if not existing.strip() or existing.rstrip().endswith(",")
-                  else ","
-              )
+          if json.dumps(lesson["date"], ensure_ascii=False) not in existing:
+              separator = "" if not existing.strip() or existing.rstrip().endswith(",") else ","
               new_entry = json.dumps(lesson, ensure_ascii=False, indent=2)
-              updated = (
-                  content[:insert_at]
-                  + separator
-                  + "\n  "
-                  + new_entry.replace("\n", "\n  ")
-                  + "\n"
-                  + content[insert_at:]
-              )
+              updated = content[:insert_at] + separator + "\n  " + new_entry.replace("\n", "\n  ") + "\n" + content[insert_at:]
               path.write_text(updated, encoding="utf-8")
-              print("lessons.js にレッスンを追加しました")
 
-          # 2. 小文字で個別HTMLファイルを確実に生成
           html_filename = f"lesson-{date_str}.html"
           html_path = Path(html_filename)
-
           if not html_path.exists():
               template_html = f"""<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{lesson['title']} - 一期一語</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div id="app" data-date="{date_str}"></div>
-    <script src="lessons.js"></script>
-    <script src="app.js"></script>
-</body>
-</html>
-"""
+          <html lang=\"ja\">
+          <head>
+              <meta charset=\"UTF-8\">
+              <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+              <title>{lesson[\"title\"]} - 一期一語</title>
+              <link rel=\"stylesheet\" href=\"style.css\">
+          </head>
+          <body>
+              <div id=\"app\" data-date=\"{date_str}\"></div>
+              <script src=\"lessons.js\"></script>
+              <script src=\"app.js\"></script>
+          </body>
+          </html>
+          """
               html_path.write_text(template_html, encoding="utf-8")
-              print(f"個別HTMLファイルを作成しました: {html_filename}")
-          else:
-              print(f"個別HTMLファイルは既に存在します: {html_filename}")
-
-          PY
+          '
 
       - name: Commit and push
         run: |
