@@ -40,53 +40,62 @@
       var container = document.getElementById('auto-archive-list');
       if (typeof lessons !== 'undefined' && Array.isArray(lessons) && lessons.length > 0) {
         
-        // 日付を数値（タイムスタンプ）に変換して確実に降順（新しい順）ソート
+        // 最新日付が一番上に来るように降順ソート
         var sorted = lessons.slice().sort(function(a, b){
-          var parseDate = function(item) {
-            if (item.date) {
-              return new Date(item.date).getTime() || 0;
-            }
+          var getDateStr = function(item) {
+            if (item.date) return item.date;
+            if (item.id) return item.id;
             if (item.url) {
-              var m = item.url.match(/lesson-(\d{4}-\d{2}-\d{2})\.html/);
-              if (m) return new Date(m[1]).getTime() || 0;
+              var m = item.url.match(/(\d{4}-\d{2}-\d{2})/);
+              if (m) return m[1];
             }
-            return 0;
+            return '';
           };
-          return parseDate(b) - parseDate(a); // 新しい順 (降順)
+          return getDateStr(b).localeCompare(getDateStr(a));
         });
 
         var html = '';
         sorted.forEach(function(item){
+          var dateStr = item.date || item.id || '';
+          if (!dateStr && item.url) {
+            var m = item.url.match(/(\d{4}-\d{2}-\d{2})/);
+            if (m) dateStr = m[1];
+          }
+
           var dateText = item.dateDisplay;
-          if (!dateText && item.date) {
-            var parts = item.date.split('-');
+          if (!dateText && dateStr) {
+            var parts = dateStr.split('-');
             if (parts.length === 3) {
               dateText = parts[0] + '年' + parseInt(parts[1], 10) + '月' + parseInt(parts[2], 10) + '日';
             } else {
-              dateText = item.date;
-            }
-          }
-          if (!dateText && item.url) {
-            var m = item.url.match(/lesson-(\d{4})-(\d{2})-(\d{2})\.html/);
-            if (m) {
-              dateText = m[1] + '年' + parseInt(m[2], 10) + '月' + parseInt(m[3], 10) + '日';
+              dateText = dateStr;
             }
           }
           if (!dateText) dateText = '日付なし';
 
-          var url = item.url || ('./lesson-' + item.date + '.html');
+          // 正しい個別記事へのURLを構築
+          var url = item.url;
+          if (!url && dateStr) {
+            url = './lesson-' + dateStr + '.html';
+          }
+          if (url && !url.startsWith('./') && !url.startsWith('http')) {
+            url = './' + url;
+          }
+
           var title = item.title || '無題';
+          var words = item.words || item.keywords || '';
 
           html += '<a class="archive-item" href="' + url + '">';
           html += '  <div class="archive-date">📅 ' + dateText + '</div>';
           html += '  <div class="archive-item-title">' + title + '</div>';
-          if(item.words || item.keywords) {
-            html += '  <div class="archive-item-words">主要単語：' + (item.words || item.keywords) + '</div>';
+          if(words) {
+            html += '  <div class="archive-item-words">主要単語：' + words + '</div>';
           }
           html += '</a>';
         });
         container.innerHTML = html;
       } else {
+        // バックアップ用（最新の10/4が一番上）
         container.innerHTML = `
             <a class="archive-item" href="./lesson-2026-10-04.html">
                 <div class="archive-date">📅 2026年10月4日</div>
