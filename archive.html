@@ -26,33 +26,28 @@
     <main class="archive-page-container">
         <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
         
-        <!-- 自動でリストが生成される場所 -->
         <div id="archive-container" class="archive-list"></div>
 
         <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
     </main>
 
-    <!-- 記事データファイルの読み込み -->
     <script src="lessons.js"></script>
 
     <script>
     (function(){
         var container = document.getElementById('archive-container');
         if (typeof lessons !== 'undefined' && Array.isArray(lessons)) {
-            // 新しい日付順（降順）に自動並び替え
+            // 日付順（降順：新しい順）に自動並び替え
             var sorted = lessons.slice().sort(function(a, b) {
                 return b.date.localeCompare(a.date);
             });
 
             var html = '';
             sorted.forEach(function(item) {
-                // 日付を「2026年10月5日」の形に変換
-                var p = item.date.split('-');
-                var dateText = p[0] + '年' + parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
                 var linkUrl = './lesson-' + item.date + '.html';
 
                 html += '<a class="archive-item" href="' + linkUrl + '">';
-                html += '  <div class="archive-date">📅 ' + dateText + '</div>';
+                html += '  <div class="archive-date">📅 ' + item.dateDisplay + '</div>';
                 html += '  <div class="archive-item-title">' + item.title + '</div>';
                 if (item.words) {
                     html += '  <div class="archive-item-words">主要単語：' + item.words + '</div>';
