@@ -25,14 +25,54 @@
     </header>
     <main class="archive-page-container">
         <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
-        <div class="archive-list">
+        
+        <!-- 自動生成される一覧エリア -->
+        <div id="auto-archive-list" class="archive-list">
+            <!-- JavaScriptで自動読み込みされます -->
+        </div>
+
+        <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
+    </main>
+
+    <!-- 記事データを管理するファイル -->
+    <script src="lessons.js"></script>
+
+    <script>
+    (function(){
+      var container = document.getElementById('auto-archive-list');
+      if (typeof lessons !== 'undefined' && Array.isArray(lessons)) {
+        // 新しい日付順に並び替え
+        var sorted = lessons.slice().sort(function(a,b){
+          return b.date.localeCompare(a.date);
+        });
+
+        var html = '';
+        sorted.forEach(function(item){
+          html += '<a class="archive-item" href="' + item.url + '">';
+          html += '  <div class="archive-date">' + item.dateDisplay + '</div>';
+          html += '  <div class="archive-item-title">' + item.title + '</div>';
+          if(item.words) {
+            html += '  <div class="archive-item-words">主要単語：' + item.words + '</div>';
+          }
+          html += '</a>';
+        });
+        container.innerHTML = html;
+      } else {
+        // 万が一lessons.jsが読めない場合の予備表示
+        container.innerHTML = `
+            <a class="archive-item" href="./lesson-2026-10-04.html">
+                <div class="archive-date">2026年10月4日</div>
+                <div class="archive-item-title">🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く</div>
+                <div class="archive-item-words">主要単語：bát, này, nhiêu, tiền, mắc, rẻ</div>
+            </a>
             <a class="archive-item" href="./lesson-2026-10-03.html">
                 <div class="archive-date">2026年10月3日</div>
                 <div class="archive-item-title">市場に行きたい！ ベトナム語を覚えて、いざ出発！</div>
                 <div class="archive-item-words">主要単語：hôm nay, muốn, đi chợ, về nhà</div>
             </a>
-        </div>
-        <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
-    </main>
+        `;
+      }
+    })();
+    </script>
 </body>
 </html>
