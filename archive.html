@@ -1,64 +1,86 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ブログ記事一覧 - 一期一語</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        header { position: relative; overflow: hidden; padding: 0; text-align: center; background: #fff5e9; border-bottom: 5px solid #d83d63; box-shadow: 0 5px 0 #fff0c4; }
-        .site-banner { display: block; width: 100%; height: auto; max-height: 540px; object-fit: contain; margin: 0 auto; }
-        .archive-page-container { max-width: 800px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 20px; border: 2px solid #ffd0df; box-shadow: 0 4px 15px rgba(233,77,131,0.1); }
-        .archive-page-title { text-align: center; color: #d83d76; margin-bottom: 25px; font-size: 24px; }
-        .archive-list { display: flex; flex-direction: column; gap: 12px; }
-        .archive-item { display: block; padding: 14px 18px; background: #fff9fb; border: 1.5px solid #ffc7d9; border-radius: 14px; text-decoration: none; transition: all 0.2s ease; }
-        .archive-item:hover { background: #ffe8f0; transform: translateY(-2px); }
-        .archive-date { font-size: 13px; color: #ba7c91; font-weight: bold; margin-bottom: 3px; }
-        .archive-item-title { font-size: 16px; font-weight: bold; color: #a92758; }
-        .archive-item-words { font-size: 13px; color: #80616e; margin-top: 3px; }
-        .back-home { display: block; width: fit-content; margin: 25px auto 0; padding: 10px 20px; background: #ffdfeb; color: #92244d; border-radius: 999px; text-decoration: none; font-weight: bold; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ff6f9f">
+<title>ブログ記事一覧｜一期一語【いちごいちご】</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+:root{--pink:#ff6f9f;--deep:#d83d76;--pale:#fff0f5;--red:#e84361;--cream:#fffaf4;--ink:#514047;--line:#ffd0df;--green:#5c9b69}
+*{box-sizing:border-box;font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif !important}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#fff4f8 0,#fffaf4 55%,#fff1f5 100%);color:var(--ink);font-family:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;line-height:1.95}
+header{position:relative;overflow:hidden;padding:0;text-align:center;background:#fff5e9;border-bottom:5px solid #d83d63;box-shadow:0 5px 0 #fff0c4}
+.site-banner{display:block;width:100%;height:auto;max-height:540px;object-fit:contain;margin:0 auto}
+main{width:min(900px,calc(100% - 22px));margin:22px auto 38px}.article{background:#fff;border:2px solid var(--line);border-radius:24px;padding:clamp(16px,4vw,38px);box-shadow:0 8px 22px #e94d8314}
+h1{font-size:clamp(20px,4.6vw,32px);line-height:1.45;text-align:center;color:var(--deep);margin:0 auto 22px;max-width:19em}
+.archive-links{display:flex;flex-direction:column;gap:12px;margin-top:20px}
+.archive-item-link{display:block;text-decoration:none;color:#a92758;background:#fff;border:1px solid #ffd5e1;border-radius:12px;padding:14px 16px;transition:background 0.2s}
+.archive-item-link:hover{background:#ffe8f0}
+.archive-item-date{font-size:13px;color:#ba7c91;font-weight:bold;margin-bottom:2px;}
+.archive-item-title{font-size:16px;font-weight:bold;color:#a92758;}
+.archive-item-words{font-size:13px;color:#80616e;margin-top:4px;}
+.archive-home{display:flex;flex-wrap:wrap;gap:8px;margin-top:25px;justify-content:center}
+.archive-home a{display:block;text-decoration:none;color:#a92758;background:#fff;border:1px solid #ffd5e1;border-radius:12px;padding:10px 16px;font-weight:bold}
+.archive-home a:hover{background:#ffe8f0}
+.site-links{max-width:900px;margin:22px auto;padding:0 11px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.site-links a{display:block;text-align:center;text-decoration:none;color:#a92758;background:#fff;border:2px solid #ffd0df;border-radius:16px;padding:13px 8px;font-size:clamp(12px,2.4vw,15px);line-height:1.55;font-weight:700;box-shadow:0 4px 12px #e94d8310}
+.site-links a:hover{background:#fff0f5}
+.visitor-counter{max-width:900px;margin:25px auto 0;padding:20px 12px;text-align:center;background:rgba(255,255,255,.88);border:2px dashed #ffc6d3;border-radius:22px;color:#d95370;font-size:14px;font-weight:700}
+.visitor-counter img{display:inline-block;margin-top:10px;max-width:100%;min-height:24px}
+.footer{text-align:center;color:#b77990;font-size:13px;padding:20px 10px}
+</style>
 </head>
 <body>
-    <header aria-label="一期一語のサイトタイトル">
-        <img class="site-banner" src="site-banner.jpg" alt="一期一語">
-    </header>
-    <main class="archive-page-container">
-        <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
-        
-        <div id="archive-container" class="archive-list"></div>
+<header aria-label="一期一語のサイトタイトル">
+<img class="site-banner" src="site-banner.jpg" alt="ベトナム暮らし、ベトナム語は今日も。一期一語【いちごいちご】。ベトナム語の旅。ゼロから、少しだけ日常会話へ。楽しく覚える南部ベトナム語。">
+</header>
+<main><article class="article">
 
-        <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
-    </main>
+<h1>📖 全てのブログ一覧</h1>
+<p style="text-align:center; color:#80616e;">これまでに投稿したベトナム語レッスンのアーカイブです🍓</p>
 
-    <script src="lessons.js"></script>
+<div class="archive-links">
+  <a href="./lesson-2026-10-07.html" class="archive-item-link">
+    <div class="archive-item-date">2026年10月7日</div>
+    <div class="archive-item-title">🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）</div>
+    <div class="archive-item-words">主要単語：uống, sữa, ăn, cơm, buồn ngủ, chưa, đang, còn, rồi</div>
+  </a>
+  
+  <a href="./lesson-2026-10-06.html" class="archive-item-link">
+    <div class="archive-item-date">2026年10月6日</div>
+    <div class="archive-item-title">👶 4ヶ月のゴちゃんが寝た！音を立てたら即終了ミッション</div>
+    <div class="archive-item-words">主要単語：ru, ngủ, im, im lặng, xin</div>
+  </a>
 
-    <script>
-    (function(){
-        var container = document.getElementById('archive-container');
-        if (typeof lessons !== 'undefined' && Array.isArray(lessons)) {
-            // 日付順（降順：新しい順）に自動並び替え
-            var sorted = lessons.slice().sort(function(a, b) {
-                return b.date.localeCompare(a.date);
-            });
+  <a href="./lesson-2026-10-05.html" class="archive-item-link">
+    <div class="archive-item-date">2026年10月5日</div>
+    <div class="archive-item-title">👶 お母さん、ゴを抱っこしてくれる？</div>
+    <div class="archive-item-words">主要単語：mẹ, ẵm, giùm, anh, cõng, chăm sóc</div>
+  </a>
+</div>
 
-            var html = '';
-            sorted.forEach(function(item) {
-                var linkUrl = './lesson-' + item.date + '.html';
+<div class="archive-home">
+  <a href="./index.html">🍓 トップページへ</a>
+  <a href="./words.html">📚 単語帳へ</a>
+</div>
 
-                html += '<a class="archive-item" href="' + linkUrl + '">';
-                html += '  <div class="archive-date">📅 ' + item.dateDisplay + '</div>';
-                html += '  <div class="archive-item-title">' + item.title + '</div>';
-                if (item.words) {
-                    html += '  <div class="archive-item-words">主要単語：' + item.words + '</div>';
-                }
-                html += '</a>';
-            });
-            container.innerHTML = html;
-        } else {
-            container.innerHTML = '<p style="text-align:center; color:#888;">記事データを読み込めませんでした。</p>';
-        }
-    })();
-    </script>
+</article></main>
+
+<nav class="site-links" aria-label="サイトメニュー">
+  <a href="./index.html#today">🍓 今日覚えた<br>今日のベトナム語</a>
+  <a href="./words.html">📚 これまでの一語<br>復習しよう</a>
+  <a href="./index.html#basic">🌱 ベトナム語の基礎<br>母音・子音・声調</a>
+</nav>
+
+<section class="visitor-counter" aria-label="訪問者数">
+  🍓 このサイトを訪れた人 🍓<br>
+  <img src="https://api.visitorbadge.io/api/visitors?path=tan15-15.github.io%2Fichigoichigo&label=%E8%A8%AA%E5%95%8F%E8%80%85&countColor=%23e83e8c" alt="訪問者数カウンター">
+</section>
+
+<div class="footer">🍓 ベトナム暮らし、ベトナム語は今日も「一期一語」 🍓</div>
+
 </body>
 </html>
