@@ -20,7 +20,7 @@ jobs:
 
       - name: Run update script
         env:
-          LESSON_JSON: ${{ inputs.lesson_json }}
+          LESSON_JSON: "${{ inputs.lesson_json }}"
         run: python3 update_lessons.py
 
       - name: Commit and push changes
