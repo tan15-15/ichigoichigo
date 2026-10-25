@@ -26,85 +26,23 @@
     <main class="archive-page-container">
         <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
         
-        <div id="auto-archive-list" class="archive-list"></div>
-
-        <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
-    </main>
-
-    <script src="lessons.js"></script>
-
-    <script>
-    (function(){
-      var container = document.getElementById('auto-archive-list');
-      
-      if (typeof lessons !== 'undefined' && Array.isArray(lessons) && lessons.length > 0) {
-        // 1. 日付で最新順（降順）にソートする処理
-        var sorted = lessons.slice().sort(function(a, b){
-          var getNum = function(item) {
-            var raw = item.date || item.id || item.url || '';
-            var m = raw.match(/\d{4}-\d{2}-\d{2}/);
-            return m ? m[0].replace(/-/g, '') : '0';
-          };
-          return parseInt(getNum(b), 10) - parseInt(getNum(a), 10);
-        });
-
-        var html = '';
-        sorted.forEach(function(item){
-          // 日付文字列の抽出（例: 2026-10-04）
-          var rawDate = item.date || item.id || '';
-          if(!rawDate && item.url) {
-            var m = item.url.match(/\d{4}-\d{2}-\d{2}/);
-            if(m) rawDate = m[0];
-          }
-
-          // 表示用の日付形式（例: 2026年10月4日）
-          var displayDate = item.dateDisplay;
-          if(!displayDate && rawDate) {
-            var p = rawDate.split('-');
-            if(p.length === 3) {
-              displayDate = p[0] + '年' + parseInt(p[1], 10) + '月' + parseInt(p[2], 10) + '日';
-            }
-          }
-          if(!displayDate) displayDate = '日付未設定';
-
-          // 遷移先URLの確定（lesson-YYYY-MM-DD.html への直接リンク）
-          var linkUrl = item.url;
-          if(!linkUrl && rawDate) {
-            linkUrl = 'lesson-' + rawDate + '.html';
-          }
-          if(linkUrl && !linkUrl.startsWith('./') && !linkUrl.startsWith('http')) {
-            linkUrl = './' + linkUrl;
-          }
-
-          var titleText = item.title || '無題のブログ';
-          var wordText = item.words || item.keywords || '';
-
-          html += '<a class="archive-item" href="' + linkUrl + '">';
-          html += '  <div class="archive-date">📅 ' + displayDate + '</div>';
-          html += '  <div class="archive-item-title">' + titleText + '</div>';
-          if(wordText) {
-            html += '  <div class="archive-item-words">主要単語：' + wordText + '</div>';
-          }
-          html += '</a>';
-        });
-
-        container.innerHTML = html;
-      } else {
-        // 万が一lessons.jsの読み込みに失敗した場合の固定HTML
-        container.innerHTML = `
+        <div class="archive-list">
+            <!-- 10月4日の記事（最新を上） -->
             <a class="archive-item" href="./lesson-2026-10-04.html">
                 <div class="archive-date">📅 2026年10月4日</div>
                 <div class="archive-item-title">🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く</div>
                 <div class="archive-item-words">主要単語：bát, này, nhiêu, tiền, mắc, rẻ</div>
             </a>
+
+            <!-- 10月3日の記事 -->
             <a class="archive-item" href="./lesson-2026-10-03.html">
                 <div class="archive-date">📅 2026年10月3日</div>
                 <div class="archive-item-title">市場に行きたい！ ベトナム語を覚えて、いざ出発！</div>
                 <div class="archive-item-words">主要単語：hôm nay, muốn, đi chợ, về nhà</div>
             </a>
-        `;
-      }
-    })();
-    </script>
+        </div>
+
+        <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
+    </main>
 </body>
 </html>
