@@ -1,6 +1,7 @@
 import json
 import re
 import os
+import ast
 from pathlib import Path
 
 # 1. 新規レッスンの追加処理（JSONが入力されている場合のみ）
@@ -36,13 +37,23 @@ if raw:
     except Exception as e:
         print(f"JSON追加スキップ: {e}")
 
-# 2. lessons.js から全レッスンデータを取得して日付順にソート
+# 2. lessons.js から全レッスンデータを安全に取得
 lessons_content = Path("lessons.js").read_text(encoding="utf-8")
 match_lessons = re.search(r'const\s+lessons\s*=\s*(\[.*?\]);?\s*\n', lessons_content, re.DOTALL)
 if not match_lessons:
+    match_lessons = re.search(r'const\s+lessons\s*=\s*(\[.*?\])', lessons_content, re.DOTALL)
+
+if not match_lessons:
     raise Exception("lessons.js から lessons 配列が見つかりません")
 
-lessons_list = json.loads(match_lessons.group(1))
+try:
+    lessons_list = json.loads(match_lessons.group(1))
+except json.JSONDecodeError:
+    # JavaScript形式（シングルクォートや末尾カンマ等）でも安全に読み込む
+    js_array_str = match_lessons.group(1)
+    py_str = js_array_str.replace('true', 'True').replace('false', 'False').replace('null', 'None')
+    lessons_list = ast.literal_eval(py_str)
+
 lessons_list.sort(key=lambda x: x.get("date", ""))
 
 # 3. archive.html（全記事一覧ページ）を生成
@@ -89,7 +100,7 @@ archive_html += """        </div>
 Path("archive.html").write_text(archive_html, encoding="utf-8")
 print("archive.html を生成しました")
 
-# 4. 各個別レッスンHTMLのアーカイブ部分を更新
+# 4. 各個別レッスンHTMLのアーカイブ部分を更新（前後3日分 ＋ 一覧ボタン）
 for index, current in enumerate(lessons_list):
     curr_date = current.get("date")
     if not curr_date:
