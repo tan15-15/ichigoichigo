@@ -6,98 +6,33 @@
     <title>ブログ記事一覧 - 一期一語</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .archive-page-container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 20px;
-            border: 2px solid #ffd0df;
-            box-shadow: 0 4px 15px rgba(233,77,131,0.1);
-        }
-        .archive-page-title {
-            text-align: center;
-            color: #d83d76;
-            margin-bottom: 25px;
-            font-size: 24px;
-        }
-        .archive-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .archive-item {
-            display: flex;
-            align-items: center;
-            padding: 14px 18px;
-            background: #fff9fb;
-            border: 1.5px solid #ffc7d9;
-            border-radius: 14px;
-            text-decoration: none;
-            color: #a92758;
-            font-weight: bold;
-            transition: all 0.2s ease;
-        }
-        .archive-item:hover {
-            background: #ffe8f0;
-            transform: translateY(-2px);
-        }
-        .archive-date {
-            font-size: 14px;
-            color: #ba7c91;
-            margin-right: 15px;
-            white-space: nowrap;
-        }
-        .archive-item-title {
-            font-size: 16px;
-        }
-        .back-home {
-            display: block;
-            width: fit-content;
-            margin: 25px auto 0;
-            padding: 10px 20px;
-            background: #ffdfeb;
-            color: #92244d;
-            border-radius: 999px;
-            text-decoration: none;
-            font-weight: bold;
-        }
+        .archive-page-container { max-width: 800px; margin: 30px auto; padding: 20px; background: #fff; border-radius: 20px; border: 2px solid #ffd0df; box-shadow: 0 4px 15px rgba(233,77,131,0.1); }
+        .archive-page-title { text-align: center; color: #d83d76; margin-bottom: 25px; font-size: 24px; }
+        .archive-list { display: flex; flex-direction: column; gap: 12px; }
+        .archive-item { display: block; padding: 14px 18px; background: #fff9fb; border: 1.5px solid #ffc7d9; border-radius: 14px; text-decoration: none; transition: all 0.2s ease; }
+        .archive-item:hover { background: #ffe8f0; transform: translateY(-2px); }
+        .archive-date { font-size: 13px; color: #ba7c91; font-weight: bold; margin-bottom: 3px; }
+        .archive-item-title { font-size: 16px; font-weight: bold; color: #a92758; }
+        .archive-item-words { font-size: 13px; color: #80616e; margin-top: 3px; }
+        .back-home { display: block; width: fit-content; margin: 25px auto 0; padding: 10px 20px; background: #ffdfeb; color: #92244d; border-radius: 999px; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
     <header aria-label="一期一語のサイトタイトル">
         <img class="site-banner" src="site-banner.jpg" alt="一期一語">
     </header>
-
     <main class="archive-page-container">
         <h1 class="archive-page-title">🍓 ブログ記事一覧（全件）</h1>
-        <div id="archive-list" class="archive-list"></div>
+        <div class="archive-list">
+            <!-- 10月3日の記事 -->
+            <a class="archive-item" href="./lesson-2026-10-03.html">
+                <div class="archive-date">2026年10月3日</div>
+                <div class="archive-item-title">市場に行きたい！ ベトナム語を覚えて、いざ出発！</div>
+                <div class="archive-item-words">主要単語：hôm nay, muốn, đi chợ, về nhà</div>
+            </a>
+            <!-- 他の日付の記事もここに追加していく形になります -->
+        </div>
         <a href="./index.html" class="back-home">🍓 トップページへ戻る</a>
     </main>
-
-    <script src="lessons.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var container = document.getElementById('archive-list');
-            if (typeof lessons !== 'undefined' && Array.isArray(lessons)) {
-                // 日付の降順（新しい順）に並び替え
-                var sorted = lessons.slice().sort(function(a, b) {
-                    return b.date.localeCompare(a.date);
-                });
-                
-                sorted.forEach(function(l) {
-                    var a = document.createElement('a');
-                    a.className = 'archive-item';
-                    a.href = './lesson-' + l.date + '.html';
-                    
-                    var parts = l.date.split('-');
-                    var dateFormatted = parts[0] + '年' + parseInt(parts[1], 10) + '月' + parseInt(parts[2], 10) + '日';
-                    
-                    a.innerHTML = '<span class="archive-date">' + dateFormatted + '</span><span class="archive-item-title">' + l.title + '</span>';
-                    container.appendChild(a);
-                });
-            }
-        });
-    </script>
 </body>
 </html>
