@@ -1,36 +1,38 @@
-name: Add Vietnamese Lesson and Sync Archive
+name: Add or Update Vietnamese Lesson
 
 on:
   workflow_dispatch:
     inputs:
-      lesson_json:
-        description: "追加するレッスン内容（JSONを丸ごと貼り付け。空でも同期のみ実行可）"
-        required: false
+      lesson_html:
+        description: 'メタデータ付きの完全版HTMLコードをここに丸ごと貼り付けてください'
+        required: true
         type: string
 
-permissions:
-  contents: write
-
 jobs:
-  sync-and-add:
+  process-lesson:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
     steps:
-      - name: Get repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run update script
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Run processor
         env:
-          LESSON_JSON: "${{ inputs.lesson_json }}"
-        run: python3 update_lessons.py
+          LESSON_HTML: ${{ inputs.lesson_html }}
+        run: |
+          python scripts/process_lesson.py
 
       - name: Commit and push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .
-          if git diff --cached --quiet; then
-            echo "変更はありません"
-          else
-            git commit -m "Batch update archive links and archive page"
-            git push
-          fi
+          git config --global user.name "GitHub Actions Bot"
+          git config --global user.email "actions@github.com"
+          git add lesson-*.html lessons.js
+          git diff --staged --quiet || git commit -m "Auto-sync lesson and vocabulary"
+          git push
