@@ -115,6 +115,7 @@ body {
   background: rgba(255,255,255,.88);
   border-radius: 25px;
   box-shadow: 0 8px 25px rgba(120,100,100,.07);
+  scroll-margin-top: 20px;
 }
 
 .archive-section h3 {
@@ -251,7 +252,7 @@ body {
   <main id="lessons"></main>
 
   <!-- 📚 過去の記事一覧（lessons.js から全自動生成） -->
-  <section class="archive-section">
+  <section id="archive-section" class="archive-section">
     <h3>📚 過去の記事一覧</h3>
     <ul id="archive-list" class="archive-list"></ul>
   </section>
@@ -269,10 +270,10 @@ body {
       <small>復習しよう</small>
     </a>
 
-    <a href="./index.html#basic">
-      🌱
-      <strong>ベトナム語の基礎</strong>
-      <small>母音・子音・声調</small>
+    <a href="#archive-section">
+      📜
+      <strong>過去記事一覧</strong>
+      <small>一覧へスクロール</small>
     </a>
   </nav>
 
@@ -288,8 +289,8 @@ body {
   document.addEventListener('DOMContentLoaded', () => {
     if (typeof lessons === 'undefined' || !lessons.length) return;
 
-    // 1. 最新記事へ自動でリンクを設定（「今日覚えた」ボタン）
-    const latest = lessons[lessons.length - 1];
+    // 1. 最新記事（配列の先頭 lessons[0]）へ自動でリンクを設定（「今日覚えた」ボタン）
+    const latest = lessons[0];
     const cleanDate = latest.date.replace(/[^0-9]/g, '');
     const y = cleanDate.substring(0, 4);
     const m = cleanDate.substring(4, 6);
@@ -305,21 +306,22 @@ body {
     const archiveList = document.getElementById('archive-list');
     if (!archiveList) return;
 
-    const sortedLessons = [...lessons].reverse();
-    archiveList.innerHTML = sortedLessons.map(lesson => {
+    archiveList.innerHTML = lessons.map(lesson => {
       const cd = lesson.date.replace(/[^0-9]/g, '');
       const fileName = `lesson-${cd.substring(0, 4)}-${cd.substring(4, 6)}-${cd.substring(6, 8)}.html`;
 
       let keywordsText = '';
-      if (lesson.archiveWords && lesson.archiveWords.length > 0) {
-        keywordsText = lesson.archiveWords.slice(0, 3).join(', ');
-      } else if (lesson.words && lesson.words.length > 0) {
-        keywordsText = lesson.words.slice(0, 3).map(w => w.v || w.vn).join(', ');
+      if (typeof lesson.words === 'string') {
+        keywordsText = lesson.words;
+      } else if (Array.isArray(lesson.archiveWords) && lesson.archiveWords.length > 0) {
+        keywordsText = lesson.archiveWords.slice(0, 4).join(', ');
+      } else if (Array.isArray(lesson.words) && lesson.words.length > 0) {
+        keywordsText = lesson.words.slice(0, 4).map(w => typeof w === 'string' ? w : (w.v || w.vn)).join(', ');
       }
 
       return `
         <li class="archive-item">
-          <a href="./${fileName}">${lesson.date}：${lesson.title}</a>
+          <a href="./${fileName}">${lesson.dateDisplay || lesson.date}：${lesson.title}</a>
           ${keywordsText ? `<div class="archive-keywords">🔑 重要語: ${keywordsText}</div>` : ''}
         </li>
       `;
