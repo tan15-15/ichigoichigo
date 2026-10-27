@@ -29,26 +29,53 @@ def main():
     with open("lessons.js", "r", encoding="utf-8") as f:
         content = f.read()
 
-    new_lesson_json = json.dumps({
-        "date": date_str,
-        "dateDisplay": date_display,
-        "title": title_str,
-        "words": words_str
-    }, ensure_ascii=False, indent=4)
+    # 1. lessons 配列の抽出と重複除去・マージ
+    lessons_match = re.search(r'const\s+lessons\s*=\s*(\[.*?\]);', content, re.DOTALL)
+    if lessons_match:
+        try:
+            current_lessons = json.loads(lessons_match.group(1))
+        except Exception:
+            current_lessons = []
+        
+        # 既存の同日付データを削除
+        current_lessons = [l for l in current_lessons if l.get("date") != date_str]
+        
+        # 新しいレッスンを先頭に追加
+        new_entry = {
+            "date": date_str,
+            "dateDisplay": date_display,
+            "title": title_str,
+            "words": words_str
+        }
+        current_lessons.insert(0, new_entry)
+        
+        # 日付順にソート（新しい順）
+        current_lessons.sort(key=lambda x: x.get("date", ""), reverse=True)
+        
+        lessons_json_str = json.dumps(current_lessons, ensure_ascii=False, indent=4)
+        content = re.sub(r'const\s+lessons\s*=\s*\[.*?\];', f'const lessons = {lessons_json_str};', content, flags=re.DOTALL)
 
-    if "const lessons = [" in content:
-        content = content.replace("const lessons = [", f"const lessons = [\n    {new_lesson_json},")
+    # 2. vocabulary 配列の抽出と重複除去・マージ
+    vocab_match = re.search(r'const\s+vocabulary\s*=\s*(\[.*?\]);', content, re.DOTALL)
+    if vocab_match:
+        try:
+            current_vocab = json.loads(vocab_match.group(1))
+        except Exception:
+            current_vocab = []
 
-    for item in new_vocab:
-        v_word = item.get("v")
-        if f'v: "{v_word}"' not in content and f"v: '{v_word}'" not in content:
-            vocab_json = json.dumps(item, ensure_ascii=False, indent=4)
-            if "const vocabulary = [" in content:
-                content = content.replace("const vocabulary = [", f"const vocabulary = [\n    {vocab_json},")
+        existing_words = {v.get("v") for v in current_vocab if "v" in v}
+        for item in new_vocab:
+            word = item.get("v")
+            if word and word not in existing_words:
+                current_vocab.append(item)
+                existing_words.add(word)
+
+        vocab_json_str = json.dumps(current_vocab, ensure_ascii=False, indent=4)
+        content = re.sub(r'const\s+vocabulary\s*=\s*\[.*?\];', f'const vocabulary = {vocab_json_str};', content, flags=re.DOTALL)
 
     with open("lessons.js", "w", encoding="utf-8") as f:
         f.write(content)
-    print("Successfully updated!")
+    print("Successfully updated with de-duplication!")
 
 if __name__ == "__main__":
     main()
