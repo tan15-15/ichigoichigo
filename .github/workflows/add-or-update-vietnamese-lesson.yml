@@ -24,16 +24,16 @@ jobs:
         run: |
           echo "$LESSON_JSON" > input.json
 
-      - name: Execute Lesson Automation
+      - name: Create robust update script
         run: |
-          node -e '
-          const fs = require("fs");
+          cat << 'EOF' > update.js
+          const fs = require('fs');
 
-          let rawInput = fs.readFileSync("input.json", "utf8").trim();
+          let rawInput = fs.readFileSync('input.json', 'utf8').trim();
 
-          // ★ここに注目：末尾についてしまう余分な ]; や ; を強制的に削り落とす
-          rawInput = rawInput.replace(/\]\s*;?\s*$/, "").trim();
-          if (rawInput.startsWith("[")) {
+          // 末尾の予期せぬ ]; や余分な文字を完全に削除
+          rawInput = rawInput.replace(/\]\s*;?\s*$/, '').trim();
+          if (rawInput.startsWith('[')) {
             rawInput = rawInput.substring(1).trim();
           }
 
@@ -41,59 +41,55 @@ jobs:
           try {
             input = JSON.parse(rawInput);
           } catch (e1) {
-            // もしそれでもダメなら最初の { から最後の } までを綺麗に切り出す
-            const start = rawInput.indexOf("{");
-            const end = rawInput.lastIndexOf("}");
+            const start = rawInput.indexOf('{');
+            const end = rawInput.lastIndexOf('}');
             if (start !== -1 && end !== -1) {
-              const jsonStr = rawInput.substring(start, end + 1);
-              input = JSON.parse(jsonStr);
+              input = JSON.parse(rawInput.substring(start, end + 1));
             } else {
-              throw new Error("JSONのパースに失敗しました: " + e1.message);
+              throw new Error('JSONのパースに失敗しました: ' + e1.message);
             }
           }
 
-          // 2. 日付からファイル名決定
-          const dateMatch = String(input.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-          if (!dateMatch) throw new Error("date は「2026年10月13日」の形式で指定してください。");
+          const dateMatch = String(input.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+          if (!dateMatch) throw new Error('date は「2026年10月13日」の形式で指定してください。');
           const [, year, month, day] = dateMatch;
-          const isoDate = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
           const pagePath = `lesson-${isoDate}.html`;
 
-          const esc = v => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+          const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
           const speak = v => ` <button class="speak" type="button" data-text="${esc(v)}" onclick="speakVietnamese(this.dataset.text)">🔊 聴く</button>`;
           const viet = v => `<p class="viet-card">${esc(v)}${speak(v)}</p>`;
 
-          // 3. HTMLパーツ組み立て
           const renderPairs = items => (items || []).map(item => {
-            const v = Array.isArray(item) ? item[0] : (item.v || item.word || "");
-            const j = Array.isArray(item) ? item[1] : (item.j || item.meaning || "");
-            const w = Array.isArray(item) ? "" : (item.w || "");
-            return `<div class="step-box"><p>${esc(v)}${speak(v)}</p><p class="translation">${esc(j)}</p>${w ? `<p>${esc(w)}</p>` : ""}</div>`;
-          }).join("\n");
+            const v = Array.isArray(item) ? item[0] : (item.v || item.word || '');
+            const j = Array.isArray(item) ? item[1] : (item.j || item.meaning || '');
+            const w = Array.isArray(item) ? '' : (item.w || '');
+            return `<div class="step-box"><p>${esc(v)}${speak(v)}</p><p class="translation">${esc(j)}</p>${w ? `<p>${esc(w)}</p>` : ''}</div>`;
+          }).join('\n');
 
-          const sIcon = input.sceneIcon || "🚿";
-          const sTitle = input.sceneTitle || "今日の出来事";
+          const sIcon = input.sceneIcon || '🚿';
+          const sTitle = input.sceneTitle || '今日の出来事';
 
           const sectionsHtml = (input.articleSections || []).map(sec => {
-            const heading = sec.heading || sec.title || "";
-            const pList = (sec.paragraphs || []).map(p => p ? `<p>${esc(p)}</p>` : "<br>").join("\n");
+            const heading = sec.heading || sec.title || '';
+            const pList = (sec.paragraphs || []).map(p => p ? `<p>${esc(p)}</p>` : '<br>').join('\n');
             const exList = (sec.examples || []).map(ex => {
-              const noteHtml = ex.w ? `<div style="margin-top:8px; padding:10px; background:#f9f9f9; border-left:4px solid #e74c3c; border-radius:4px; font-size:0.95em; line-height:1.6;">${esc(ex.w).replace(/\n/g, "<br>")}</div>` : "";
-              return `<div class="step-box" style="margin-bottom:15px;">${viet(ex.v || "")}<p class="translation">${esc(ex.j || "")}</p>${noteHtml}</div>`;
-            }).join("\n");
+              const noteHtml = ex.w ? `<div style="margin-top:8px; padding:10px; background:#f9f9f9; border-left:4px solid #e74c3c; border-radius:4px; font-size:0.95em; line-height:1.6;">${esc(ex.w).replace(/\n/g, '<br>')}</div>` : '';
+              return `<div class="step-box" style="margin-bottom:15px;">${viet(ex.v || '')}<p class="translation">${esc(ex.j || '')}</p>${noteHtml}</div>`;
+            }).join('\n');
             return `<section><h2>${esc(heading)}</h2>${pList}${exList}</section>`;
-          }).join("\n");
+          }).join('\n');
 
           const speechScript = `
           <script>
           function speakVietnamese(text) {
-            if (!("speechSynthesis" in window)) {
-              alert("お使いのブラウザは音声再生に対応していません。");
+            if (!('speechSynthesis' in window)) {
+              alert('お使いのブラウザは音声再生に対応していません。');
               return;
             }
             window.speechSynthesis.cancel();
             const uttr = new SpeechSynthesisUtterance(text);
-            uttr.lang = "vi-VN";
+            uttr.lang = 'vi-VN';
             uttr.rate = 0.85;
             window.speechSynthesis.speak(uttr);
           }
@@ -121,7 +117,7 @@ jobs:
               <h2>📚 今日の単語</h2>
               ${renderPairs(input.words)}
             </section>
-            ${input.extraWords?.length ? `<section><h2>➕ 関連する言葉</h2>${renderPairs(input.extraWords)}</section>` : ""}
+            ${input.extraWords?.length ? `<section><h2>➕ 関連する言葉</h2>${renderPairs(input.extraWords)}</section>` : ''}
             <section>
               <h2>🍓 今日の復習</h2>
               ${viet(input.vietnamese)}
@@ -131,19 +127,18 @@ jobs:
           </article>
           ${speechScript}`;
 
-          const templatePath = "lesson-2026-10-03.html";
-          if (!fs.existsSync(templatePath)) throw new Error("テンプレートが見つかりません");
+          const templatePath = 'lesson-2026-10-03.html';
+          if (!fs.existsSync(templatePath)) throw new Error('テンプレートが見つかりません');
           fs.copyFileSync(templatePath, pagePath);
-          let html = fs.readFileSync(pagePath, "utf8");
+          let html = fs.readFileSync(pagePath, 'utf8');
 
-          const articleRegex = /<article\b[^>]*class=["\x27][^"\x27]*\barticle\b[^"\x27]*["\x27][^>]*>[\s\S]*?<\/article>/i;
+          const articleRegex = /<article\b[^>]*class=["'\x27][^"\x27]*\barticle\b[^"\x27]*["\x27][^>]*>[\s\S]*?<\/article>/i;
           html = html.replace(articleRegex, articleHtml);
           html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(input.title)}｜一期一語</title>`);
-          fs.writeFileSync(pagePath, html, "utf8");
+          fs.writeFileSync(pagePath, html, 'utf8');
 
-          // 4. lessons.js 更新と降順ソート
-          const lessonFile = "lessons.js";
-          const source = fs.readFileSync(lessonFile, "utf8");
+          const lessonFile = 'lessons.js';
+          const source = fs.readFileSync(lessonFile, 'utf8');
           const matchLessons = source.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
           let lessons = JSON.parse(matchLessons[1]);
 
@@ -154,35 +149,38 @@ jobs:
             lessons.push(input);
           }
 
-          lessons.sort((a, b) => (b.date || "").replace(/[^0-9]/g, "").localeCompare((a.date || "").replace(/[^0-9]/g, "")));
-          fs.writeFileSync(lessonFile, source.replace(matchLessons[1], JSON.stringify(lessons, null, 2)), "utf8");
+          lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
+          fs.writeFileSync(lessonFile, source.replace(matchLessons[1], JSON.stringify(lessons, null, 2)), 'utf8');
 
-          // 5. 全記事にナビボタン挿入
           lessons.forEach((lesson, i) => {
-            const dm = String(lesson.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+            const dm = String(lesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
             if (!dm) return;
-            const targetFile = `lesson-${dm[1]}-${dm[2].padStart(2, "0")}-${dm[3].padStart(2, "0")}.html`;
+            const targetFile = `lesson-${dm[1]}-${dm[2].padStart(2, '0')}-${dm[3].padStart(2, '0')}.html`;
             if (!fs.existsSync(targetFile)) return;
 
-            let fileContent = fs.readFileSync(targetFile, "utf8");
+            let fileContent = fs.readFileSync(targetFile, 'utf8');
             const newer = i > 0 ? lessons[i - 1] : null;
             const older = i < lessons.length - 1 ? lessons[i + 1] : null;
 
             const getFn = l => {
-              const m = String(l.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-              return `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
+              const m = String(l.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+              return `lesson-${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}.html`;
             };
 
-            const prevHtml = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : "";
-            const nextHtml = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉` : "";
+            const prevHtml = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : '';
+            const nextHtml = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉` : '';
             const navHtml = `<nav class="nav-buttons" style="display:flex; justify-content:space-between; margin:20px 0; gap:10px;">${prevHtml}<a href="./" class="nav-btn">🏠 トップ</a>${nextHtml}</nav>`;
 
-            fileContent = fileContent.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, "");
+            fileContent = fileContent.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, '');
             fileContent = fileContent.replace(/(<article\b[^>]*>)/i, `${navHtml}\n$1`);
             fileContent = fileContent.replace(/(<\/article>)/i, `$1\n${navHtml}`);
-            fs.writeFileSync(targetFile, fileContent, "utf8");
+            fs.writeFileSync(targetFile, fileContent, 'utf8');
           });
-          '
+          console.log('Successfully updated lesson and navigation.');
+          EOF
+
+      - name: Execute Update Script
+        run: node update.js
 
       - name: Commit and Push All Changes
         run: |
@@ -192,6 +190,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Auto strip trailing brackets from input json"
+            git commit -m "Fix workflow using standalone script file"
             git push
           fi
