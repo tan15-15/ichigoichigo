@@ -18,37 +18,30 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Execute Robust Lesson Automation
+      - name: Save input JSON to file
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
+        run: |
+          echo "$LESSON_JSON" > input.json
+
+      - name: Execute Lesson Automation
         run: |
           node <<'NODE'
           const fs = require('fs');
 
-          // 1. JSONパース（ゴミや不要な記号が混ざっても安全に抽出）
-          let rawInput = process.env.LESSON_JSON || '{}';
-          // 末尾の予期せぬ `];` などを自動カット
-          rawInput = rawInput.trim().replace(/;+$/, '');
-          if (rawInput.endsWith(']') && !rawInput.startsWith('[')) {
-            // もし余分なブラケットがあれば削る
-          }
-
+          // 1. 安全にファイルからJSONを読み込む
+          let rawInput = fs.readFileSync('input.json', 'utf8').trim();
           let input;
           try {
-            // 最初から最後までをきれいなJSONとしてパース試行
             input = JSON.parse(rawInput);
           } catch (e1) {
-            try {
-              // 失敗した場合、最初の `{` から最後の `}` までを強制抽出してリトライ
-              const start = rawInput.indexOf('{');
-              const end = rawInput.lastIndexOf('}');
-              if (start !== -1 && end !== -1) {
-                input = JSON.parse(rawInput.substring(start, end + 1));
-              } else {
-                throw e1;
-              }
-            } catch (e2) {
-              throw new Error('JSONの形式が不正です（{} の閉じ忘れや不要な文字がないか確認してください）: ' + e2.message);
+            // 万が一前後にゴミがあればトリムして再試行
+            const start = rawInput.indexOf('{');
+            const end = rawInput.lastIndexOf('}');
+            if (start !== -1 && end !== -1) {
+              input = JSON.parse(rawInput.substring(start, end + 1));
+            } else {
+              throw new Error('JSONの形式が不正です: ' + e1.message);
             }
           }
 
@@ -192,6 +185,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix navigation, audio, and robust JSON parser"
+            git commit -m "Fix workflow using secure file input method"
             git push
           fi
