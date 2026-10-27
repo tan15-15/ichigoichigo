@@ -106,37 +106,46 @@ const lessons = [
   },
   {
     "date": "2026年10月13日",
-    "title": "準備はできた？",
-    "scene": "出かける前の会話",
-    "vietnamese": "Em chuẩn bị xong chưa?",
-    "translation": "準備はもうできた？",
-    "mainWord": "chuẩn bị",
-    "mainMeaning": "準備する",
+    "title": "ここに記事のタイトル",
+    "scene": "今日のシチュエーションや出来事の説明文",
+    "vietnamese": "今日の一文のベトナム語",
+    "translation": "今日の一文の日本語訳",
+    "mainWord": "今日の一語",
+    "mainMeaning": "一語の意味",
     "words": [
       [
-        "chuẩn bị",
-        "準備する"
+        "単語1",
+        "意味1"
       ],
       [
-        "tắm",
-        "お風呂に入る"
+        "単語2",
+        "意味2"
       ],
       [
-        "xong",
-        "終わる"
+        "単語3",
+        "意味3"
       ],
       [
-        "chưa",
-        "まだ〜ない"
+        "単語4",
+        "意味4"
       ],
       [
-        "rồi",
-        "もう〜した"
+        "単語5",
+        "意味5"
       ]
     ],
     "sceneIcon": "🍓",
     "sceneTitle": "今日の出来事",
-    "extraWords": [],
+    "extraWords": [
+      [
+        "関連する言葉1",
+        "意味1"
+      ],
+      [
+        "関連する言葉2",
+        "意味2"
+      ]
+    ],
     "archiveWords": [
       "chuẩn bị",
       "tắm",
@@ -144,7 +153,22 @@ const lessons = [
       "chưa",
       "rồi"
     ],
-    "articleSections": []
+    "articleSections": [
+      {
+        "heading": "見出しのタイトル（例：文法のポイントなど）",
+        "paragraphs": [
+          "本文の段落1の文章",
+          "本文の段落2の文章"
+        ],
+        "examples": [
+          {
+            "v": "例文のベトナム語",
+            "j": "例文の日本語訳",
+            "w": "補足や解説"
+          }
+        ]
+      }
+    ]
   }
 ];
 
