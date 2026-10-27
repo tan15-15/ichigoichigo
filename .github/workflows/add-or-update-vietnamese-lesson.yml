@@ -22,17 +22,14 @@ jobs:
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
-          # Base64でエンコードして改行・特殊文字による文字化けやファイル破壊を完全に防止
           echo "$LESSON_JSON" | base64 -w 0 > payload.b64
 
           node << 'EOF'
           const fs = require('fs');
 
-          // 1. Base64から完全復元
+          // 1. 入力データの復元
           const rawB64 = fs.readFileSync('payload.b64', 'utf8').trim();
           let rawStr = Buffer.from(rawB64, 'base64').toString('utf8').trim();
-
-          // 2. 自動クリーニング（末尾の ]; や不要なゴミを全自動除去）
           rawStr = rawStr.replace(/\]\s*;?\s*$/, '').trim();
           if (rawStr.startsWith('[')) rawStr = rawStr.substring(1).trim();
 
@@ -40,19 +37,14 @@ jobs:
           try {
             input = JSON.parse(rawStr);
           } catch (e1) {
-            // 万が一のフォールバック：最初の { から 最後の } を抽出
             const s = rawStr.indexOf('{');
             const e = rawStr.lastIndexOf('}');
-            if (s !== -1 && e !== -1) {
-              input = JSON.parse(rawStr.substring(s, e + 1));
-            } else {
-              throw new Error("JSON Parse Error: " + e1.message);
-            }
+            input = JSON.parse(rawStr.substring(s, e + 1));
           }
 
-          // 3. 日付解析 & ファイル作成
+          // 2. 日付からファイル名決定
           const dateMatch = String(input.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-          if (!dateMatch) throw new Error("日付形式が正しくありません (例: 2026年10月13日)");
+          if (!dateMatch) throw new Error("日付形式が正しくありません");
           const [, y, m, d] = dateMatch;
           const isoDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
           const pagePath = `lesson-${isoDate}.html`;
@@ -138,11 +130,19 @@ jobs:
           html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(input.title)}｜一期一語</title>`);
           fs.writeFileSync(pagePath, html, 'utf8');
 
-          // 4. lessons.js 更新とソート
+          // 3. lessons.js の安全な読み込み（壊れていても自動修復する仕組み）
           const lessonFile = 'lessons.js';
-          const source = fs.readFileSync(lessonFile, 'utf8');
-          const matchLessons = source.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
-          let lessons = JSON.parse(matchLessons[1]);
+          let lessons = [];
+          try {
+            const source = fs.readFileSync(lessonFile, 'utf8');
+            const matchLessons = source.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
+            if (matchLessons && matchLessons[1]) {
+              lessons = JSON.parse(matchLessons[1]);
+            }
+          } catch (err) {
+            console.log('lessons.js の読み込みに失敗したため、新規作成します:', err.message);
+            lessons = [];
+          }
 
           const existingIndex = lessons.findIndex(item => item.date === input.date);
           if (existingIndex >= 0) {
@@ -152,9 +152,11 @@ jobs:
           }
 
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
-          fs.writeFileSync(lessonFile, source.replace(matchLessons[1], JSON.stringify(lessons, null, 2)), 'utf8');
+          
+          const newLessonsFileContent = `const lessons = ${JSON.stringify(lessons, null, 2)};\n`;
+          fs.writeFileSync(lessonFile, newLessonsFileContent, 'utf8');
 
-          // 5. ナビゲーションの自動挿入
+          // 4. ナビゲーションの自動挿入
           lessons.forEach((lesson, i) => {
             const dm = String(lesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
             if (!dm) return;
@@ -192,6 +194,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix workflow using Base64 payload encoding"
+            git commit -m "Fix lessons.js robust parser fallback"
             git push
           fi
