@@ -36,9 +36,13 @@ def update_navigation_links(lessons_data):
         with open(filename, "r", encoding="utf-8") as f:
             html = f.read()
             
-        # <nav class="nav-buttons"> ... </nav> を置換
-        html = re.sub(r'<nav\s+class="nav-buttons">.*?</nav>', nav_content, html, flags=re.DOTALL)
-        
+        # nav-buttons クラスの nav タグを確実に書き換える
+        if '<nav class="nav-buttons">' in html:
+            html = re.sub(r'<nav\s+class="nav-buttons">.*?</nav>', nav_content, html, flags=re.DOTALL)
+        else:
+            # 存在しない場合は header の直後に挿入
+            html = re.sub(r'(</header>)', r'\1\n\n  ' + nav_content, html, count=1)
+            
         with open(filename, "w", encoding="utf-8") as f:
             f.write(html)
 
