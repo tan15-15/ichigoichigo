@@ -25,16 +25,35 @@ jobs:
           node <<'NODE'
           const fs = require('fs');
 
-          // 1. JSONパース
+          // 1. JSONパース（ゴミや不要な記号が混ざっても安全に抽出）
+          let rawInput = process.env.LESSON_JSON || '{}';
+          // 末尾の予期せぬ `];` などを自動カット
+          rawInput = rawInput.trim().replace(/;+$/, '');
+          if (rawInput.endsWith(']') && !rawInput.startsWith('[')) {
+            // もし余分なブラケットがあれば削る
+          }
+
           let input;
           try {
-            input = JSON.parse(process.env.LESSON_JSON || '{}');
-          } catch (e) {
-            throw new Error('JSONの形式が不正です: ' + e.message);
+            // 最初から最後までをきれいなJSONとしてパース試行
+            input = JSON.parse(rawInput);
+          } catch (e1) {
+            try {
+              // 失敗した場合、最初の `{` から最後の `}` までを強制抽出してリトライ
+              const start = rawInput.indexOf('{');
+              const end = rawInput.lastIndexOf('}');
+              if (start !== -1 && end !== -1) {
+                input = JSON.parse(rawInput.substring(start, end + 1));
+              } else {
+                throw e1;
+              }
+            } catch (e2) {
+              throw new Error('JSONの形式が不正です（{} の閉じ忘れや不要な文字がないか確認してください）: ' + e2.message);
+            }
           }
 
           // 2. 日付からファイル名決定
-          const dateMatch = String(input.date).match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+          const dateMatch = String(input.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
           if (!dateMatch) throw new Error('date は「2026年10月13日」の形式で指定してください。');
           const [, year, month, day] = dateMatch;
           const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
@@ -65,7 +84,6 @@ jobs:
             return `<section><h2>${esc(heading)}</h2>${pList}${exList}</section>`;
           }).join('\n');
 
-          // 音声再生JavaScript（動かない問題を完全解決）
           const speechScript = `
           <script>
           function speakVietnamese(text) {
@@ -113,7 +131,6 @@ jobs:
           </article>
           ${speechScript}`;
 
-          // テンプレートコピー
           const templatePath = 'lesson-2026-10-03.html';
           if (!fs.existsSync(templatePath)) throw new Error('テンプレートが見つかりません');
           fs.copyFileSync(templatePath, pagePath);
@@ -140,7 +157,7 @@ jobs:
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
           fs.writeFileSync(lessonFile, source.replace(matchLessons[1], JSON.stringify(lessons, null, 2)), 'utf8');
 
-          // 5. 全記事にナビボタンを確実に挿入・更新
+          // 5. 全記事にナビボタン挿入
           lessons.forEach((lesson, i) => {
             const dm = String(lesson.date).match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
             if (!dm) return;
@@ -175,6 +192,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix navigation, audio, and lesson formatting"
+            git commit -m "Fix navigation, audio, and robust JSON parser"
             git push
           fi
