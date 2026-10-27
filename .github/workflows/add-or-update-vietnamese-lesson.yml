@@ -18,42 +18,43 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Save input JSON to file
+      - name: Build and Run Parser
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
-          echo "$LESSON_JSON" > input.json
+          # Base64でエンコードして改行・特殊文字による文字化けやファイル破壊を完全に防止
+          echo "$LESSON_JSON" | base64 -w 0 > payload.b64
 
-      - name: Create robust update script
-        run: |
-          cat << 'EOF' > update.js
+          node << 'EOF'
           const fs = require('fs');
 
-          let rawInput = fs.readFileSync('input.json', 'utf8').trim();
+          // 1. Base64から完全復元
+          const rawB64 = fs.readFileSync('payload.b64', 'utf8').trim();
+          let rawStr = Buffer.from(rawB64, 'base64').toString('utf8').trim();
 
-          // 末尾の予期せぬ ]; や余分な文字を完全に削除
-          rawInput = rawInput.replace(/\]\s*;?\s*$/, '').trim();
-          if (rawInput.startsWith('[')) {
-            rawInput = rawInput.substring(1).trim();
-          }
+          // 2. 自動クリーニング（末尾の ]; や不要なゴミを全自動除去）
+          rawStr = rawStr.replace(/\]\s*;?\s*$/, '').trim();
+          if (rawStr.startsWith('[')) rawStr = rawStr.substring(1).trim();
 
           let input;
           try {
-            input = JSON.parse(rawInput);
+            input = JSON.parse(rawStr);
           } catch (e1) {
-            const start = rawInput.indexOf('{');
-            const end = rawInput.lastIndexOf('}');
-            if (start !== -1 && end !== -1) {
-              input = JSON.parse(rawInput.substring(start, end + 1));
+            // 万が一のフォールバック：最初の { から 最後の } を抽出
+            const s = rawStr.indexOf('{');
+            const e = rawStr.lastIndexOf('}');
+            if (s !== -1 && e !== -1) {
+              input = JSON.parse(rawStr.substring(s, e + 1));
             } else {
-              throw new Error('JSONのパースに失敗しました: ' + e1.message);
+              throw new Error("JSON Parse Error: " + e1.message);
             }
           }
 
+          // 3. 日付解析 & ファイル作成
           const dateMatch = String(input.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-          if (!dateMatch) throw new Error('date は「2026年10月13日」の形式で指定してください。');
-          const [, year, month, day] = dateMatch;
-          const isoDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+          if (!dateMatch) throw new Error("日付形式が正しくありません (例: 2026年10月13日)");
+          const [, y, m, d] = dateMatch;
+          const isoDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
           const pagePath = `lesson-${isoDate}.html`;
 
           const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -137,6 +138,7 @@ jobs:
           html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(input.title)}｜一期一語</title>`);
           fs.writeFileSync(pagePath, html, 'utf8');
 
+          // 4. lessons.js 更新とソート
           const lessonFile = 'lessons.js';
           const source = fs.readFileSync(lessonFile, 'utf8');
           const matchLessons = source.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
@@ -152,6 +154,7 @@ jobs:
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
           fs.writeFileSync(lessonFile, source.replace(matchLessons[1], JSON.stringify(lessons, null, 2)), 'utf8');
 
+          // 5. ナビゲーションの自動挿入
           lessons.forEach((lesson, i) => {
             const dm = String(lesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
             if (!dm) return;
@@ -176,11 +179,10 @@ jobs:
             fileContent = fileContent.replace(/(<\/article>)/i, `$1\n${navHtml}`);
             fs.writeFileSync(targetFile, fileContent, 'utf8');
           });
-          console.log('Successfully updated lesson and navigation.');
           EOF
 
-      - name: Execute Update Script
-        run: node update.js
+      - name: Clean Temporary Files
+        run: rm -f payload.b64
 
       - name: Commit and Push All Changes
         run: |
@@ -190,6 +192,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix workflow using standalone script file"
+            git commit -m "Fix workflow using Base64 payload encoding"
             git push
           fi
