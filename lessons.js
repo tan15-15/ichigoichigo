@@ -1,170 +1,14 @@
-let currentUtterance = null;
-
-// 音声読み上げ共通関数
-function speakVietnamese(text) {
-  if (!text) return;
-  if (!("speechSynthesis" in window)) {
-    alert("お使いのブラウザは音声読み上げに対応していません。");
-    return;
-  }
-  
-  window.speechSynthesis.cancel();
-  
-  currentUtterance = new SpeechSynthesisUtterance(text);
-  currentUtterance.lang = "vi-VN";
-  currentUtterance.rate = 0.78;
-  currentUtterance.pitch = 1;
-  currentUtterance.volume = 1;
-
-  window.speechSynthesis.speak(currentUtterance);
-}
-
-function playAudio(text) {
-  speakVietnamese(text);
-}
-
-document.addEventListener("click", e => {
-  const button = e.target.closest("[data-speak]");
-  if (button) {
-    const text = button.dataset.speak || button.getAttribute("data-text");
-    if (text) speakVietnamese(text);
-  }
-});
-
-// ==========================================
-// レッスンデータ（全件）
-// ==========================================
 const lessons = [
-  {
-    "date": "2026-10-13",
-    "dateDisplay": "2026年10月13日",
-    "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
-    "words": "chuẩn bị, tắm, xong, chưa"
-  },
-  {
-    "date": "2026-10-12",
-    "dateDisplay": "2026年10月12日",
-    "title": "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
-    "words": "với, vợ, ba, ngủ, đi, ăn, chơi, cùng, mình, nha",
-    "url": "lessons/2026-10-12.html"
-  },
-  {
-    "date": "2026-10-11",
-    "dateDisplay": "2026年10月11日",
-    "title": "🌦️ 洗濯物を外に干す？突然の雨との心理戦",
-    "words": "Hình như, sắp, mưa, trời, nóng, sấm, mưa lớn",
-    "url": "lessons/2026-10-11.html"
-  },
-  {
-    "date": "2026-10-10",
-    "dateDisplay": "2026年10月10日",
-    "title": "✨ hả・à・á・nha・rồi・chưa、短い言葉で会話が変わる！",
-    "words": "hả, à, á, nha, rồi, chưa",
-    "url": "lessons/2026-10-10.html"
-  },
-  {
-    "date": "2026-10-09",
-    "dateDisplay": "2026年10月9日",
-    "title": "🌅 ゴちゃん、まだ寝てるの？ 朝の様子を伺う一言",
-    "words": "Gô, còn, ngủ, hả, rồi, chưa",
-    "url": "lessons/2026-10-09.html"
-  },
-  {
-    "date": "2026-10-07",
-    "dateDisplay": "2026年10月7日",
-    "title": "👶 お母さん、ゴを抱っこしてくれる？",
-    "words": "Mẹ, ẵm, Gô, dùm, cõng",
-    "url": "lessons/2026-10-07.html"
-  },
-  {
-    "date": "2026-10-06",
-    "dateDisplay": "2026年10月6日",
-    "title": "👶 4ヶ月のゴちゃんが寝た！音を立てたら即終了ミッション",
-    "words": "ru, ngủ, im, im lặng, xin",
-    "url": "lessons/2026-10-06.html"
-  },
-  {
-    "date": "2026-10-05",
-    "dateDisplay": "2026年10月5日",
-    "title": "👶 お母さん、ゴを抱っこしてくれる？",
-    "words": "mẹ, ẵm, giùm, anh, cõng, chăm sóc",
-    "url": "lessons/2026-10-05.html"
-  },
-  {
-    "date": "2026-10-04",
-    "dateDisplay": "2026年10月4日",
-    "title": "🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く",
-    "words": "bát, này, nhiêu, tiền, mắc, rẻ",
-    "url": "lessons/2026-10-04.html"
-  },
-  {
-    "date": "2026-10-03",
-    "dateDisplay": "2026年10月3日",
-    "title": "🍓 市場に行きたい！ベトナム語を覚えて、いざ出発！",
-    "words": "hôm nay, muốn, đi chợ, về nhà",
-    "url": "lessons/2026-10-03.html"
-  },
   {
     "date": "2026年10月13日",
     "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
+    "sceneIcon": "🚿",
+    "sceneTitle": "お風呂準備での一幕",
     "scene": "日本とベトナムの家のつくりの違い、赤ちゃんのお風呂準備、準備が終わったかどうかを尋ねる表現。",
     "vietnamese": "Chuẩn bị tắm cho Gô xong chưa?",
     "translation": "ゴちゃんのお風呂の準備、もう終わった？",
     "mainWord": "xong",
     "mainMeaning": "終わる、完了する",
-    "words": [
-      [
-        "chuẩn bị",
-        "準備する"
-      ],
-      [
-        "tắm",
-        "お風呂に入る、シャワーを浴びる"
-      ],
-      [
-        "cho Gô",
-        "ゴちゃんのために"
-      ],
-      [
-        "xong",
-        "終わる、完了する"
-      ],
-      [
-        "chưa",
-        "もう～した？／まだ～していない"
-      ],
-      [
-        "rồi",
-        "もう、すでに／～した"
-      ],
-      [
-        "Chuẩn bị xong chưa?",
-        "準備はもう終わった？"
-      ],
-      [
-        "Xong rồi.",
-        "終わったよ、もうできたよ"
-      ]
-    ],
-    "sceneIcon": "🚿",
-    "sceneTitle": "お風呂準備での一幕",
-    "extraWords": [
-      [
-        "Chuẩn bị xong chưa?",
-        "準備はもう終わった？"
-      ],
-      [
-        "Xong rồi.",
-        "終わったよ、もうできたよ"
-      ]
-    ],
-    "archiveWords": [
-      "chuẩn bị",
-      "tắm",
-      "xong",
-      "chưa",
-      "rồi"
-    ],
     "articleSections": [
       {
         "heading": "🚿 日本のお風呂にはあるのに、ベトナムでは違うことも？",
@@ -177,7 +21,7 @@ const lessons = [
           "「さて、お風呂に入る前に、どこで着替えよう？」",
           "日本で暮らしていたときには、わざわざ考えたこともなかった問題だ。",
           "脱衣所というのは、普段はあまり意識しない。",
-          "でも、なくなって初めて、そのありがたさに気づく。",
+          "デモ、なくなって初めて、そのありがたさに気づく。",
           "まるで、いつも家にあると思っていたリモコンが見つからなくなったときのようだ。",
           "いや、リモコンなら見つかるまでテレビをつけられないだけで済む。",
           "お風呂はそうはいかない。",
@@ -221,7 +65,7 @@ const lessons = [
           {
             "v": "Chuẩn bị tắm cho Gô xong chưa?",
             "j": "ゴちゃんのお風呂の準備、もう終わった？",
-            "w": "【文の構造】chuẩn bị tắm（お風呂の準備をする）＋ cho Gô（ゴちゃんのために）＋ xong（終わる・完了する）＋ chưa（もう〜した？）。一つひとつの役割に分けると「ゴちゃんのためのお風呂準備は完了した？」という組み立てが見えてきます。"
+            "w": "【文の構造】\nchuẩn bị tắm（お風呂の準備をする）\n＋ cho Gô（ゴちゃんのために）\n＋ xong（終わる・完了する）\n＋ chưa（もう〜した？）。\n\n一つひとつの役割に分けると「ゴちゃんのためのお風呂準備は完了した？」という組み立てが見えてきます。"
           }
         ]
       },
@@ -253,15 +97,10 @@ const lessons = [
         "heading": "🔗 以前のレッスンとのつながり＆文法メモ",
         "paragraphs": [
           "ここで、以前のレッスンで覚えた rồi が再び登場します。一度覚えた言葉が、別の場面でも出てくる。これが語学学習の面白いところです。",
-          "【xong と rồi の違い】",
-          "・xong：動作が「終わる」「完了する」こと自体を表す言葉（動詞のあとについて完了を示す）。",
-          "・rồi：「もう〜した」「ある状態になった」ことを表す言葉（文末などについて完了や変化を示す）。",
-          "※Xong rồi. は「完了＋すでに」で「もう終わったよ！」という決まり文句になります。",
           "",
-          "【chưa の役割】",
-          "・質問（〜 chưa?）：文末について「もう〜した？」と完了の確認をする。",
-          "・否定（chưa 〜）：動詞の前について「まだ〜していない」を表す。",
-          "※以前学んだ rồi（〜した）と chưa（まだ〜していない／もう〜した？）は対になる表現です。",
+          "【xong と rồi の違い】\n・xong：動作が「終わる」「完了する」こと自体を表す言葉（動詞のあとについて完了を示す）。\n・rồi：「もう〜した」「ある状態になった」ことを表す言葉（文末などについて完了や変化を示す）。\n※Xong rồi. は「完了＋すでに」で「もう終わったよ！」という決まり文句になります。",
+          "",
+          "【chưa の役割】\n・質問（〜 chưa?）：文末について「もう〜した？」と完了の確認をする。\n・否定（chưa 〜）：動詞の前について「まだ〜していない」を表す。\n※以前学んだ rồi（〜した）と chưa（まだ〜していない／もう〜した？）は対になる表現です。",
           "",
           "ただ単語をひとつずつ暗記するだけでなく、日常生活の中で何度も出会うことで、少しずつ使えるようになっていきます。",
           "もちろん、実際の赤ちゃんのお風呂では、準備が終わったと思っても、もう一度確認することがあるかもしれません。",
@@ -272,36 +111,50 @@ const lessons = [
           "今日も、ゴちゃんのお風呂準備からベトナム語をひとつ。"
         ]
       }
+    ],
+    "words": [
+      [
+        "chuẩn bị",
+        "準備する"
+      ],
+      [
+        "tắm",
+        "お風呂に入る、シャワーを浴びる"
+      ],
+      [
+        "cho Gô",
+        "ゴちゃんのために"
+      ],
+      [
+        "xong",
+        "終わる、完了する"
+      ],
+      [
+        "chưa",
+        "もう～した？／まだ～していない"
+      ],
+      [
+        "rồi",
+        "もう、すでに／～した"
+      ],
+      [
+        "Chuẩn bị xong chưa?",
+        "準備はもう終わった？"
+      ],
+      [
+        "Xong rồi.",
+        "終わったよ、もうできたよ"
+      ]
+    ],
+    "extraWords": [
+      [
+        "Chuẩn bị xong chưa?",
+        "準備はもう終わった？"
+      ],
+      [
+        "Xong rồi.",
+        "終わったよ、もうできたよ"
+      ]
     ]
   }
-];
-
-// ==========================================
-// 単語帳データ（反対語・日本語訳・相互リンク完全対応版）
-// ==========================================
-const vocabulary = [
-    {
-        "v": "chuẩn bị",
-        "m": "準備する",
-        "p": "動詞"
-    },
-    {
-        "v": "tắm",
-        "m": "入浴する、お風呂に入る",
-        "p": "動詞"
-    },
-    {
-        "v": "xong",
-        "m": "終わる、完了する",
-        "p": "動詞",
-        "opposite": "chưa（まだ〜していない）",
-        "related": "rồi（もう・すでに）"
-    },
-    {
-        "v": "chưa",
-        "m": "まだ〜していない",
-        "p": "表現",
-        "opposite": "xong（終わる）",
-        "related": "rồi（もう・すでに）"
-    }
 ];
