@@ -35,75 +35,117 @@ document.addEventListener("click", e => {
 // レッスンデータ（全件）
 // ==========================================
 const lessons = [
-    {
-        "date": "2026-10-13",
-        "dateDisplay": "2026年10月13日",
-        "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
-        "words": "chuẩn bị, tắm, xong, chưa"
-    },
-    {
-        "date": "2026-10-12",
-        "dateDisplay": "2026年10月12日",
-        "title": "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
-        "words": "với, vợ, ba, ngủ, đi, ăn, chơi, cùng, mình, nha",
-        "url": "lessons/2026-10-12.html"
-    },
-    {
-        "date": "2026-10-11",
-        "dateDisplay": "2026年10月11日",
-        "title": "🌦️ 洗濯物を外に干す？突然の雨との心理戦",
-        "words": "Hình như, sắp, mưa, trời, nóng, sấm, mưa lớn",
-        "url": "lessons/2026-10-11.html"
-    },
-    {
-        "date": "2026-10-10",
-        "dateDisplay": "2026年10月10日",
-        "title": "✨ hả・à・á・nha・rồi・chưa、短い言葉で会話が変わる！",
-        "words": "hả, à, á, nha, rồi, chưa",
-        "url": "lessons/2026-10-10.html"
-    },
-    {
-        "date": "2026-10-09",
-        "dateDisplay": "2026年10月9日",
-        "title": "🌅 ゴちゃん、まだ寝てるの？ 朝の様子を伺う一言",
-        "words": "Gô, còn, ngủ, hả, rồi, chưa",
-        "url": "lessons/2026-10-09.html"
-    },
-    {
-        "date": "2026-10-07",
-        "dateDisplay": "2026年10月7日",
-        "title": "👶 お母さん、ゴを抱っこしてくれる？",
-        "words": "Mẹ, ẵm, Gô, dùm, cõng",
-        "url": "lessons/2026-10-07.html"
-    },
-    {
-        "date": "2026-10-06",
-        "dateDisplay": "2026年10月6日",
-        "title": "👶 4ヶ月のゴちゃんが寝た！音を立てたら即終了ミッション",
-        "words": "ru, ngủ, im, im lặng, xin",
-        "url": "lessons/2026-10-06.html"
-    },
-    {
-        "date": "2026-10-05",
-        "dateDisplay": "2026年10月5日",
-        "title": "👶 お母さん、ゴを抱っこしてくれる？",
-        "words": "mẹ, ẵm, giùm, anh, cõng, chăm sóc",
-        "url": "lessons/2026-10-05.html"
-    },
-    {
-        "date": "2026-10-04",
-        "dateDisplay": "2026年10月4日",
-        "title": "🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く",
-        "words": "bát, này, nhiêu, tiền, mắc, rẻ",
-        "url": "lessons/2026-10-04.html"
-    },
-    {
-        "date": "2026-10-03",
-        "dateDisplay": "2026年10月3日",
-        "title": "🍓 市場に行きたい！ベトナム語を覚えて、いざ出発！",
-        "words": "hôm nay, muốn, đi chợ, về nhà",
-        "url": "lessons/2026-10-03.html"
-    }
+  {
+    "date": "2026-10-13",
+    "dateDisplay": "2026年10月13日",
+    "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
+    "words": "chuẩn bị, tắm, xong, chưa"
+  },
+  {
+    "date": "2026-10-12",
+    "dateDisplay": "2026年10月12日",
+    "title": "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
+    "words": "với, vợ, ba, ngủ, đi, ăn, chơi, cùng, mình, nha",
+    "url": "lessons/2026-10-12.html"
+  },
+  {
+    "date": "2026-10-11",
+    "dateDisplay": "2026年10月11日",
+    "title": "🌦️ 洗濯物を外に干す？突然の雨との心理戦",
+    "words": "Hình như, sắp, mưa, trời, nóng, sấm, mưa lớn",
+    "url": "lessons/2026-10-11.html"
+  },
+  {
+    "date": "2026-10-10",
+    "dateDisplay": "2026年10月10日",
+    "title": "✨ hả・à・á・nha・rồi・chưa、短い言葉で会話が変わる！",
+    "words": "hả, à, á, nha, rồi, chưa",
+    "url": "lessons/2026-10-10.html"
+  },
+  {
+    "date": "2026-10-09",
+    "dateDisplay": "2026年10月9日",
+    "title": "🌅 ゴちゃん、まだ寝てるの？ 朝の様子を伺う一言",
+    "words": "Gô, còn, ngủ, hả, rồi, chưa",
+    "url": "lessons/2026-10-09.html"
+  },
+  {
+    "date": "2026-10-07",
+    "dateDisplay": "2026年10月7日",
+    "title": "👶 お母さん、ゴを抱っこしてくれる？",
+    "words": "Mẹ, ẵm, Gô, dùm, cõng",
+    "url": "lessons/2026-10-07.html"
+  },
+  {
+    "date": "2026-10-06",
+    "dateDisplay": "2026年10月6日",
+    "title": "👶 4ヶ月のゴちゃんが寝た！音を立てたら即終了ミッション",
+    "words": "ru, ngủ, im, im lặng, xin",
+    "url": "lessons/2026-10-06.html"
+  },
+  {
+    "date": "2026-10-05",
+    "dateDisplay": "2026年10月5日",
+    "title": "👶 お母さん、ゴを抱っこしてくれる？",
+    "words": "mẹ, ẵm, giùm, anh, cõng, chăm sóc",
+    "url": "lessons/2026-10-05.html"
+  },
+  {
+    "date": "2026-10-04",
+    "dateDisplay": "2026年10月4日",
+    "title": "🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く",
+    "words": "bát, này, nhiêu, tiền, mắc, rẻ",
+    "url": "lessons/2026-10-04.html"
+  },
+  {
+    "date": "2026-10-03",
+    "dateDisplay": "2026年10月3日",
+    "title": "🍓 市場に行きたい！ベトナム語を覚えて、いざ出発！",
+    "words": "hôm nay, muốn, đi chợ, về nhà",
+    "url": "lessons/2026-10-03.html"
+  },
+  {
+    "date": "2026年10月13日",
+    "title": "準備はできた？",
+    "scene": "出かける前の会話",
+    "vietnamese": "Em chuẩn bị xong chưa?",
+    "translation": "準備はもうできた？",
+    "mainWord": "chuẩn bị",
+    "mainMeaning": "準備する",
+    "words": [
+      [
+        "chuẩn bị",
+        "準備する"
+      ],
+      [
+        "tắm",
+        "お風呂に入る"
+      ],
+      [
+        "xong",
+        "終わる"
+      ],
+      [
+        "chưa",
+        "まだ〜ない"
+      ],
+      [
+        "rồi",
+        "もう〜した"
+      ]
+    ],
+    "sceneIcon": "🍓",
+    "sceneTitle": "今日の出来事",
+    "extraWords": [],
+    "archiveWords": [
+      "chuẩn bị",
+      "tắm",
+      "xong",
+      "chưa",
+      "rồi"
+    ],
+    "articleSections": []
+  }
 ];
 
 // ==========================================
