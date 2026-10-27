@@ -2,6 +2,46 @@ import os
 import re
 import json
 
+def update_navigation_links(lessons_data):
+    # 日付昇順（古い順）にソートして前後関係を計算
+    sorted_lessons = sorted(lessons_data, key=lambda x: x.get("date", ""))
+    
+    for i, lesson in enumerate(sorted_lessons):
+        date_str = lesson["date"]
+        clean_date = date_str.replace("-", "")
+        filename = f"lesson-{clean_date[:4]}-{clean_date[4:6]}-{clean_date[6:]}.html"
+        
+        if not os.path.exists(filename):
+            continue
+            
+        prev_lesson = sorted_lessons[i - 1] if i > 0 else None
+        next_lesson = sorted_lessons[i + 1] if i < len(sorted_lessons) - 1 else None
+        
+        prev_html = ""
+        if prev_lesson:
+            p_clean = prev_lesson["date"].replace("-", "")
+            p_file = f"lesson-{p_clean[:4]}-{p_clean[4:6]}-{p_clean[6:]}.html"
+            p_date = prev_lesson.get("dateDisplay", prev_lesson["date"])
+            prev_html = f'<a href="./{p_file}" class="nav-btn">👈 前の記事 ({p_date})</a>'
+            
+        next_html = ""
+        if next_lesson:
+            n_clean = next_lesson["date"].replace("-", "")
+            n_file = f"lesson-{n_clean[:4]}-{n_clean[4:6]}-{n_clean[6:]}.html"
+            n_date = next_lesson.get("dateDisplay", next_lesson["date"])
+            next_html = f'<a href="./{n_file}" class="nav-btn">次の記事 ({n_date}) 👉</a>'
+            
+        nav_content = f'<nav class="nav-buttons">\n    {prev_html}\n    <a href="./" class="nav-btn">🏠 トップページへ戻る</a>\n    {next_html}\n  </nav>'
+        
+        with open(filename, "r", encoding="utf-8") as f:
+            html = f.read()
+            
+        # <nav class="nav-buttons"> ... </nav> を置換
+        html = re.sub(r'<nav\s+class="nav-buttons">.*?</nav>', nav_content, html, flags=re.DOTALL)
+        
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(html)
+
 def main():
     html_content = os.environ.get("LESSON_HTML", "")
     if not html_content.strip():
@@ -37,19 +77,15 @@ def main():
         except Exception:
             current_lessons = []
         
-        # 既存の同日付データを削除
         current_lessons = [l for l in current_lessons if l.get("date") != date_str]
         
-        # 新しいレッスンを先頭に追加
         new_entry = {
             "date": date_str,
             "dateDisplay": date_display,
             "title": title_str,
             "words": words_str
         }
-        current_lessons.insert(0, new_entry)
-        
-        # 日付順にソート（新しい順）
+        current_lessons.append(new_entry)
         current_lessons.sort(key=lambda x: x.get("date", ""), reverse=True)
         
         lessons_json_str = json.dumps(current_lessons, ensure_ascii=False, indent=4)
@@ -75,7 +111,10 @@ def main():
 
     with open("lessons.js", "w", encoding="utf-8") as f:
         f.write(content)
-    print("Successfully updated with de-duplication!")
+
+    # 3. 全記事の前後リンク（Prev / Next）を再計算して更新
+    update_navigation_links(current_lessons)
+    print("Successfully updated with automatic Prev/Next links!")
 
 if __name__ == "__main__":
     main()
