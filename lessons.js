@@ -41,25 +41,6 @@ const lessons = [
     "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
     "words": "chuẩn bị, tắm, xong, chưa"
 },
-    {
-    "date": "2026-10-13",
-    "dateDisplay": "2026年10月13日",
-    "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
-    "words": "chuẩn bị, tắm, xong, chưa"
-},
-    {
-    "date": "2026-10-13",
-    "dateDisplay": "2026年10月13日",
-    "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
-    "words": "chuẩn bị, tắm, xong, chưa"
-},
-  {
-    "date": "2026-10-13",
-    "dateDisplay": "2026年10月13日",
-    "title": "脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
-    "words": "chuẩn bị, tắm, xong, chưa",
-    "url": "lessons/2026-10-13.html"
-  },
   {
     "date": "2026-10-12",
     "dateDisplay": "2026年10月12日",
