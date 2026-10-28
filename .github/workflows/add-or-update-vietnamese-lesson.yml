@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       lesson_json:
-        description: "レッスン内容（JSONを丸ごと1回貼り付け）"
+        description: "レッスン内容（JSON）"
         required: true
         type: string
 
@@ -18,7 +18,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Run Clean Generation Script
+      - name: Update lessons.js and HTML
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
@@ -43,19 +43,12 @@ jobs:
             if (!m) throw new Error("日付形式エラー");
             const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
 
-            // 1. 古い10/13があれば一度完全に削除して作り直す
-            if (fs.existsSync(targetFn)) {
-              fs.unlinkSync(targetFn);
-            }
-
-            // 2. 10/12をテンプレートにしてコピー
-            if (fs.existsSync("lesson-2026-10-12.html")) {
+            // 10/12をマスターとして複製
+            if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
               fs.copyFileSync("lesson-2026-10-12.html", targetFn);
-            } else {
-              throw new Error("ベースとなる lesson-2026-10-12.html が見つかりません");
             }
 
-            // 3. lessons.js の更新
+            // lessons.js の読み込みと追加
             let lessons = [];
             if (fs.existsSync("lessons.js")) {
               try {
@@ -65,16 +58,6 @@ jobs:
               } catch (err) {}
             }
 
-            // 10/12が抜けていれば安全に追加
-            if (!lessons.some(l => l.date === "2026年10月12日")) {
-              lessons.push({
-                date: "2026年10月12日",
-                title: "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
-                mainWord: "với",
-                mainMeaning: "〜と、〜といっしょに"
-              });
-            }
-
             const idx = lessons.findIndex(l => l.date === input.date);
             if (idx >= 0) {
               lessons[idx] = { ...lessons[idx], ...input };
@@ -82,22 +65,27 @@ jobs:
               lessons.push(input);
             }
 
-            lessons.sort((a, b) => (b.date || "").replace(/[^0-9]/g, "").localeCompare((a.date || "").replace(/[^0-9]/g, "")));
+            // 正しい数字順（新しい順: YYYYMMDD）でソート
+            lessons.sort((a, b) => {
+              const getNum = d => {
+                const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+                return pm ? Number(`${pm[1]}${pm[2].padStart(2, "0")}${pm[3].padStart(2, "0")}`) : 0;
+              };
+              return getNum(b.date) - getNum(a.date);
+            });
+
             fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
 
-            // 4. 新しく作ったファイル（10/13）の文字・タイトル・日付をJSONの内容にピンポイント置換
-            let content = fs.readFileSync(targetFn, "utf8");
-            
-            // タイトル置換
-            content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
-            // 日付置換
-            content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
-            // H1タイトル置換
-            content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
+            // 対象HTMLのタイトル・日付置換
+            if (fs.existsSync(targetFn)) {
+              let content = fs.readFileSync(targetFn, "utf8");
+              content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
+              content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
+              content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
+              fs.writeFileSync(targetFn, content, "utf8");
+            }
 
-            fs.writeFileSync(targetFn, content, "utf8");
-
-            // 5. 全ページのナビボタンを更新
+            // 全ページのナビゲーション更新
             lessons.forEach((l, i) => {
               const dm = String(l.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
               if (!dm) return;
@@ -133,6 +121,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Recreate 10/13 cleanly from 10/12 template"
+            git commit -m "Fix full lesson ordering and restore lessons.js"
             git push
           fi
