@@ -109,6 +109,110 @@ body {
   font-size: 20px;
 }
 
+/* 🍓 自己紹介セクションのスタイル */
+.story-section {
+  margin: 25px auto;
+  padding: 28px 20px;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 25px;
+  box-shadow: 0 8px 25px rgba(120, 100, 100, 0.08);
+  border: 2px solid #ffe1e8;
+}
+
+.story-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.story-header h2 {
+  margin: 0;
+  color: #df5c73;
+  font-size: clamp(20px, 4.2vw, 26px);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+/* 🐣 キャラクターと動くアニメーション */
+.story-char {
+  width: 55px;
+  height: auto;
+  flex-shrink: 0;
+  animation: floatChar 3s infinite ease-in-out;
+}
+
+.char-left {
+  animation-delay: 0s;
+}
+
+.char-right {
+  animation-delay: 1.5s;
+}
+
+@keyframes floatChar {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(3deg); }
+}
+
+.story-date {
+  text-align: center;
+  font-size: 13px;
+  color: #8a7777;
+  margin: 6px 0 2px;
+  font-weight: bold;
+}
+
+.story-subtitle {
+  text-align: center;
+  font-size: 14px;
+  color: #604b4b;
+  margin: 0 0 20px;
+  font-weight: 700;
+}
+
+.story-content {
+  font-size: 14px;
+  line-height: 1.85;
+  color: #594d4d;
+}
+
+.story-box {
+  background: #fff;
+  border: 1.5px solid #ffd5e1;
+  border-radius: 18px;
+  padding: 16px 18px;
+  margin: 16px 0;
+}
+
+.story-box h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+  color: #d83d76;
+}
+
+.story-box ul {
+  margin: 8px 0;
+  padding-left: 20px;
+}
+
+.story-box li {
+  margin-bottom: 4px;
+}
+
+.highlight-box {
+  background: linear-gradient(135deg, #fff0f5 0%, #fff8e7 100%);
+  border: 2px dashed #ff9dbb;
+}
+
+@media (max-width: 600px) {
+  .story-char {
+    width: 42px;
+  }
+}
+
 .archive-section {
   margin: 25px 0;
   padding: 22px 20px;
@@ -248,102 +352,102 @@ body {
     <h2>ベトナム語初心者でも、暮らしの中から一歩ずつ🍓</h2>
     <p>「ベトナム語を覚えたい」「ベトナム語を話したい」。そんな気持ちから始められる、日常会話で使えるベトナム語の学習サイトです。</p>
   </section>
+
   <!-- 🍓 自己紹介・一期一語のストーリーセクション -->
-<section class="story-section" aria-label="はじめに">
-  <div class="story-header">
-    <img src="assets/ichigo-chan-em1.png" alt="いちごちゃん" class="story-char char-left" onerror="this.style.display='none'">
-    <h2>🇻🇳 40代からベトナム語を勉強します</h2>
-    <img src="assets/durian-kun.png" alt="ドリアンくん" class="story-char char-right" onerror="this.style.display='none'">
-  </div>
-  
-  <p class="story-date">📅 2026年9月29日</p>
-  <p class="story-subtitle">ベトナム人の妻と赤ちゃん、義両親と暮らしながら</p>
-
-  <div class="story-content">
-    <p>はじめまして。たんたんです。</p>
-    <p>私は40代になってから、ベトナム語の勉強を始めることにしました。</p>
-    <p>しかも、ほぼゼロからではありません。<strong>本当にゼロからです😂</strong></p>
-
-    <div class="story-box">
-      <h3>🏠 ベトナムに住んでいるのに、ベトナム語が分からない</h3>
-      <p>私は今、ベトナム南部で暮らしています。</p>
-      <p>一緒に暮らしているのは、私、ベトナム人の妻、赤ちゃん、義父、義母の5人です。</p>
-      <p>ベトナムに住んでいるので、当然ですが、周りではベトナム語が飛び交っています。</p>
-      <p>でも、私はベトナム語がまったく分かりません。単語もまったく分かりません。ベトナム人が話しているのを聞いても、速すぎて全く聞き取れません😂</p>
+  <section class="story-section" aria-label="はじめに">
+    <div class="story-header">
+      <img src="assets/ichigo-chan-em1.png" alt="いちごちゃん" class="story-char char-left" onerror="this.style.display='none'">
+      <h2>🇻🇳 40代からベトナム語を勉強します</h2>
+      <img src="assets/durian-kun.png" alt="ドリアンくん" class="story-char char-right" onerror="this.style.display='none'">
     </div>
+    
+    <p class="story-date">📅 2026年9月29日</p>
+    <p class="story-subtitle">ベトナム人の妻と赤ちゃん、義両親と暮らしながら</p>
 
-    <div class="story-box">
-      <h3>😂 妻は日本語ペラペラ</h3>
-      <p>一方、私の妻はベトナム人ですが、日本語がペラペラです。しかも、日本語能力試験のN1を持っています。</p>
-      <p>日本語能力試験は、N5からN1まであり、N1が一番上のレベルです。</p>
-      <p style="text-align: center; font-weight: bold; color: #df5c73; background: #fff0f5; padding: 10px; border-radius: 12px; margin: 12px 0;">
-        私 → ベトナム語ゼロ<br>
-        妻 → 日本語ペラペラ＋N1
-      </p>
-      <p>差がすごいです😂</p>
-      <p>そして今の私は、ベトナムで生活するうえで、妻にかなり頼っています。というより、<strong>妻がいないと、私はベトナムで生活できません😂</strong></p>
-      <p>買い物をするときも、何か聞きたいときも、妻にお願いすることが多いです。</p>
+    <div class="story-content">
+      <p>はじめまして。たんたんです。</p>
+      <p>私は40代になってから、ベトナム語の勉強を始めることにしました。</p>
+      <p>しかも、ほぼゼロからではありません。<strong>本当にゼロからです😂</strong></p>
+
+      <div class="story-box">
+        <h3>🏠 ベトナムに住んでいるのに、ベトナム語が分からない</h3>
+        <p>私は今、ベトナム南部で暮らしています。</p>
+        <p>一緒に暮らしているのは、私、ベトナム人の妻、赤ちゃん、義父、義母の5人です。</p>
+        <p>ベトナムに住んでいるので、当然ですが、周りではベトナム語が飛び交っています。</p>
+        <p>でも、私はベトナム語がまったく分かりません。単語もまったく分かりません。ベトナム人が話しているのを聞いても、速すぎて全く聞き取れません😂</p>
+      </div>
+
+      <div class="story-box">
+        <h3>😂 妻は日本語ペラペラ</h3>
+        <p>一方、私の妻はベトナム人ですが、日本語がペラペラです。しかも、日本語能力試験のN1を持っています。</p>
+        <p>日本語能力試験は、N5からN1まであり、N1が一番上のレベルです。</p>
+        <p style="text-align: center; font-weight: bold; color: #df5c73; background: #fff0f5; padding: 10px; border-radius: 12px; margin: 12px 0;">
+          私 → ベトナム語ゼロ<br>
+          妻 → 日本語ペラペラ＋N1
+        </p>
+        <p>差がすごいです😂</p>
+        <p>アンド、今の私は、ベトナムで生活するうえで、妻にかなり頼っています。というより、<strong>妻がいないと、私はベトナムで生活できません😂</strong></p>
+        <p>買い物をするときも、何か聞きたいときも、妻にお願いすることが多いです。</p>
+      </div>
+
+      <div class="story-box">
+        <h3>🎯 ベトナム語を勉強する理由</h3>
+        <p>「せっかくベトナムに住んでいるんだから、少しくらいベトナム語を話せるようになりたい。」</p>
+        <p>これが、私が勉強を始める一番の理由です。妻や家族と、少しでも直接話せるようになりたい。</p>
+        <p>赤ちゃんが大きくなったときにも、簡単なベトナム語くらいは話せるようになりたい。</p>
+        <p>アンド、何でも妻にお願いする生活から、少しだけ卒業したいと思っています😂</p>
+      </div>
+
+      <div class="story-box">
+        <h3>🐣 私はベトナム語をペラペラに話したいわけではありません</h3>
+        <p>ここは、最初にはっきり書いておきます。私は、ベトナム語をペラペラに話せるようになりたいわけではありません。</p>
+        <p>ベトナム人が普通のスピードで話しているベトナム語は、今の私には速すぎます。聞いても、何を言っているのか全く分かりません。正直、「こんなの聞き取れるようになるのかな……😂」と思っています。</p>
+        <p>でも、そんな大きな目標は持っていません。私の目標は、<strong>少しだけ日常会話ができるようになること。</strong>それだけです。</p>
+        <ul>
+          <li>「これ買ってきて」</li>
+          <li>「赤ちゃん抱っこして」</li>
+          <li>「ご飯できた？」</li>
+        </ul>
+        <p>そんな簡単な会話が少し分かるようになれば、私は十分うれしいです。</p>
+      </div>
+
+      <div class="story-box">
+        <h3>📚 本当にゼロから始めます</h3>
+        <p>今回のブログでは、私がベトナム語を勉強していく過程を、そのまま記録していきます。最初から難しい文法を勉強するつもりはありません。</p>
+        <p style="text-align: center; font-weight: bold; color: #4d6f91; background: #f0f7ff; padding: 10px; border-radius: 12px; margin: 12px 0;">
+          母音 ➔ 子音 ➔ 声調 ➔ 単語 ➔ 文法 ➔ 日常会話
+        </p>
+        <p>という順番で進めていきます。</p>
+        <p>ベトナム語の文字を見ても、最初は「これ、どう読むの？」となります。発音を聞いても、「今なんて言った？」となります😂</p>
+        <p>そんな私でも分かるように、できるだけ簡単に書いていきます。</p>
+      </div>
+
+      <div class="story-box">
+        <h3>👶 子どもでも読めるくらい、やさしく</h3>
+        <p>このブログは、大人だけではなく、ベトナムで暮らしている日本人の子どもが読んでも分かるくらい、やさしく書いていきたいと思っています。</p>
+        <p>難しい言葉をたくさん使うより、「これはこういう意味なんだ」と、少しずつ分かるほうが楽しいからです。</p>
+        <p>私自身も、本当にゼロからのスタートです。一緒に少しずつ覚えていけたらと思っています。</p>
+      </div>
+
+      <div class="story-box highlight-box">
+        <h3>🍓 「一期一語」というブログ名</h3>
+        <p>ブログの名前は、<strong>「ベトナム暮らし、ベトナム語は今日も一期一語（いちごいちご）」</strong>にしました。</p>
+        <p>「一期一会」という言葉がありますが、私はそれを少し変えて、一期一語にしました。一日にひとつでも、ベトナム語を覚えられたらいい。ひとつの言葉との出会いを大切にしたい。そんな気持ちです。</p>
+        <p>そして「いちごいちご」なので、最後はもちろん、🍓です。</p>
+      </div>
+
+      <div class="story-box">
+        <h3>🚶‍♂️ 40代からでも、ゼロからでも</h3>
+        <p>ベトナム語が分からない私が、40代から勉強を始めます。いつまで続くのか。どこまで話せるようになるのか。自分でもまだ分かりません😂</p>
+        <p>でも、最初から完璧を目指すつもりはありません。一語ずつ、少しずつ。まずは、妻や家族と簡単な日常会話ができるところを目指します。</p>
+        <p>このブログが、私のベトナム語勉強の記録です。</p>
+        <p style="text-align: center; font-size: 18px; font-weight: bold; color: #df5c73; margin-top: 15px;">
+          これから一緒に、ゆっくり覚えていきましょう。<br>
+          🍓今日も一期一語🍓
+        </p>
+      </div>
     </div>
-
-    <div class="story-box">
-      <h3>🎯 ベトナム語を勉強する理由</h3>
-      <p>「せっかくベトナムに住んでいるんだから、少しくらいベトナム語を話せるようになりたい。」</p>
-      <p>これが、私が勉強を始める一番の理由です。妻や家族と、少しでも直接話せるようになりたい。</p>
-      <p>赤ちゃんが大きくなったときにも、簡単なベトナム語くらいは話せるようになりたい。</p>
-      <p>アンド、何でも妻にお願いする生活から、少しだけ卒業したいと思っています😂</p>
-    </div>
-
-    <div class="story-box">
-      <h3>🐣 私はベトナム語をペラペラに話したいわけではありません</h3>
-      <p>ここは、最初にはっきり書いておきます。私は、ベトナム語をペラペラに話せるようになりたいわけではありません。</p>
-      <p>ベトナム人が普通のスピードで話しているベトナム語は、今の私には速すぎます。聞いても、何を言っているのか全く分かりません。正直、「こんなの聞き取れるようになるのかな……😂」と思っています。</p>
-      <p>でも、そんな大きな目標は持っていません。私の目標は、<strong>少しだけ日常会話ができるようになること。</strong>それだけです。</p>
-      <ul>
-        <li>「これ買ってきて」</li>
-        <li>「赤ちゃん抱っこして」</li>
-        <li>「ご飯できた？」</li>
-      </ul>
-      <p>そんな簡単な会話が少し分かるようになれば、私は十分うれしいです。</p>
-    </div>
-
-    <div class="story-box">
-      <h3>📚 本当にゼロから始めます</h3>
-      <p>今回のブログでは、私がベトナム語を勉強していく過程を、そのまま記録していきます。最初から難しい文法を勉強するつもりはありません。</p>
-      <p style="text-align: center; font-weight: bold; color: #4d6f91; background: #f0f7ff; padding: 10px; border-radius: 12px; margin: 12px 0;">
-        母音 ➔ 子音 ➔ 声調 ➔ 単語 ➔ 文法 ➔ 日常会話
-      </p>
-      <p>という順番で進めていきます。</p>
-      <p>ベトナム語の文字を見ても、最初は「これ、どう読むの？」となります。発音を聞いても、「今なんて言った？」となります😂</p>
-      <p>そんな私でも分かるように、できるだけ簡単に書いていきます。</p>
-    </div>
-
-    <div class="story-box">
-      <h3>👶 子どもでも読めるくらい、やさしく</h3>
-      <p>このブログは、大人だけではなく、ベトナムで暮らしている日本人の子どもが読んでも分かるくらい、やさしく書いていきたいと思っています。</p>
-      <p>難しい言葉をたくさん使うより、「これはこういう意味なんだ」と、少しずつ分かるほうが楽しいからです。</p>
-      <p>私自身も、本当にゼロからのスタートです。一緒に少しずつ覚えていけたらと思っています。</p>
-    </div>
-
-    <div class="story-box highlight-box">
-      <h3>🍓 「一期一語」というブログ名</h3>
-      <p>ブログの名前は、<strong>「ベトナム暮らし、ベトナム語は今日も一期一語（いちごいちご）」</strong>にしました。</p>
-      <p>「一期一会」という言葉がありますが、私はそれを少し変えて、一期一語にしました。一日にひとつでも、ベトナム語を覚えられたらいい。ひとつの言葉との出会いを大切にしたい。そんな気持ちです。</p>
-      <p>そして「いちごいちご」なので、最後はもちろん、🍓です。</p>
-    </div>
-
-    <div class="story-box">
-      <h3>🚶‍♂️ 40代からでも、ゼロからでも</h3>
-      <p>ベトナム語が分からない私が、40代から勉強を始めます。いつまで続くのか。どこまで話せるようになるのか。自分でもまだ分かりません😂</p>
-      <p>でも、最初から完璧を目指すつもりはありません。一語ずつ、少しずつ。まずは、妻や家族と簡単な日常会話ができるところを目指します。</p>
-      <p>このブログが、私のベトナム語勉強の記録です。</p>
-      <p style="text-align: center; font-size: 18px; font-weight: bold; color: #df5c73; margin-top: 15px;">
-        これから一緒に、ゆっくり覚えていきましょう。<br>
-        🍓今日も一期一語🍓
-      </p>
-    </div>
-  </div>
-</section>
-
+  </section>
 
   <main id="lessons"></main>
 
