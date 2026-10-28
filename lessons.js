@@ -168,5 +168,13 @@ const lessons = [
         "終わったよ、もうできたよ"
       ]
     ]
+  },
+  {
+    "date": "2026年10月12日",
+    "title": "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
+    "mainWord": "với",
+    "mainMeaning": "〜と、〜といっしょに",
+    "vietnamese": "Ngủ với ba nha.",
+    "translation": "パパといっしょに寝ようね。"
   }
 ];
