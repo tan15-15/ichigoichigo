@@ -51,7 +51,7 @@ jobs:
 
           const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-          // 3. lessons.js の読み込みと更新
+          // 3. lessons.js の読み込みと更新（過去の記事が消えないように完全な配列として維持）
           const lessonFile = 'lessons.js';
           let lessons = [];
           if (fs.existsSync(lessonFile)) {
@@ -62,6 +62,19 @@ jobs:
             } catch (err) { lessons = []; }
           }
 
+          // 10月12日のデータがもしlessons.jsから抜けていれば自動的に再登録するセーフティネット
+          const hasOct12 = lessons.some(item => item.date === "2026年10月12日");
+          if (!hasOct12 && fs.existsSync("lesson-2026-10-12.html")) {
+            lessons.push({
+              "date": "2026年10月12日",
+              "title": "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
+              "mainWord": "với",
+              "mainMeaning": "〜と、〜といっしょに",
+              "vietnamese": "Ngủ với ba nha.",
+              "translation": "パパといっしょに寝ようね。"
+            });
+          }
+
           const existingIndex = lessons.findIndex(item => item.date === input.date);
           if (existingIndex >= 0) {
             lessons[existingIndex] = { ...lessons[existingIndex], ...input };
@@ -69,10 +82,11 @@ jobs:
             lessons.push(input);
           }
 
+          // 降順ソート（新しい日付が上）
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
           fs.writeFileSync(lessonFile, `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, 'utf8');
 
-          // 4. 10/12のHTMLをベースにして安全にパーツを置き換えて新ファイル・既存ファイルを生成
+          // 4. 10/12のテンプレートファイルをベースにして各個別ページ（HTML）を安全に生成・更新
           const templateFile = 'lesson-2026-10-12.html';
           if (!fs.existsSync(templateFile)) throw new Error("テンプレートファイル lesson-2026-10-12.html が見つかりません");
 
@@ -105,27 +119,18 @@ jobs:
 
             const archiveHtml = `<section class="archive" aria-label="別の日のブログ">\n  <h2>📅 前後のブログ</h2>\n  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>\n  <div class="archive-links">\n${archiveItems.join('\n')}\n  </div>\n  <div style="margin-top: 15px; text-align: center;">\n    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>\n  </div>\n  <p class="archive-home" style="text-align: center; margin-top: 15px;">\n    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>\n  </p>\n</section>`;
 
-            // ファイルがなければテンプレートをコピーして作成
             if (!fs.existsSync(targetFn)) {
               fs.copyFileSync(templateFile, targetFn);
             }
 
             let html = fs.readFileSync(targetFn, 'utf8');
 
-            // 1. タイトルタグの置換
             html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(currentLesson.title)}｜一期一語</title>`);
-
-            // 2. ナビゲーションの置換
             html = html.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, navHtml);
-
-            // 3. 日付の置換
+            
             const dateBlock = `<div class="date">\n  <div class="date-main">🍓 ${esc(currentLesson.date)}</div>\n  <div>ベトナム語の旅 🍓 もっと一期一語</div>\n</div>`;
             html = html.replace(/<div\s+class="date">[\s\S]*?<\/div>\s*<\/div>/gi, dateBlock);
-
-            // 4. 記事タイトルの置換
             html = html.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${esc(currentLesson.title)}</h1>`);
-
-            // 5. アーカイブセクションの置換
             html = html.replace(/<section\s+class="archive"\b[^>]*>[\s\S]*?<\/section>/gi, archiveHtml);
 
             fs.writeFileSync(targetFn, html, 'utf8');
@@ -143,6 +148,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Use template copy method for reliable lesson generation"
+            git commit -m "Fix lessons.js population and archive list generation"
             git push
           fi
