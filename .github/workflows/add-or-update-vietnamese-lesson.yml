@@ -27,7 +27,7 @@ jobs:
           node << 'EOF'
           const fs = require('fs');
 
-          // 1. 入力JSONの復元
+          // 1. JSONデータの復元
           const rawB64 = fs.readFileSync('payload.b64', 'utf8').trim();
           let rawStr = Buffer.from(rawB64, 'base64').toString('utf8').trim();
           rawStr = rawStr.replace(/\]\s*;?\s*$/, '').trim();
@@ -42,16 +42,9 @@ jobs:
             input = JSON.parse(rawStr.substring(s, e + 1));
           }
 
-          // 2. 日付からファイル名決定
-          const dateMatch = String(input.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-          if (!dateMatch) throw new Error("日付形式が正しくありません");
-          const [, y, m, d] = dateMatch;
-          const isoDate = `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-          const pagePath = `lesson-${isoDate}.html`;
-
           const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-          // 3. lessons.js の読み込みと更新（過去の記事が消えないように完全な配列として維持）
+          // 2. lessons.js の読み込みと更新
           const lessonFile = 'lessons.js';
           let lessons = [];
           if (fs.existsSync(lessonFile)) {
@@ -62,7 +55,7 @@ jobs:
             } catch (err) { lessons = []; }
           }
 
-          // 10月12日のデータがもしlessons.jsから抜けていれば自動的に再登録するセーフティネット
+          // 10/12の基本データがなければ登録
           const hasOct12 = lessons.some(item => item.date === "2026年10月12日");
           if (!hasOct12 && fs.existsSync("lesson-2026-10-12.html")) {
             lessons.push({
@@ -82,13 +75,14 @@ jobs:
             lessons.push(input);
           }
 
-          // 降順ソート（新しい日付が上）
+          // 日付順にソート（新しい順）
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
           fs.writeFileSync(lessonFile, `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, 'utf8');
 
-          // 4. 10/12のテンプレートファイルをベースにして各個別ページ（HTML）を安全に生成・更新
+          // 3. 10/12 のHTMLをマスターテンプレートとして使用
           const templateFile = 'lesson-2026-10-12.html';
           if (!fs.existsSync(templateFile)) throw new Error("テンプレートファイル lesson-2026-10-12.html が見つかりません");
+          const templateHtml = fs.readFileSync(templateFile, 'utf8');
 
           lessons.forEach((currentLesson, idx) => {
             const dm = String(currentLesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
@@ -103,28 +97,30 @@ jobs:
               return `lesson-${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}.html`;
             };
 
-            // ナビボタン生成
-            const prevBtn = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${esc(older.date)})</a>` : '<span></span>';
-            const nextBtn = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${esc(newer.date)}) 👉</a>` : '<span></span>';
+            // 10/12と全く同じ形式のナビボタン
+            const prevBtn = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : '<span></span>';
+            const nextBtn = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉</a>` : '<span></span>';
             const navHtml = `<nav class="nav-buttons">\n    ${prevBtn}\n    <a href="./" class="nav-btn">🏠 トップページへ戻る</a>\n    ${nextBtn}\n  </nav>`;
 
-            // アーカイブ生成
-            const archiveItems = [];
+            // 10/12と全く同じ形式の「前後のブログ」アーカイブカード（最大2件）
+            const archiveLinks = [];
             if (older) {
-              archiveItems.push(`    <a href="./${getFn(older)}" class="archive-item-link">\n      <div class="archive-item-date">${esc(older.date)}</div>\n      <div class="archive-item-title">${esc(older.title)}</div>\n      <div class="archive-item-words">主要単語：${esc(older.mainWord || '')}</div>\n    </a>`);
+              archiveLinks.push(`    <a href="./${getFn(older)}" class="archive-item-link">\n      <div class="archive-item-date">${older.date}</div>\n      <div class="archive-item-title">${older.title}</div>\n      <div class="archive-item-words">主要単語：${older.mainWord || ''}</div>\n    </a>`);
             }
             if (newer) {
-              archiveItems.push(`    <a href="./${getFn(newer)}" class="archive-item-link">\n      <div class="archive-item-date">${esc(newer.date)}</div>\n      <div class="archive-item-title">${esc(newer.title)}</div>\n      <div class="archive-item-words">主要単語：${esc(newer.mainWord || '')}</div>\n    </a>`);
+              archiveLinks.push(`    <a href="./${getFn(newer)}" class="archive-item-link">\n      <div class="archive-item-date">${newer.date}</div>\n      <div class="archive-item-title">${newer.title}</div>\n      <div class="archive-item-words">主要単語：${newer.mainWord || ''}</div>\n    </a>`);
             }
 
-            const archiveHtml = `<section class="archive" aria-label="別の日のブログ">\n  <h2>📅 前後のブログ</h2>\n  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>\n  <div class="archive-links">\n${archiveItems.join('\n')}\n  </div>\n  <div style="margin-top: 15px; text-align: center;">\n    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>\n  </div>\n  <p class="archive-home" style="text-align: center; margin-top: 15px;">\n    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>\n  </p>\n</section>`;
+            const archiveHtml = `<section class="archive" aria-label="別の日のブログ">\n  <h2>📅 前後のブログ</h2>\n  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>\n  <div class="archive-links">\n${archiveLinks.join('\n')}\n  </div>\n  <div style="margin-top: 15px; text-align: center;">\n    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>\n  </div>\n  <p class="archive-home" style="text-align: center; margin-top: 15px;">\n    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>\n  </p>\n</section>`;
 
+            // ページファイル作成（無ければテンプレートをコピー）
             if (!fs.existsSync(targetFn)) {
               fs.copyFileSync(templateFile, targetFn);
             }
 
             let html = fs.readFileSync(targetFn, 'utf8');
 
+            // 10/12のコード構造を維持したまま、タイトル・日付・アーカイブ欄を更新
             html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(currentLesson.title)}｜一期一語</title>`);
             html = html.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, navHtml);
             
@@ -148,6 +144,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix lessons.js population and archive list generation"
+            git commit -m "Align all pages and archive sections strictly with 10/12 template"
             git push
           fi
