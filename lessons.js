@@ -1,5 +1,17 @@
 const lessons = [
   {
+    "date": "2026年10月3日",
+    "title": "🍓 一期一語はじまります！",
+    "sceneIcon": "🍓",
+    "sceneTitle": "はじめに",
+    "scene": "ベトナムでの日常から、生きたフレーズを楽しく学びます。",
+    "vietnamese": "Xin chào!",
+    "translation": "こんにちは！",
+    "mainWord": "Xin chào",
+    "mainMeaning": "こんにちは",
+    "articleSections": []
+  },
+  {
     "date": "2026年10月13日",
     "title": "🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong",
     "sceneIcon": "🚿",
