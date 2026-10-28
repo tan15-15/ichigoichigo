@@ -130,7 +130,7 @@ jobs:
           html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(input.title)}｜一期一語</title>`);
           fs.writeFileSync(pagePath, html, 'utf8');
 
-          // 3. lessons.js の安全な読み込みと、10/03（過去記事）の自動補完
+          // 3. lessons.js の安全な読み込みと更新
           const lessonFile = 'lessons.js';
           let lessons = [];
           try {
@@ -143,23 +143,6 @@ jobs:
             lessons = [];
           }
 
-          // 10月3日の記事データが消えていれば自動復元して追加
-          const hasOct3 = lessons.some(item => item.date === "2026年10月3日");
-          if (!hasOct3) {
-            lessons.push({
-              "date": "2026年10月3日",
-              "title": "🍓 一期一語はじまります！",
-              "sceneIcon": "🍓",
-              "sceneTitle": "はじめに",
-              "scene": "ベトナムでの日常から、生きたフレーズを楽しく学びます。",
-              "vietnamese": "Xin chào!",
-              "translation": "こんにちは！",
-              "mainWord": "Xin chào",
-              "mainMeaning": "こんにちは",
-              "articleSections": []
-            });
-          }
-
           const existingIndex = lessons.findIndex(item => item.date === input.date);
           if (existingIndex >= 0) {
             lessons[existingIndex] = { ...lessons[existingIndex], ...input };
@@ -167,12 +150,34 @@ jobs:
             lessons.push(input);
           }
 
-          // 降順ソート（新しい日付が上）
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
-          
           fs.writeFileSync(lessonFile, `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, 'utf8');
 
-          // 4. 全記事に「前の記事」「次の記事」「ブログ一覧」ボタンを確実に挿入
+          // 4. index.html（ブログ一覧ページ）のリストを自動更新
+          const indexFile = 'index.html';
+          if (fs.existsSync(indexFile)) {
+            let indexHtml = fs.readFileSync(indexFile, 'utf8');
+            const listHtml = lessons.map(lesson => {
+              const dm = String(lesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+              if (!dm) return '';
+              const fn = `lesson-${dm[1]}-${dm[2].padStart(2, '0')}-${dm[3].padStart(2, '0')}.html`;
+              return `<li><a href="./${fn}"><strong>${esc(lesson.date)}</strong>：${esc(lesson.title)}</a></li>`;
+            }).join('\n');
+
+            // index.html 内のリストエリア（<ul id="lesson-list"> など）を自動書き換え、なければarticle内や適当な位置に追加
+            if (indexHtml.includes('id="lesson-list"')) {
+              indexHtml = indexHtml.replace(/<ul[^>]*id="lesson-list"[^>]*>[\s\S]*?<\/ul>/i, `<ul id="lesson-list">\n${listHtml}\n</ul>`);
+            } else {
+              // リストコンテナがない場合は記事一覧セクションを挿入
+              const listSection = `<div style="margin: 20px 0;"><ul id="lesson-list" style="list-style: none; padding: 0;">\n${listHtml}\n</ul></div>`;
+              if (indexHtml.includes('</article>')) {
+                indexHtml = indexHtml.replace(/(<\/article>)/i, `$1\n${listSection}`);
+              }
+            }
+            fs.writeFileSync(indexFile, indexHtml, 'utf8');
+          }
+
+          // 5. 全記事にナビボタン挿入
           lessons.forEach((lesson, i) => {
             const dm = String(lesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
             if (!dm) return;
@@ -180,8 +185,8 @@ jobs:
             if (!fs.existsSync(targetFile)) return;
 
             let fileContent = fs.readFileSync(targetFile, 'utf8');
-            const newer = i > 0 ? lessons[i - 1] : null;       // リスト上で一つ前（日付が新しい）
-            const older = i < lessons.length - 1 ? lessons[i + 1] : null; // リスト上で一つ次（日付が古い）
+            const newer = i > 0 ? lessons[i - 1] : null;
+            const older = i < lessons.length - 1 ? lessons[i + 1] : null;
 
             const getFn = l => {
               const m = String(l.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
@@ -210,6 +215,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix navigation links, blog list button, and restore lessons list"
+            git commit -m "Auto update index.html blog list and navigation"
             git push
           fi
