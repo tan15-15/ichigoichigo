@@ -18,125 +18,96 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build and Run Parser
+      - name: Run Update Script
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
           echo "$LESSON_JSON" | base64 -w 0 > payload.b64
+          node -e '
+            const fs = require("fs");
+            const rawB64 = fs.readFileSync("payload.b64", "utf8").trim();
+            let rawStr = Buffer.from(rawB64, "base64").toString("utf8").trim();
+            rawStr = rawStr.replace(/\]\s*;?\s*$/, "").trim();
+            if (rawStr.startsWith("[")) rawStr = rawStr.substring(1).trim();
 
-          node << 'EOF'
-          const fs = require('fs');
-
-          // 1. JSONデータの復元
-          const rawB64 = fs.readFileSync('payload.b64', 'utf8').trim();
-          let rawStr = Buffer.from(rawB64, 'base64').toString('utf8').trim();
-          rawStr = rawStr.replace(/\]\s*;?\s*$/, '').trim();
-          if (rawStr.startsWith('[')) rawStr = rawStr.substring(1).trim();
-
-          let input;
-          try {
-            input = JSON.parse(rawStr);
-          } catch (e1) {
-            const s = rawStr.indexOf('{');
-            const e = rawStr.lastIndexOf('}');
-            input = JSON.parse(rawStr.substring(s, e + 1));
-          }
-
-          const esc = v => String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-          // 2. lessons.js の読み込みと更新
-          const lessonFile = 'lessons.js';
-          let lessons = [];
-          if (fs.existsSync(lessonFile)) {
+            let input;
             try {
-              const source = fs.readFileSync(lessonFile, 'utf8');
-              const matchLessons = source.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
-              if (matchLessons && matchLessons[1]) lessons = JSON.parse(matchLessons[1]);
-            } catch (err) { lessons = []; }
-          }
+              input = JSON.parse(rawStr);
+            } catch (e) {
+              const s = rawStr.indexOf("{");
+              const en = rawStr.lastIndexOf("}");
+              input = JSON.parse(rawStr.substring(s, en + 1));
+            }
 
-          // 10/12の基本データがなければ登録
-          const hasOct12 = lessons.some(item => item.date === "2026年10月12日");
-          if (!hasOct12 && fs.existsSync("lesson-2026-10-12.html")) {
-            lessons.push({
-              "date": "2026年10月12日",
-              "title": "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
-              "mainWord": "với",
-              "mainMeaning": "〜と、〜といっしょに",
-              "vietnamese": "Ngủ với ba nha.",
-              "translation": "パパといっしょに寝ようね。"
+            const m = String(input.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+            if (!m) throw new Error("日付形式エラー");
+            const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
+
+            // 10/12をテンプレートにしてコピー
+            if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
+              fs.copyFileSync("lesson-2026-10-12.html", targetFn);
+            }
+
+            // lessons.js の更新
+            let lessons = [];
+            if (fs.existsSync("lessons.js")) {
+              try {
+                const src = fs.readFileSync("lessons.js", "utf8");
+                const match = src.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
+                if (match) lessons = JSON.parse(match[1]);
+              } catch (err) {}
+            }
+
+            if (!lessons.some(l => l.date === "2026年10月120日") && fs.existsSync("lesson-2026-10-12.html")) {
+              if (!lessons.some(l => l.date === "2026年10月12日")) {
+                lessons.push({
+                  date: "2026年10月12日",
+                  title: "🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう",
+                  mainWord: "với",
+                  mainMeaning: "〜と、〜といっしょに"
+                });
+              }
+            }
+
+            const idx = lessons.findIndex(l => l.date === input.date);
+            if (idx >= 0) {
+              lessons[idx] = { ...lessons[idx], ...input };
+            } else {
+              lessons.push(input);
+            }
+
+            lessons.sort((a, b) => (b.date || "").replace(/[^0-9]/g, "").localeCompare((a.date || "").replace(/[^0-9]/g, "")));
+            fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
+
+            // 全ページのナビとアーカイブを連動更新
+            lessons.forEach((l, i) => {
+              const dm = String(l.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+              if (!dm) return;
+              const fn = `lesson-${dm[1]}-${dm[2].padStart(2, "0")}-${dm[3].padStart(2, "0")}.html`;
+              if (!fs.existsSync(fn)) return;
+
+              let content = fs.readFileSync(fn, "utf8");
+              const newer = i > 0 ? lessons[i - 1] : null;
+              const older = i < lessons.length - 1 ? lessons[i + 1] : null;
+
+              const getFn = item => {
+                const im = String(item.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+                return `lesson-${im[1]}-${im[2].padStart(2, "0")}-${im[3].padStart(2, "0")}.html`;
+              };
+
+              const prevBtn = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : "<span></span>";
+              const nextBtn = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉</a>` : "<span></span>";
+              const navHtml = `<nav class="nav-buttons">\n    ${prevBtn}\n    <a href="./" class="nav-btn">🏠 トップページへ戻る</a>\n    ${nextBtn}\n  </nav>`;
+
+              content = content.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, navHtml);
+              fs.writeFileSync(fn, content, "utf8");
             });
-          }
+          '
 
-          const existingIndex = lessons.findIndex(item => item.date === input.date);
-          if (existingIndex >= 0) {
-            lessons[existingIndex] = { ...lessons[existingIndex], ...input };
-          } else {
-            lessons.push(input);
-          }
-
-          // 日付順にソート（新しい順）
-          lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
-          fs.writeFileSync(lessonFile, `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, 'utf8');
-
-          // 3. 10/12 のHTMLをマスターテンプレートとして使用
-          const templateFile = 'lesson-2026-10-12.html';
-          if (!fs.existsSync(templateFile)) throw new Error("テンプレートファイル lesson-2026-10-12.html が見つかりません");
-          const templateHtml = fs.readFileSync(templateFile, 'utf8');
-
-          lessons.forEach((currentLesson, idx) => {
-            const dm = String(currentLesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-            if (!dm) return;
-            const targetFn = `lesson-${dm[1]}-${dm[2].padStart(2, '0')}-${dm[3].padStart(2, '0')}.html`;
-
-            const newer = idx > 0 ? lessons[idx - 1] : null;
-            const older = idx < lessons.length - 1 ? lessons[idx + 1] : null;
-
-            const getFn = l => {
-              const m = String(l.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-              return `lesson-${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}.html`;
-            };
-
-            // 10/12と全く同じ形式のナビボタン
-            const prevBtn = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : '<span></span>';
-            const nextBtn = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉</a>` : '<span></span>';
-            const navHtml = `<nav class="nav-buttons">\n    ${prevBtn}\n    <a href="./" class="nav-btn">🏠 トップページへ戻る</a>\n    ${nextBtn}\n  </nav>`;
-
-            // 10/12と全く同じ形式の「前後のブログ」アーカイブカード（最大2件）
-            const archiveLinks = [];
-            if (older) {
-              archiveLinks.push(`    <a href="./${getFn(older)}" class="archive-item-link">\n      <div class="archive-item-date">${older.date}</div>\n      <div class="archive-item-title">${older.title}</div>\n      <div class="archive-item-words">主要単語：${older.mainWord || ''}</div>\n    </a>`);
-            }
-            if (newer) {
-              archiveLinks.push(`    <a href="./${getFn(newer)}" class="archive-item-link">\n      <div class="archive-item-date">${newer.date}</div>\n      <div class="archive-item-title">${newer.title}</div>\n      <div class="archive-item-words">主要単語：${newer.mainWord || ''}</div>\n    </a>`);
-            }
-
-            const archiveHtml = `<section class="archive" aria-label="別の日のブログ">\n  <h2>📅 前後のブログ</h2>\n  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>\n  <div class="archive-links">\n${archiveLinks.join('\n')}\n  </div>\n  <div style="margin-top: 15px; text-align: center;">\n    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>\n  </div>\n  <p class="archive-home" style="text-align: center; margin-top: 15px;">\n    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>\n  </p>\n</section>`;
-
-            // ページファイル作成（無ければテンプレートをコピー）
-            if (!fs.existsSync(targetFn)) {
-              fs.copyFileSync(templateFile, targetFn);
-            }
-
-            let html = fs.readFileSync(targetFn, 'utf8');
-
-            // 10/12のコード構造を維持したまま、タイトル・日付・アーカイブ欄を更新
-            html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(currentLesson.title)}｜一期一語</title>`);
-            html = html.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, navHtml);
-            
-            const dateBlock = `<div class="date">\n  <div class="date-main">🍓 ${esc(currentLesson.date)}</div>\n  <div>ベトナム語の旅 🍓 もっと一期一語</div>\n</div>`;
-            html = html.replace(/<div\s+class="date">[\s\S]*?<\/div>\s*<\/div>/gi, dateBlock);
-            html = html.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${esc(currentLesson.title)}</h1>`);
-            html = html.replace(/<section\s+class="archive"\b[^>]*>[\s\S]*?<\/section>/gi, archiveHtml);
-
-            fs.writeFileSync(targetFn, html, 'utf8');
-          });
-          EOF
-
-      - name: Clean Temporary Files
+      - name: Clean
         run: rm -f payload.b64
 
-      - name: Commit and Push All Changes
+      - name: Commit & Push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]"
@@ -144,6 +115,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Align all pages and archive sections strictly with 10/12 template"
+            git commit -m "Simple reliable update"
             git push
           fi
