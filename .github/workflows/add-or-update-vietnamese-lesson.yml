@@ -130,7 +130,7 @@ jobs:
           html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${esc(input.title)}｜一期一語</title>`);
           fs.writeFileSync(pagePath, html, 'utf8');
 
-          // 3. lessons.js の安全な読み込み（壊れていても自動修復する仕組み）
+          // 3. lessons.js の安全な読み込みと、10/03（過去記事）の自動補完
           const lessonFile = 'lessons.js';
           let lessons = [];
           try {
@@ -140,8 +140,24 @@ jobs:
               lessons = JSON.parse(matchLessons[1]);
             }
           } catch (err) {
-            console.log('lessons.js の読み込みに失敗したため、新規作成します:', err.message);
             lessons = [];
+          }
+
+          // 10月3日の記事データが消えていれば自動復元して追加
+          const hasOct3 = lessons.some(item => item.date === "2026年10月3日");
+          if (!hasOct3) {
+            lessons.push({
+              "date": "2026年10月3日",
+              "title": "🍓 一期一語はじまります！",
+              "sceneIcon": "🍓",
+              "sceneTitle": "はじめに",
+              "scene": "ベトナムでの日常から、生きたフレーズを楽しく学びます。",
+              "vietnamese": "Xin chào!",
+              "translation": "こんにちは！",
+              "mainWord": "Xin chào",
+              "mainMeaning": "こんにちは",
+              "articleSections": []
+            });
           }
 
           const existingIndex = lessons.findIndex(item => item.date === input.date);
@@ -151,12 +167,12 @@ jobs:
             lessons.push(input);
           }
 
+          // 降順ソート（新しい日付が上）
           lessons.sort((a, b) => (b.date || '').replace(/[^0-9]/g, '').localeCompare((a.date || '').replace(/[^0-9]/g, '')));
           
-          const newLessonsFileContent = `const lessons = ${JSON.stringify(lessons, null, 2)};\n`;
-          fs.writeFileSync(lessonFile, newLessonsFileContent, 'utf8');
+          fs.writeFileSync(lessonFile, `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, 'utf8');
 
-          // 4. ナビゲーションの自動挿入
+          // 4. 全記事に「前の記事」「次の記事」「ブログ一覧」ボタンを確実に挿入
           lessons.forEach((lesson, i) => {
             const dm = String(lesson.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
             if (!dm) return;
@@ -164,8 +180,8 @@ jobs:
             if (!fs.existsSync(targetFile)) return;
 
             let fileContent = fs.readFileSync(targetFile, 'utf8');
-            const newer = i > 0 ? lessons[i - 1] : null;
-            const older = i < lessons.length - 1 ? lessons[i + 1] : null;
+            const newer = i > 0 ? lessons[i - 1] : null;       // リスト上で一つ前（日付が新しい）
+            const older = i < lessons.length - 1 ? lessons[i + 1] : null; // リスト上で一つ次（日付が古い）
 
             const getFn = l => {
               const m = String(l.date || '').match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
@@ -173,8 +189,8 @@ jobs:
             };
 
             const prevHtml = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : '';
-            const nextHtml = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉` : '';
-            const navHtml = `<nav class="nav-buttons" style="display:flex; justify-content:space-between; margin:20px 0; gap:10px;">${prevHtml}<a href="./" class="nav-btn">🏠 トップ</a>${nextHtml}</nav>`;
+            const nextHtml = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉</a>` : '';
+            const navHtml = `<nav class="nav-buttons" style="display:flex; justify-content:space-between; margin:20px 0; gap:10px;">${prevHtml}<a href="./" class="nav-btn">🏠 ブログ一覧</a>${nextHtml}</nav>`;
 
             fileContent = fileContent.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, '');
             fileContent = fileContent.replace(/(<article\b[^>]*>)/i, `${navHtml}\n$1`);
@@ -194,6 +210,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix lessons.js robust parser fallback"
+            git commit -m "Fix navigation links, blog list button, and restore lessons list"
             git push
           fi
