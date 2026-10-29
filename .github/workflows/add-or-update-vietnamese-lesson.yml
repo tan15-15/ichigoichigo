@@ -40,21 +40,21 @@ jobs:
           if (!m) throw new Error("日付形式エラー");
           const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
 
-          // 1. 10/12をテンプレートとしてコピー
+          // 1. テンプレートとして10/12を使用（なければ作成）
           if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
             fs.copyFileSync("lesson-2026-10-12.html", targetFn);
           }
 
-          // 2. HTMLの本文（<article class="article">の中身）を完全に作り直して置き換える
+          // 2. HTMLコンテンツ全体の動的生成
           if (fs.existsSync(targetFn)) {
             let content = fs.readFileSync(targetFn, "utf8");
 
-            // タイトルと日付の置換
+            // ヘッダー・タイトル・日付
             content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
             content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
             content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
 
-            // 文章セクションの動的生成
+            // エッセイ本文セクションの組み立て
             let sectionsHtml = "";
             if (Array.isArray(input.articleSections)) {
               input.articleSections.forEach(sec => {
@@ -77,13 +77,86 @@ jobs:
               });
             }
 
-            // intro部分（エッセイ本文）の完全置換
-            content = content.replace(/<div class="intro">[\s\S]*?<\/div>/i, `<div class="intro">\n${sectionsHtml}\n</div>`);
+            // メイン単語エリアの組み立て
+            let mainWordHtml = `
+              <div class="viet-card">
+                <div class="viet-line" lang="vi">${input.mainWord || ''}</div>
+                <div class="translation">日本語訳：${input.mainMeaning || ''}</div>
+                <button class="speak" type="button" onclick="speakVietnamese('${input.mainWord || ''}')">🔊 聴く</button>
+              </div>
+              <div class="viet-card">
+                <div class="viet-line" lang="vi">${input.vietnamese || ''}</div>
+                <div class="translation">日本語訳：${input.translation || ''}</div>
+                <button class="speak" type="button" onclick="speakVietnamese('${input.vietnamese || ''}')">🔊 聴く</button>
+              </div>`;
+
+            // 単語テーブルの組み立て
+            let tableRows = "";
+            if (Array.isArray(input.words)) {
+              input.words.forEach(w => {
+                const vn = Array.isArray(w) ? w[0] : w.v;
+                const jp = Array.isArray(w) ? w[1] : w.j;
+                tableRows += `
+                  <tr>
+                    <td><strong>${vn}</strong></td>
+                    <td>${jp}</td>
+                    <td><button class="speak" type="button" onclick="speakVietnamese('${vn}')">🔊 聴く</button></td>
+                  </tr>\n`;
+              });
+            }
+
+            // <article class="article">の中身を丸ごと置き換え
+            const articleRegex = /(<article class="article">)[\s\S]*?(<\/article>)/i;
+            if (articleRegex.test(content)) {
+              const newArticleContent = `
+                <div class="date">
+                  <div class="date-main">🍓 ${input.date}</div>
+                  <div>ベトナム語の旅 🍓 もっと一期一語</div>
+                </div>
+                <h1>🍓 ${input.title}</h1>
+
+                <div class="intro">
+                  ${sectionsHtml}
+                  <p style="text-align: center; font-weight: bold; color: #d83d76; font-size: 18px; margin-top: 20px;">🍓 一期一語 🍓</p>
+                </div>
+
+                <hr class="divider">
+                <h2>🇻🇳 今日のメイン単語：${input.mainWord || ''}</h2>
+                ${mainWordHtml}
+
+                <hr class="divider">
+                <h2>📚 単語一覧</h2>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>ベトナム語</th>
+                      <th>日本語の意味</th>
+                      <th>音声</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${tableRows}
+                  </tbody>
+                </table>
+
+                <section class="archive" aria-label="別の日のブログ">
+                  <h2>📅 前後のブログ</h2>
+                  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>
+                  <div style="text-align: center; margin-top: 15px;">
+                    <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>
+                  </div>
+                  <p class="archive-home" style="text-align: center; margin-top: 15px;">
+                    <a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a>
+                  </p>
+                </section>`;
+
+              content = content.replace(articleRegex, `$1\n${newArticleContent}\n$2`);
+            }
 
             fs.writeFileSync(targetFn, content, "utf8");
           }
 
-          // 3. lessons.js の更新と全配列の保持
+          // 3. lessons.js の更新と保持
           let lessons = [];
           if (fs.existsSync("lessons.js")) {
             try {
@@ -100,7 +173,6 @@ jobs:
             lessons.push(input);
           }
 
-          // 新しい順にソート
           lessons.sort((a, b) => {
             const getNum = d => {
               const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
@@ -130,6 +202,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix workflow script syntax error"
+            git commit -m "Rebuild full HTML structure from JSON"
             git push
           fi
