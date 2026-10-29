@@ -18,105 +18,109 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Update lessons.js and HTML
+      - name: Create builder script
+        run: |
+          cat << 'EOF' > build-lesson.js
+          const fs = require("fs");
+          const rawB64 = fs.readFileSync("payload.b64", "utf8").trim();
+          let rawStr = Buffer.from(rawB64, "base64").toString("utf8").trim();
+          rawStr = rawStr.replace(/\]\s*;?\s*$/, "").trim();
+          if (rawStr.startsWith("[")) rawStr = rawStr.substring(1).trim();
+
+          let input;
+          try {
+            input = JSON.parse(rawStr);
+          } catch (e) {
+            const s = rawStr.indexOf("{");
+            const en = rawStr.lastIndexOf("}");
+            input = JSON.parse(rawStr.substring(s, en + 1));
+          }
+
+          const m = String(input.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+          if (!m) throw new Error("日付形式エラー");
+          const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
+
+          // 1. 10/12をテンプレートとしてコピー
+          if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
+            fs.copyFileSync("lesson-2026-10-12.html", targetFn);
+          }
+
+          // 2. HTMLの本文（<article class="article">の中身）を完全に作り直して置き換える
+          if (fs.existsSync(targetFn)) {
+            let content = fs.readFileSync(targetFn, "utf8");
+
+            // タイトルと日付の置換
+            content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
+            content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
+            content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
+
+            // 文章セクションの動的生成
+            let sectionsHtml = "";
+            if (Array.isArray(input.articleSections)) {
+              input.articleSections.forEach(sec => {
+                sectionsHtml += `<p><strong>${sec.heading}</strong></p>\n`;
+                if (Array.isArray(sec.paragraphs)) {
+                  sec.paragraphs.forEach(p => {
+                    sectionsHtml += `<p>${p}</p>\n`;
+                  });
+                }
+                if (Array.isArray(sec.examples)) {
+                  sec.examples.forEach(ex => {
+                    sectionsHtml += `
+                      <div class="viet-card" style="margin: 12px 0; background: #fff;">
+                        <div class="viet-line" lang="vi">${ex.v}</div>
+                        <div class="translation">（日本語訳：${ex.j}）</div>
+                        <button class="speak" type="button" onclick="speakVietnamese('${ex.v}')">🔊 聴く</button>
+                      </div>\n`;
+                  });
+                }
+              });
+            }
+
+            // intro部分（エッセイ本文）の完全置換
+            content = content.replace(/<div class="intro">[\s\S]*?<\/div>/i, `<div class="intro">\n${sectionsHtml}\n</div>`);
+
+            fs.writeFileSync(targetFn, content, "utf8");
+          }
+
+          // 3. lessons.js の更新と全配列の保持
+          let lessons = [];
+          if (fs.existsSync("lessons.js")) {
+            try {
+              const src = fs.readFileSync("lessons.js", "utf8");
+              const match = src.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
+              if (match) lessons = JSON.parse(match[1]);
+            } catch (err) {}
+          }
+
+          const idx = lessons.findIndex(l => l.date === input.date);
+          if (idx >= 0) {
+            lessons[idx] = { ...lessons[idx], ...input };
+          } else {
+            lessons.push(input);
+          }
+
+          // 新しい順にソート
+          lessons.sort((a, b) => {
+            const getNum = d => {
+              const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+              return pm ? Number(`${pm[1]}${pm[2].padStart(2, "0")}${pm[3].padStart(2, "0")}`) : 0;
+            };
+            return getNum(b.date) - getNum(a.date);
+          });
+
+          fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
+          EOF
+
+      - name: Run Builder Script
         env:
           LESSON_JSON: ${{ inputs.lesson_json }}
         run: |
           echo "$LESSON_JSON" | base64 -w 0 > payload.b64
-          node -e '
-            const fs = require("fs");
-            const rawB64 = fs.readFileSync("payload.b64", "utf8").trim();
-            let rawStr = Buffer.from(rawB64, "base64").toString("utf8").trim();
-            rawStr = rawStr.replace(/\]\s*;?\s*$/, "").trim();
-            if (rawStr.startsWith("[")) rawStr = rawStr.substring(1).trim();
-
-            let input;
-            try {
-              input = JSON.parse(rawStr);
-            } catch (e) {
-              const s = rawStr.indexOf("{");
-              const en = rawStr.lastIndexOf("}");
-              input = JSON.parse(rawStr.substring(s, en + 1));
-            }
-
-            const m = String(input.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-            if (!m) throw new Error("日付形式エラー");
-            const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
-
-            // 1. 10/12をテンプレートとしてコピー
-            if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
-              fs.copyFileSync("lesson-2026-10-12.html", targetFn);
-            }
-
-            // 2. HTMLの本文（<article class="article">の中身）を完全に作り直して置き換える
-            if (fs.existsSync(targetFn)) {
-              let content = fs.readFileSync(targetFn, "utf8");
-
-              // タイトルと日付の置換
-              content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
-              content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
-              content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
-
-              // 文章セクションの動的生成
-              let sectionsHtml = "";
-              if (Array.isArray(input.articleSections)) {
-                input.articleSections.forEach(sec => {
-                  sectionsHtml += `<p><strong>${sec.heading}</strong></p>\n`;
-                  if (Array.isArray(sec.paragraphs)) {
-                    sec.paragraphs.forEach(p => {
-                      sectionsHtml += `<p>${p}</p>\n`;
-                    });
-                  }
-                  if (Array.isArray(sec.examples)) {
-                    sec.examples.forEach(ex => {
-                      sectionsHtml += `
-                        <div class="viet-card" style="margin: 12px 0; background: #fff;">
-                          <div class="viet-line" lang="vi">${ex.v}</div>
-                          <div class="translation">（日本語訳：${ex.j}）</div>
-                          <button class="speak" type="button" onclick="speakVietnamese('${ex.v}')">🔊 聴く</button>
-                        </div>\n`;
-                    });
-                  }
-                });
-              }
-
-              // intro部分（エッセイ本文）の完全置換
-              content = content.replace(/<div class="intro">[\s\S]*?<\/div>/i, `<div class="intro">\n${sectionsHtml}\n</div>`);
-
-              fs.writeFileSync(targetFn, content, "utf8");
-            }
-
-            // 3. lessons.js の更新と全配列の保持
-            let lessons = [];
-            if (fs.existsSync("lessons.js")) {
-              try {
-                const src = fs.readFileSync("lessons.js", "utf8");
-                const match = src.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
-                if (match) lessons = JSON.parse(match[1]);
-              } catch (err) {}
-            }
-
-            const idx = lessons.findIndex(l => l.date === input.date);
-            if (idx >= 0) {
-              lessons[idx] = { ...lessons[idx], ...input };
-            } else {
-              lessons.push(input);
-            }
-
-            // 新しい順にソート
-            lessons.sort((a, b) => {
-              const getNum = d => {
-                const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-                return pm ? Number(`${pm[1]}${pm[2].padStart(2, "0")}${pm[3].padStart(2, "0")}`) : 0;
-              };
-              return getNum(b.date) - getNum(a.date);
-            });
-
-            fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
-          '
+          node build-lesson.js
 
       - name: Clean
-        run: rm -f payload.b64
+        run: rm -f payload.b64 build-lesson.js
 
       - name: Commit & Push
         run: |
@@ -126,6 +130,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix workflow to correctly replace article content"
+            git commit -m "Fix workflow script syntax error"
             git push
           fi
