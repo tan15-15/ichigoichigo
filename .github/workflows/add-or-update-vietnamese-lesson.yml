@@ -54,7 +54,7 @@ jobs:
             content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
             content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
 
-            // エッセイ本文セクションの組み立て
+            // エッセイ本文セクション（例文・単語分解の縦並びカード形式）の組み立て
             let sectionsHtml = "";
             if (Array.isArray(input.articleSections)) {
               input.articleSections.forEach(sec => {
@@ -67,17 +67,29 @@ jobs:
                 if (Array.isArray(sec.examples)) {
                   sec.examples.forEach(ex => {
                     sectionsHtml += `
-                      <div class="viet-card" style="margin: 12px 0; background: #fff;">
-                        <div class="viet-line" lang="vi">${ex.v}</div>
-                        <div class="translation">（日本語訳：${ex.j}）</div>
-                        <button class="speak" type="button" onclick="speakVietnamese('${ex.v}')">🔊 聴く</button>
+                      <div class="viet-card" style="margin: 15px 0; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                        <div class="viet-line" lang="vi" style="font-weight: bold; font-size: 1.1em; color: #2c3e50;">${ex.v}</div>
+                        <div class="translation" style="margin: 4px 0 10px 0; color: #e74c3c;">日本語訳：${ex.j}</div>`;
+                    
+                    if (ex.w) {
+                      // 解説文中の改行を綺麗に分割して縦並び表示にする
+                      const lines = ex.w.split("\n");
+                      lines.forEach(line => {
+                        if (line.trim()) {
+                          sectionsHtml += `<div style="margin: 6px 0; padding-left: 10px; border-left: 3px solid #ffb6c1; font-size: 0.95em;">${line}</div>\n`;
+                        }
+                      });
+                    }
+
+                    sectionsHtml += `
+                        <button class="speak" type="button" onclick="speakVietnamese('${ex.v}')" style="margin-top: 8px;">🔊 聴く</button>
                       </div>\n`;
                   });
                 }
               });
             }
 
-            // メイン単語エリアの組み立て
+            // メイン単語エリア
             let mainWordHtml = `
               <div class="viet-card">
                 <div class="viet-line" lang="vi">${input.mainWord || ''}</div>
@@ -90,7 +102,7 @@ jobs:
                 <button class="speak" type="button" onclick="speakVietnamese('${input.vietnamese || ''}')">🔊 聴く</button>
               </div>`;
 
-            // 単語テーブルの組み立て
+            // 単語テーブル
             let tableRows = "";
             if (Array.isArray(input.words)) {
               input.words.forEach(w => {
@@ -105,7 +117,7 @@ jobs:
               });
             }
 
-            // <article class="article">の中身を丸ごと置き換え
+            // <article class="article">の中身を置き換え
             const articleRegex = /(<article class="article">)[\s\S]*?(<\/article>)/i;
             if (articleRegex.test(content)) {
               const newArticleContent = `
@@ -202,6 +214,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Rebuild full HTML structure from JSON"
+            git commit -m "Restore vertical decomposed word card layout"
             git push
           fi
