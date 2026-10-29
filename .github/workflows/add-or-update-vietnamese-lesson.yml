@@ -40,12 +40,12 @@ jobs:
           if (!m) throw new Error("日付形式エラー");
           const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
 
-          // 1. テンプレートとして10/12を使用（なければ作成）
+          // 1. テンプレートファイルの確保
           if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
             fs.copyFileSync("lesson-2026-10-12.html", targetFn);
           }
 
-          // 2. HTMLコンテンツ全体の動的生成
+          // 2. HTMLの生成・置換
           if (fs.existsSync(targetFn)) {
             let content = fs.readFileSync(targetFn, "utf8");
 
@@ -54,7 +54,13 @@ jobs:
             content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
             content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
 
-            // エッセイ本文セクション（例文・単語分解の縦並びカード形式）の組み立て
+            // 改行ヘルパー関数
+            const formatText = (text) => {
+              if (!text) return "";
+              return String(text).replace(/\n/g, "<br>");
+            };
+
+            // 文章セクション（記事本文）
             let sectionsHtml = "";
             if (Array.isArray(input.articleSections)) {
               input.articleSections.forEach(sec => {
@@ -66,43 +72,38 @@ jobs:
                 }
                 if (Array.isArray(sec.examples)) {
                   sec.examples.forEach(ex => {
+                    const wordMeaningHtml = ex.w ? `<div style="margin-top: 10px; padding: 10px; background: #fdf2f4; border-radius: 6px; color: #2c3e50; font-size: 0.95em; line-height: 1.6;">${formatText(ex.w)}</div>` : '';
                     sectionsHtml += `
                       <div class="viet-card" style="margin: 15px 0; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
-                        <div class="viet-line" lang="vi" style="font-weight: bold; font-size: 1.1em; color: #2c3e50;">${ex.v}</div>
-                        <div class="translation" style="margin: 4px 0 10px 0; color: #e74c3c;">日本語訳：${ex.j}</div>`;
-                    
-                    if (ex.w) {
-                      // 解説文中の改行を綺麗に分割して縦並び表示にする
-                      const lines = ex.w.split("\n");
-                      lines.forEach(line => {
-                        if (line.trim()) {
-                          sectionsHtml += `<div style="margin: 6px 0; padding-left: 10px; border-left: 3px solid #ffb6c1; font-size: 0.95em;">${line}</div>\n`;
-                        }
-                      });
-                    }
-
-                    sectionsHtml += `
-                        <button class="speak" type="button" onclick="speakVietnamese('${ex.v}')" style="margin-top: 8px;">🔊 聴く</button>
+                        <div class="viet-line" lang="vi" style="font-weight: bold; font-size: 1.2em; color: #e74c3c;">${ex.v}</div>
+                        <div class="translation" style="margin: 6px 0; color: #27ae60; font-weight: bold;">日本語訳：${ex.j}</div>
+                        <button class="speak" type="button" onclick="speakVietnamese('${ex.v.replace(/'/g, "\\'")}')" style="margin: 6px 0 10px 0;">🔊 聴く</button>
+                        ${wordMeaningHtml}
                       </div>\n`;
                   });
                 }
               });
             }
 
-            // メイン単語エリア
+            // 今日の一歩（BOX）
+            let todayStepHtml = "";
+            if (input.todayStep) {
+              todayStepHtml = `
+                <div style="margin: 25px 0; padding: 15px 20px; background: #fff0f5; border-left: 5px solid #d83d76; border-radius: 8px;">
+                  <h3 style="margin: 0 0 8px 0; color: #d83d76; font-size: 1.1em;">🍓 今日の一歩🐾</h3>
+                  <p style="margin: 0; color: #2c3e50; line-height: 1.6; font-weight: bold;">${formatText(input.todayStep)}</p>
+                </div>`;
+            }
+
+            // 今日の一語（メイン単語エリア）
             let mainWordHtml = `
-              <div class="viet-card">
-                <div class="viet-line" lang="vi">${input.mainWord || ''}</div>
-                <div class="translation">日本語訳：${input.mainMeaning || ''}</div>
-                <button class="speak" type="button" onclick="speakVietnamese('${input.mainWord || ''}')">🔊 聴く</button>
-              </div>
-              <div class="viet-card">
-                <div class="viet-line" lang="vi">${input.vietnamese || ''}</div>
-                <div class="translation">日本語訳：${input.translation || ''}</div>
-                <button class="speak" type="button" onclick="speakVietnamese('${input.vietnamese || ''}')">🔊 聴く</button>
+              <div class="viet-card" style="margin: 15px 0; background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+                <div class="viet-line" lang="vi" style="font-weight: bold; font-size: 1.2em; color: #e74c3c;">${input.vietnamese || input.mainWord || ''}</div>
+                <div class="translation" style="margin: 6px 0; color: #27ae60; font-weight: bold;">日本語訳：${input.translation || input.mainMeaning || ''}</div>
+                <button class="speak" type="button" onclick="speakVietnamese('${(input.vietnamese || input.mainWord || '').replace(/'/g, "\\'")}')" style="margin-top: 6px;">🔊 聴く</button>
               </div>`;
 
-            // 単語テーブル
+            // 単語一覧テーブル
             let tableRows = "";
             if (Array.isArray(input.words)) {
               input.words.forEach(w => {
@@ -110,14 +111,14 @@ jobs:
                 const jp = Array.isArray(w) ? w[1] : w.j;
                 tableRows += `
                   <tr>
-                    <td><strong>${vn}</strong></td>
-                    <td>${jp}</td>
-                    <td><button class="speak" type="button" onclick="speakVietnamese('${vn}')">🔊 聴く</button></td>
+                    <td style="color: #e74c3c; font-weight: bold;">${vn}</td>
+                    <td style="color: #2c3e50;">${jp}</td>
+                    <td><button class="speak" type="button" onclick="speakVietnamese('${vn.replace(/'/g, "\\'")}')">🔊 聴く</button></td>
                   </tr>\n`;
               });
             }
 
-            // <article class="article">の中身を置き換え
+            // <article class="article">の中身を置換
             const articleRegex = /(<article class="article">)[\s\S]*?(<\/article>)/i;
             if (articleRegex.test(content)) {
               const newArticleContent = `
@@ -129,11 +130,12 @@ jobs:
 
                 <div class="intro">
                   ${sectionsHtml}
+                  ${todayStepHtml}
                   <p style="text-align: center; font-weight: bold; color: #d83d76; font-size: 18px; margin-top: 20px;">🍓 一期一語 🍓</p>
                 </div>
 
                 <hr class="divider">
-                <h2>🇻🇳 今日のメイン単語：${input.mainWord || ''}</h2>
+                <h2>🍓 今日の一語</h2>
                 ${mainWordHtml}
 
                 <hr class="divider">
@@ -214,6 +216,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Restore vertical decomposed word card layout"
+            git commit -m "Update lesson builder format with new styling and todayStep box"
             git push
           fi
