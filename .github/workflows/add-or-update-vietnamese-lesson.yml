@@ -43,12 +43,50 @@ jobs:
             if (!m) throw new Error("日付形式エラー");
             const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
 
-            // 10/12をマスターとして複製
+            // 1. 10/12をテンプレートとしてコピー
             if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
               fs.copyFileSync("lesson-2026-10-12.html", targetFn);
             }
 
-            // lessons.js の読み込みと追加
+            // 2. HTMLの本文（<article class="article">の中身）を完全に作り直して置き換える
+            if (fs.existsSync(targetFn)) {
+              let content = fs.readFileSync(targetFn, "utf8");
+
+              // タイトルと日付の置換
+              content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
+              content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
+              content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
+
+              // 文章セクションの動的生成
+              let sectionsHtml = "";
+              if (Array.isArray(input.articleSections)) {
+                input.articleSections.forEach(sec => {
+                  sectionsHtml += `<p><strong>${sec.heading}</strong></p>\n`;
+                  if (Array.isArray(sec.paragraphs)) {
+                    sec.paragraphs.forEach(p => {
+                      sectionsHtml += `<p>${p}</p>\n`;
+                    });
+                  }
+                  if (Array.isArray(sec.examples)) {
+                    sec.examples.forEach(ex => {
+                      sectionsHtml += `
+                        <div class="viet-card" style="margin: 12px 0; background: #fff;">
+                          <div class="viet-line" lang="vi">${ex.v}</div>
+                          <div class="translation">（日本語訳：${ex.j}）</div>
+                          <button class="speak" type="button" onclick="speakVietnamese('${ex.v}')">🔊 聴く</button>
+                        </div>\n`;
+                    });
+                  }
+                });
+              }
+
+              // intro部分（エッセイ本文）の完全置換
+              content = content.replace(/<div class="intro">[\s\S]*?<\/div>/i, `<div class="intro">\n${sectionsHtml}\n</div>`);
+
+              fs.writeFileSync(targetFn, content, "utf8");
+            }
+
+            // 3. lessons.js の更新と全配列の保持
             let lessons = [];
             if (fs.existsSync("lessons.js")) {
               try {
@@ -65,7 +103,7 @@ jobs:
               lessons.push(input);
             }
 
-            // 正しい数字順（新しい順: YYYYMMDD）でソート
+            // 新しい順にソート
             lessons.sort((a, b) => {
               const getNum = d => {
                 const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
@@ -75,39 +113,6 @@ jobs:
             });
 
             fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
-
-            // 対象HTMLのタイトル・日付置換
-            if (fs.existsSync(targetFn)) {
-              let content = fs.readFileSync(targetFn, "utf8");
-              content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
-              content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
-              content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
-              fs.writeFileSync(targetFn, content, "utf8");
-            }
-
-            // 全ページのナビゲーション更新
-            lessons.forEach((l, i) => {
-              const dm = String(l.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-              if (!dm) return;
-              const fn = `lesson-${dm[1]}-${dm[2].padStart(2, "0")}-${dm[3].padStart(2, "0")}.html`;
-              if (!fs.existsSync(fn)) return;
-
-              let pageContent = fs.readFileSync(fn, "utf8");
-              const newer = i > 0 ? lessons[i - 1] : null;
-              const older = i < lessons.length - 1 ? lessons[i + 1] : null;
-
-              const getFn = item => {
-                const im = String(item.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-                return `lesson-${im[1]}-${im[2].padStart(2, "0")}-${im[3].padStart(2, "0")}.html`;
-              };
-
-              const prevBtn = older ? `<a href="./${getFn(older)}" class="nav-btn">👈 前の記事 (${older.date})</a>` : "<span></span>";
-              const nextBtn = newer ? `<a href="./${getFn(newer)}" class="nav-btn">次の記事 (${newer.date}) 👉</a>` : "<span></span>";
-              const navHtml = `<nav class="nav-buttons">\n    ${prevBtn}\n    <a href="./" class="nav-btn">🏠 トップページへ戻る</a>\n    ${nextBtn}\n  </nav>`;
-
-              pageContent = pageContent.replace(/<nav\s+class="nav-buttons">[\s\S]*?<\/nav>/gi, navHtml);
-              fs.writeFileSync(fn, pageContent, "utf8");
-            });
           '
 
       - name: Clean
@@ -121,6 +126,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Fix full lesson ordering and restore lessons.js"
+            git commit -m "Fix workflow to correctly replace article content"
             git push
           fi
