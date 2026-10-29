@@ -38,27 +38,72 @@ jobs:
 
           const m = String(input.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
           if (!m) throw new Error("日付形式エラー");
-          const targetFn = `lesson-${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}.html`;
+          const yyyy = m[1];
+          const mm = m[2].padStart(2, "0");
+          const dd = m[3].padStart(2, "0");
+          const targetFn = `lesson-${yyyy}-${mm}-${dd}.html`;
 
-          // 1. テンプレートファイルの確保
+          // 1. テンプレートファイルの準備
           if (!fs.existsSync(targetFn) && fs.existsSync("lesson-2026-10-12.html")) {
             fs.copyFileSync("lesson-2026-10-12.html", targetFn);
           }
 
-          // 2. HTMLの生成・置換
+          // 2. lessons.js の読み込み・更新（最新3件取得の準備）
+          let lessons = [];
+          if (fs.existsSync("lessons.js")) {
+            try {
+              const src = fs.readFileSync("lessons.js", "utf8");
+              const match = src.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
+              if (match) lessons = JSON.parse(match[1]);
+            } catch (err) {}
+          }
+
+          const idx = lessons.findIndex(l => l.date === input.date);
+          if (idx >= 0) {
+            lessons[idx] = { ...lessons[idx], ...input };
+          } else {
+            lessons.push(input);
+          }
+
+          // 日付の降順（新しい順）にソート
+          lessons.sort((a, b) => {
+            const getNum = d => {
+              const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+              return pm ? Number(`${pm[1]}${pm[2].padStart(2, "0")}${pm[3].padStart(2, "0")}`) : 0;
+            };
+            return getNum(b.date) - getNum(a.date);
+          });
+
+          fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
+
+          // 3. 「最近のブログ（最新3件）」HTMLブロックの生成
+          let recentLessonsHtml = '<ul style="list-style: none; padding: 0; margin: 15px 0;">';
+          const recentItems = lessons.slice(0, 3);
+          recentItems.forEach(item => {
+            const im = String(item.date || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
+            if (im) {
+              const fn = `lesson-${im[1]}-${im[2].padStart(2, "0")}-${im[3].padStart(2, "0")}.html`;
+              const isCurrent = (fn === targetFn);
+              const badge = isCurrent ? ' <span style="font-size:0.8em; background:#d83d76; color:#fff; padding:2px 6px; border-radius:4px; margin-left:5px;">この記事</span>' : '';
+              recentLessonsHtml += `
+                <li style="margin-bottom: 12px; padding: 12px; background: #fff; border: 1px solid #ffe0e9; border-radius: 8px;">
+                  <a href="./${fn}" style="text-decoration: none; color: #d83d76; font-weight: bold; font-size: 1.05em; display: block;">
+                    📅 ${item.date}：${item.title}${badge}
+                  </a>
+                </li>`;
+            }
+          });
+          recentLessonsHtml += '</ul>';
+
+          // 4. HTMLページの置換と生成
           if (fs.existsSync(targetFn)) {
             let content = fs.readFileSync(targetFn, "utf8");
 
-            // ヘッダー・タイトル・日付
             content = content.replace(/<title>[\s\S]*?<\/title>/i, `<title>🍓 ${input.title}｜一期一語</title>`);
             content = content.replace(/<div class="date-main">[\s\S]*?<\/div>/i, `<div class="date-main">🍓 ${input.date}</div>`);
             content = content.replace(/<h1>[\s\S]*?<\/h1>/i, `<h1>🍓 ${input.title}</h1>`);
 
-            // 改行ヘルパー関数
-            const formatText = (text) => {
-              if (!text) return "";
-              return String(text).replace(/\n/g, "<br>");
-            };
+            const formatText = (text) => text ? String(text).replace(/\n/g, "<br>") : "";
 
             // 文章セクション（記事本文）
             let sectionsHtml = "";
@@ -153,9 +198,10 @@ jobs:
                   </tbody>
                 </table>
 
-                <section class="archive" aria-label="別の日のブログ">
-                  <h2>📅 前後のブログ</h2>
-                  <p>近くの日のベトナム語日記も読んでみよう！🍓</p>
+                <section class="archive" aria-label="最近のブログ">
+                  <h2>📚 最近のブログ</h2>
+                  <p>直近のベトナム語日記も読んでみよう！🍓</p>
+                  ${recentLessonsHtml}
                   <div style="text-align: center; margin-top: 15px;">
                     <a href="./archive.html" style="display: inline-block; padding: 10px 20px; background: #d83d76; color: #fff; border-radius: 12px; text-decoration: none; font-weight: bold;">📖 全てのブログ一覧を見る</a>
                   </div>
@@ -169,33 +215,6 @@ jobs:
 
             fs.writeFileSync(targetFn, content, "utf8");
           }
-
-          // 3. lessons.js の更新と保持
-          let lessons = [];
-          if (fs.existsSync("lessons.js")) {
-            try {
-              const src = fs.readFileSync("lessons.js", "utf8");
-              const match = src.match(/const\s+lessons\s*=\s*(\[[\s\S]*\]);?/);
-              if (match) lessons = JSON.parse(match[1]);
-            } catch (err) {}
-          }
-
-          const idx = lessons.findIndex(l => l.date === input.date);
-          if (idx >= 0) {
-            lessons[idx] = { ...lessons[idx], ...input };
-          } else {
-            lessons.push(input);
-          }
-
-          lessons.sort((a, b) => {
-            const getNum = d => {
-              const pm = String(d || "").match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日/);
-              return pm ? Number(`${pm[1]}${pm[2].padStart(2, "0")}${pm[3].padStart(2, "0")}`) : 0;
-            };
-            return getNum(b.date) - getNum(a.date);
-          });
-
-          fs.writeFileSync("lessons.js", `const lessons = ${JSON.stringify(lessons, null, 2)};\n`, "utf8");
           EOF
 
       - name: Run Builder Script
@@ -216,6 +235,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes"
           else
-            git commit -m "Update lesson builder format with new styling and todayStep box"
+            git commit -m "Update lesson builder with recent lessons list and formatting"
             git push
           fi
