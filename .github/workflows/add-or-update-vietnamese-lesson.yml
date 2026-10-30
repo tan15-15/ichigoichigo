@@ -85,7 +85,6 @@ jobs:
             fail("JSONを読み込めません。入力内容を確認してください。");
           }
 
-          // 1件のJSONオブジェクト、または1件だけの配列に対応
           if (Array.isArray(input)) {
             if (input.length !== 1) {
               fail("JSON配列を使う場合は、レッスン1件だけにしてください。");
@@ -165,16 +164,55 @@ jobs:
             "utf8"
           );
 
-          // 4. 音声ボタン
+          // 4. vocabulary.js の自動生成（単語帳用グローバル変数 vocabulary の作成）
+          // 全レッスンから単語・関連語を統合し、重複を除去して整理する
+          const vocabMap = new Map();
+
+          lessons.forEach(lesson => {
+            const processWordItem = (item) => {
+              if (!item) return;
+              let vn = "", jp = "", type = "", antonym = "", example = "", note = "";
+              if (Array.isArray(item)) {
+                vn = item[0] ?? "";
+                jp = item[1] ?? "";
+              } else if (typeof item === "object") {
+                vn = item.v ?? item.vietnamese ?? "";
+                jp = item.j ?? item.translation ?? "";
+                type = item.type ?? "";
+                antonym = item.antonym ?? "";
+                example = item.example ?? "";
+                note = item.w ?? item.note ?? "";
+              }
+              if (vn && !vocabMap.has(vn)) {
+                vocabMap.set(vn, {
+                  v: vn,
+                  j: jp,
+                  type: type,
+                  antonym: antonym,
+                  example: example,
+                  note: note
+                });
+              }
+            };
+
+            if (Array.isArray(lesson.words)) lesson.words.forEach(processWordItem);
+            if (Array.isArray(lesson.extraWords)) lesson.extraWords.forEach(processWordItem);
+          });
+
+          const vocabularyArray = Array.from(vocabMap.values());
+          const vocabularyJsContent = "const vocabulary = " + JSON.stringify(vocabularyArray, null, 2) + ";\n";
+          fs.writeFileSync("vocabulary.js", vocabularyJsContent, "utf8");
+          console.log("vocabulary.js を更新しました（総単語数:", vocabularyArray.length, "）");
+
+          // 5. 音声ボタン
           function speakButton(text, style = "") {
             const safeText = escapeHtml(JSON.stringify(String(text ?? "")));
-
             return `<button class="speak" type="button"
               onclick="speakVietnamese(${safeText})"
               style="${style}">🔊 聴く</button>`;
           }
 
-          // 5. 例文カード
+          // 6. 例文カード
           function exampleCard(ex) {
             const vietnamese = ex.v ?? "";
             const japanese = ex.j ?? "";
@@ -191,7 +229,7 @@ jobs:
               </div>`;
           }
 
-          // 6. 本文
+          // 7. 本文生成
           let sectionsHtml = "";
 
           for (const section of input.articleSections ?? []) {
@@ -206,7 +244,7 @@ jobs:
             }
           }
 
-          // 7. 今日の一歩
+          // 8. 今日の一歩
           let todayStepHtml = "";
 
           if (input.todayStep) {
@@ -217,7 +255,7 @@ jobs:
               </div>`;
           }
 
-          // 8. 今日の一語
+          // 9. 今日の一語
           const mainVietnamese = input.vietnamese ?? input.mainWord ?? "";
           const mainJapanese = input.translation ?? input.mainMeaning ?? "";
 
@@ -228,7 +266,7 @@ jobs:
               ${speakButton(mainVietnamese)}
             </div>`;
 
-          // 9. 単語一覧
+          // 10. 単語一覧
           let tableRows = "";
 
           for (const word of input.words) {
@@ -243,7 +281,7 @@ jobs:
               </tr>`;
           }
 
-          // 10. 関連語・実用表現
+          // 11. 関連語・実用表現
           let extraWordsHtml = "";
 
           if (Array.isArray(input.extraWords) && input.extraWords.length > 0) {
@@ -267,7 +305,7 @@ jobs:
             }
           }
 
-          // 11. 最近のブログ一覧
+          // 12. 最近のブログ一覧
           function recentHtml(currentFilename) {
             let html = '<ul style="list-style:none;padding:0;margin:15px 0;">';
 
@@ -287,7 +325,7 @@ jobs:
             return html + "</ul>";
           }
 
-          // 12. レッスンページの作成・更新
+          // 13. レッスンページの作成・更新
           const templatePath = "lesson-2026-10-12.html";
 
           if (!fs.existsSync(target.filename) && !fs.existsSync(templatePath)) {
@@ -359,7 +397,7 @@ jobs:
 
           fs.writeFileSync(pagePath, page, "utf8");
 
-          // 13. archive.html の一覧を lessons.js から再生成
+          // 14. archive.html の安全な置換（入れ子 div の深さを正しくカウントするロジック）
           const archivePath = "archive.html";
 
           if (!fs.existsSync(archivePath)) {
@@ -367,13 +405,6 @@ jobs:
           }
 
           let archive = fs.readFileSync(archivePath, "utf8");
-
-          const archiveRegex =
-            /(<div class="archive-links">)[\s\S]*?(<\/div>)/i;
-
-          if (!archiveRegex.test(archive)) {
-            fail("archive.html の一覧部分を認識できません。");
-          }
 
           let archiveItems = "";
 
@@ -399,14 +430,69 @@ jobs:
               </a>\n`;
           }
 
-          archive = archive.replace(
-            archiveRegex,
-            `$1\n${archiveItems}\n$2`
-          );
+          // 入れ子 div の深さを正しく数えて外側の .archive-links 全体だけを安全に置き換える関数
+          function replaceArchiveLinks(html, newInnerHtml) {
+            const targetClass = 'class="archive-links"';
+            const classIdx = html.indexOf(targetClass);
+            if (classIdx === -1) return null;
 
-          fs.writeFileSync(archivePath, archive, "utf8");
+            // クラス名から手前の <div まで遡る
+            const startIndex = html.lastIndexOf('<div', classIdx);
+            if (startIndex === -1) return null;
 
-          // 14. サイトマップを実在するレッスンページに合わせる
+            let depth = 0;
+            let i = startIndex;
+            let endIndex = -1;
+
+            while (i < html.length) {
+              // タグの始まりを簡易検出
+              if (html.startsWith('<div', i)) {
+                depth++;
+                i += 4;
+              } else if (html.startsWith('</div', i)) {
+                depth--;
+                i += 6;
+                if (depth === 0) {
+                  endIndex = i;
+                  break;
+                }
+              } else {
+                i++;
+              }
+            }
+
+            if (endIndex === -1) return null;
+
+            return (
+              html.substring(0, startIndex) +
+              `<div class="archive-links">\n${newInnerHtml}\n</div>` +
+              html.substring(endIndex)
+            );
+          }
+
+          const updatedArchive = replaceArchiveLinks(archive, archiveItems);
+          if (!updatedArchive) {
+            fail("archive.html 内の <div class=\"archive-links\"> が見つからないか、構造が不正です。");
+          }
+
+          fs.writeFileSync(archivePath, updatedArchive, "utf8");
+
+          // 15. words.html のスクリプト読み込み順序確認・補正（vocabulary.js が words-page.js より前に読み込まれているか）
+          const wordsHtmlPath = "words.html";
+          if (fs.existsSync(wordsHtmlPath)) {
+            let wordsHtml = fs.readFileSync(wordsHtmlPath, "utf8");
+            // vocabulary.js が含まれていなければ追加する、または正しい順序にする
+            if (!wordsHtml.includes("vocabulary.js")) {
+              wordsHtml = wordsHtml.replace(
+                /<script[^>]*src=["'][^"']*words-page\.js["'][^>]*><\/script>/i,
+                `<script src="./vocabulary.js"></script>\n  <script src="./words-page.js"></script>`
+              );
+              fs.writeFileSync(wordsHtmlPath, wordsHtml, "utf8");
+              console.log("words.html に vocabulary.js の読み込みを追加しました。");
+            }
+          }
+
+          // 16. サイトマップを実在するページに合わせて更新
           const baseUrl = "https://tan15-15.github.io/ichigoichigo/";
 
           const corePages = [
@@ -436,24 +522,28 @@ jobs:
 
           fs.writeFileSync("sitemap.xml", xml, "utf8");
 
-          // 15. 今回変更したファイルだけを記録
+          // 17. 変更したファイルだけを正確に指定してコミット対象にする
           const changedFiles = [
             "lessons.js",
             pagePath,
             "archive.html",
+            "vocabulary.js",
+            "words.html",
             "sitemap.txt",
             "sitemap.xml"
           ];
 
+          const existingChangedFiles = changedFiles.filter(f => fs.existsSync(f));
+
           fs.writeFileSync(
             ".changed-files",
-            [...new Set(changedFiles)].join("\n") + "\n",
+            existingChangedFiles.join("\n") + "\n",
             "utf8"
           );
 
           console.log("レッスンの生成・更新が完了しました。");
           console.log("対象ページ:", pagePath);
-          console.log("アーカイブとサイトマップも更新しました。");
+          console.log("更新ファイル一覧:", existingChangedFiles.join(", "));
           NODE
 
       - name: Run Builder Script
@@ -475,7 +565,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
-            git commit -m "Add or update Vietnamese lesson"
+            git commit -m "Add or update Vietnamese lesson, vocabulary, and archive"
             git push
           fi
 
