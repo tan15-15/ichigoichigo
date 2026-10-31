@@ -4,546 +4,285 @@ on:
   workflow_dispatch:
     inputs:
       lesson_json:
-        description: "レッスン内容（JSONを1回貼り付け）"
+        description: "レッスン内容（通常JSON）または修復モード {\"action\":\"repair\"} を1回貼り付け"
         required: true
         type: string
 
 permissions:
   contents: write
 
+concurrency:
+  group: ichigoichigo-lesson-update
+  cancel-in-progress: false
+
 jobs:
   add-or-update-lesson:
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Create builder script
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Create safe builder script
         shell: bash
         run: |
           cat <<'NODE' > build-lesson.js
-          const fs = require("fs");
-          const path = require("path");
-
+          const fs = require('fs');
+          const vm = require('vm');
+          
           function fail(message) {
-            console.error("エラー:", message);
+            console.error('エラー:', message);
             process.exit(1);
           }
-
-          function escapeHtml(value) {
-            return String(value ?? "")
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")
-              .replace(/"/g, "&quot;")
-              .replace(/'/g, "&#39;");
+          function esc(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+              '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+            })[ch]);
           }
-
-          function formatText(value) {
-            return escapeHtml(value).replace(/\r?\n/g, "<br>");
-          }
-
+          function fmt(value) { return esc(value).replace(/\r?\n/g, '<br>'); }
           function dateInfo(value) {
-            const m = String(value ?? "").match(
-              /^(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日$/
-            );
-
-            if (!m) fail("日付は「2026年10月30日」の形式で入力してください。");
-
-            const year = Number(m[1]);
-            const month = Number(m[2]);
-            const day = Number(m[3]);
-            const d = new Date(Date.UTC(year, month - 1, day));
-
-            if (
-              d.getUTCFullYear() !== year ||
-              d.getUTCMonth() !== month - 1 ||
-              d.getUTCDate() !== day
-            ) {
-              fail("実在しない日付です: " + value);
+            const m = String(value ?? '').match(/^(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日$/);
+            if (!m) fail('日付は「2026年10月30日」の形式で入力してください。');
+            const y=Number(m[1]), mo=Number(m[2]), d=Number(m[3]);
+            const check=new Date(Date.UTC(y,mo-1,d));
+            if (check.getUTCFullYear()!==y || check.getUTCMonth()!==mo-1 || check.getUTCDate()!==d) fail('実在しない日付です: '+value);
+            return {date:`${y}年${String(mo).padStart(2,'0')}月${String(d).padStart(2,'0')}日`, filename:`lesson-${y}-${String(mo).padStart(2,'0')}-${String(d).padStart(2,'0')}.html`, number:y*10000+mo*100+d};
+          }
+          function writeIfChanged(file, content, changed) {
+            const old=fs.existsSync(file)?fs.readFileSync(file,'utf8'):null;
+            if (old===content) return;
+            fs.writeFileSync(file,content,'utf8');
+            changed.add(file);
+          }
+          function getLessons() {
+            const file='lessons.js';
+            if(!fs.existsSync(file)) fail('lessons.js が見つかりません。');
+            const source=fs.readFileSync(file,'utf8');
+            const sandbox={};
+            try { vm.runInNewContext(source+'\nglobalThis.__lessons = lessons;',sandbox,{timeout:1500}); }
+            catch(e) { fail('lessons.js を安全に読み込めません: '+e.message); }
+            if(!Array.isArray(sandbox.__lessons)) fail('lessons.js の lessons が配列ではありません。');
+            return sandbox.__lessons;
+          }
+          const RESTORE_10_17 = {
+            date:'2026年10月17日',
+            title:'🍓 市場に行きたい！ ベトナム語を覚えて、いざ出発！',
+            sceneIcon:'🍓',
+            sceneTitle:'市場へ行く',
+            scene:'市場へ行く前に、今日・昨日・明日などの言葉を使って、自分の希望を伝える練習。',
+            vietnamese:'Hôm nay mình muốn đi chợ.',
+            translation:'今日は市場に行きたい。',
+            mainWord:'muốn',
+            mainMeaning:'～したい',
+            archiveWords:['Hôm nay','muốn','đi','chợ'],
+            words:[['Hôm nay','今日'],['mình','僕・私（文脈による）'],['muốn','～したい'],['đi','行く'],['chợ','市場'],['về','帰る・戻る'],['ăn','食べる'],['uống','飲む'],['nước','水'],['Hôm qua','昨日'],['Ngày mai','明日'],['sẽ','未来の予定を表す語']],
+            extraWords:[['Mình muốn ăn.','食べたい。'],['Mình muốn uống nước.','水を飲みたい。'],['Đi chợ.','市場に行く。'],['Về nhà.','家に帰る。'],['Mình muốn về nhà.','家に帰りたい。'],['Hôm qua mình đi chợ.','昨日、市場に行った。'],['Ngày mai mình sẽ đi chợ.','明日は市場に行くつもり。'],['Mình muốn đi chợ ngày mai.','明日、市場に行きたい。']]
+          };
+          function mergeRestoreRecord(lessons) {
+            const idx=lessons.findIndex(x=>x && x.date===RESTORE_10_17.date);
+            if(idx<0) { lessons.push(RESTORE_10_17); console.log('10月17日の保存済み記事情報を lessons.js に復旧しました。'); return; }
+            const current=lessons[idx];
+            for(const [k,v] of Object.entries(RESTORE_10_17)) {
+              const missing=current[k]===undefined || current[k]===null || current[k]==='' || (Array.isArray(current[k]) && current[k].length===0);
+              if(missing) current[k]=v;
             }
-
-            const mm = String(month).padStart(2, "0");
-            const dd = String(day).padStart(2, "0");
-
-            return {
-              date: `${year}年${month}月${day}日`,
-              filename: `lesson-${year}-${mm}-${dd}.html`,
-              number: year * 10000 + month * 100 + day
+          }
+          function itemParts(item) {
+            if(Array.isArray(item)) return {v:String(item[0]??'').trim(),m:String(item[1]??'').trim(),p:'',o:'',e:'',j:''};
+            if(typeof item==='string') return {v:item.trim(),m:'',p:'',o:'',e:'',j:''};
+            if(item && typeof item==='object') return {
+              v:String(item.v??item.vietnamese??item.word??'').trim(),
+              m:String(item.m??item.meaning??item.translation??item.j??'').trim(),
+              p:String(item.p??item.type??'').trim(),
+              o:String(item.o??item.antonym??'').trim(),
+              e:String(item.e??item.example??'').trim(),
+              j:String(item.exampleJa??item.exampleTranslation??'').trim()
             };
+            return {v:'',m:'',p:'',o:'',e:'',j:''};
           }
-
-          // 1. JSONを読み込む
-          let input;
-
-          try {
-            input = JSON.parse(
-              fs.readFileSync("payload.json", "utf8").trim()
-            );
-          } catch (e) {
-            fail("JSONを読み込めません。入力内容を確認してください。");
+          function normalizeKey(v){return String(v??'').normalize('NFC').trim().toLocaleLowerCase('vi');}
+          function loadVocabulary() {
+            if(!fs.existsSync('vocabulary.js')) fail('vocabulary.js の初期データがありません。配布した vocabulary.js をリポジトリのルートに追加してください。');
+            const source=fs.readFileSync('vocabulary.js','utf8');
+            const sandbox={};
+            try { vm.runInNewContext(source+'\nglobalThis.__vocabulary = vocabulary;',sandbox,{timeout:1500}); }
+            catch(e) { fail('vocabulary.js を読み込めません: '+e.message); }
+            if(!Array.isArray(sandbox.__vocabulary)) fail('vocabulary.js の vocabulary が配列ではありません。');
+            return sandbox.__vocabulary.map(x=>({...x}));
           }
-
-          if (Array.isArray(input)) {
-            if (input.length !== 1) {
-              fail("JSON配列を使う場合は、レッスン1件だけにしてください。");
+          function buildVocabulary(lessons) {
+            const list=loadVocabulary();
+            const map=new Map(list.filter(x=>x && x.v).map(x=>[normalizeKey(x.v),x]));
+            const dictionary={
+              'Cho tôi':'～をください・私にください', 'cái này':'これ', 'một':'1つ', 'tô':'どんぶり・椀'
+            };
+            function add(item) {
+              const p=itemParts(item); if(!p.v) return;
+              if(!p.m && dictionary[p.v]) p.m=dictionary[p.v];
+              if(!p.m) return;
+              const key=normalizeKey(p.v);
+              if(!map.has(key)) { map.set(key,{v:p.v,m:p.m,p:p.p,o:p.o,e:p.e,j:p.j}); return; }
+              const old=map.get(key);
+              for(const k of ['m','p','o','e','j']) if((!old[k] || old[k]==='—') && p[k]) old[k]=p[k];
             }
-            input = input[0];
-          }
-
-          if (!input || typeof input !== "object" || Array.isArray(input)) {
-            fail("JSONの形式が正しくありません。");
-          }
-
-          if (!input.date || !input.title) {
-            fail("date と title は必須です。");
-          }
-
-          const target = dateInfo(input.date);
-          input.date = target.date;
-
-          if (!Array.isArray(input.words)) {
-            fail("words は配列で入力してください。");
-          }
-
-          // 2. 既存 lessons.js を安全に読み込む
-          const lessonsPath = "lessons.js";
-
-          if (!fs.existsSync(lessonsPath)) {
-            fail("lessons.js が見つかりません。");
-          }
-
-          const lessonsSource = fs.readFileSync(lessonsPath, "utf8");
-          const match = lessonsSource.match(
-            /const\s+lessons\s*=\s*(\[[\s\S]*\])\s*;?/
-          );
-
-          if (!match) {
-            fail("lessons.js の形式を認識できません。既存データは変更していません。");
-          }
-
-          let lessons;
-
-          try {
-            lessons = JSON.parse(match[1]);
-          } catch (e) {
-            fail("既存 lessons.js のJSONが壊れています。既存データは変更していません。");
-          }
-
-          if (!Array.isArray(lessons)) {
-            fail("lessons.js の内容が配列ではありません。");
-          }
-
-          // 3. 同じ日付は上書き、別の日付は追加
-          const existingIndex = lessons.findIndex(
-            item => item && item.date === input.date
-          );
-
-          if (existingIndex >= 0) {
-            lessons[existingIndex] = {
-              ...lessons[existingIndex],
-              ...input
-            };
-            console.log("既存レッスンを更新:", input.date);
-          } else {
-            lessons.push(input);
-            console.log("新しいレッスンを追加:", input.date);
-          }
-
-          // 日付の新しい順に並べる
-          lessons.sort((a, b) => {
-            return dateInfo(b.date).number - dateInfo(a.date).number;
-          });
-
-          fs.writeFileSync(
-            lessonsPath,
-            "const lessons = " +
-              JSON.stringify(lessons, null, 2) +
-              ";\n",
-            "utf8"
-          );
-
-          // 4. vocabulary.js の自動生成（単語帳用グローバル変数 vocabulary の作成）
-          // 全レッスンから単語・関連語を統合し、重複を除去して整理する
-          const vocabMap = new Map();
-
-          lessons.forEach(lesson => {
-            const processWordItem = (item) => {
-              if (!item) return;
-              let vn = "", jp = "", type = "", antonym = "", example = "", note = "";
-              if (Array.isArray(item)) {
-                vn = item[0] ?? "";
-                jp = item[1] ?? "";
-              } else if (typeof item === "object") {
-                vn = item.v ?? item.vietnamese ?? "";
-                jp = item.j ?? item.translation ?? "";
-                type = item.type ?? "";
-                antonym = item.antonym ?? "";
-                example = item.example ?? "";
-                note = item.w ?? item.note ?? "";
+            for(const lesson of lessons) {
+              for(const item of (lesson.words||[])) add(item);
+              for(const item of (lesson.extraWords||[])) add(item);
+              if(lesson.mainWord) add({v:lesson.mainWord,m:lesson.mainMeaning||''});
+              for(const section of (lesson.articleSections||[])) for(const ex of (section.examples||[])) {
+                const key=normalizeKey(ex.v);
+                const existing=map.get(key);
+                if(existing) { if(!existing.e) existing.e=ex.v; if(!existing.j) existing.j=ex.j||''; }
               }
-              if (vn && !vocabMap.has(vn)) {
-                vocabMap.set(vn, {
-                  v: vn,
-                  j: jp,
-                  type: type,
-                  antonym: antonym,
-                  example: example,
-                  note: note
-                });
-              }
-            };
-
-            if (Array.isArray(lesson.words)) lesson.words.forEach(processWordItem);
-            if (Array.isArray(lesson.extraWords)) lesson.extraWords.forEach(processWordItem);
-          });
-
-          const vocabularyArray = Array.from(vocabMap.values());
-          const vocabularyJsContent = "const vocabulary = " + JSON.stringify(vocabularyArray, null, 2) + ";\n";
-          fs.writeFileSync("vocabulary.js", vocabularyJsContent, "utf8");
-          console.log("vocabulary.js を更新しました（総単語数:", vocabularyArray.length, "）");
-
-          // 5. 音声ボタン
-          function speakButton(text, style = "") {
-            const safeText = escapeHtml(JSON.stringify(String(text ?? "")));
-            return `<button class="speak" type="button"
-              onclick="speakVietnamese(${safeText})"
-              style="${style}">🔊 聴く</button>`;
+            }
+            return [...map.values()].sort((a,b)=>String(a.v).localeCompare(String(b.v),'vi'));
           }
-
-          // 6. 例文カード
+          function speakButton(text) { return `<button class="speak" type="button" data-speak="${esc(text)}">🔊 聴く</button>`; }
           function exampleCard(ex) {
-            const vietnamese = ex.v ?? "";
-            const japanese = ex.j ?? "";
-            const meaning = ex.w
-              ? `<div style="margin-top:10px;padding:10px;background:#fdf2f4;border-radius:6px;color:#2c3e50;font-size:.95em;line-height:1.7;">${formatText(ex.w)}</div>`
-              : "";
-
-            return `
-              <div class="viet-card" style="margin:15px 0;background:#fff;padding:15px;border-radius:8px;border:1px solid #eee;">
-                <div class="viet-line" lang="vi" style="font-weight:bold;font-size:1.2em;color:#e74c3c;">${formatText(vietnamese)}</div>
-                <div class="translation" style="margin:6px 0;color:#27ae60;font-weight:bold;">日本語訳：${formatText(japanese)}</div>
-                ${speakButton(vietnamese, "margin:6px 0 10px 0;")}
-                ${meaning}
-              </div>`;
+            return `<div class="viet-card"><div class="viet-line" lang="vi">${fmt(ex.v||'')}</div><div class="translation">日本語訳：${fmt(ex.j||'')}</div>${speakButton(ex.v||'')}${ex.w?`<div class="note">${fmt(ex.w)}</div>`:''}</div>`;
           }
-
-          // 7. 本文生成
-          let sectionsHtml = "";
-
-          for (const section of input.articleSections ?? []) {
-            sectionsHtml += `<h2>${formatText(section.heading ?? "")}</h2>`;
-
-            for (const paragraph of section.paragraphs ?? []) {
-              sectionsHtml += `<p>${formatText(paragraph)}</p>`;
+          function renderArticle(lesson) {
+            const sections=(lesson.articleSections||[]).map(section=>`<h2>${fmt(section.heading||'')}</h2>${(section.paragraphs||[]).map(p=>`<p>${fmt(p)}</p>`).join('')}${(section.examples||[]).map(exampleCard).join('')}`).join('\n');
+            const main=`<div class="viet-card"><div class="viet-line" lang="vi">${fmt(lesson.vietnamese||lesson.mainWord||'')}</div><div class="translation">日本語訳：${fmt(lesson.translation||lesson.mainMeaning||'')}</div>${speakButton(lesson.vietnamese||lesson.mainWord||'')}</div>`;
+            const words=(lesson.words||[]).map(item=>{const p=itemParts(item);return `<tr><td lang="vi" style="color:#e84361;font-weight:700">${fmt(p.v)}</td><td>${fmt(p.m)}</td><td>${speakButton(p.v)}</td></tr>`;}).join('');
+            const extras=(lesson.extraWords||[]).map(item=>{const p=itemParts(item);return `<div class="viet-card"><div class="viet-line" lang="vi">${fmt(p.v)}</div><div class="translation">日本語訳：${fmt(p.m)}</div>${speakButton(p.v)}${p.e?`<p>${fmt(p.e)}</p>`:''}</div>`;}).join('');
+            const today=lesson.todayStep?`<section class="step-box"><h2>🐾 今日の一歩</h2><p>${fmt(lesson.todayStep)}</p></section>`:'';
+            return `<div class="date"><div class="date-main">🍓 ${fmt(lesson.date)}</div><div>ベトナム語の旅 🍓 今日の一期一語</div></div><h1>${fmt(lesson.title)}</h1><div class="intro">${sections||`<p>${fmt(lesson.scene||'')}</p><p>今日の表現を、声に出して覚えてみよう。</p>`}${today}</div><hr class="divider"><h2>🍓 今日の一語</h2>${main}<hr class="divider"><h2>📚 今日の単語一覧</h2><table><thead><tr><th>ベトナム語</th><th>日本語の意味</th><th>音声</th></tr></thead><tbody>${words}</tbody></table>${extras}`;
+          }
+          function renderMinimalOct8(lesson, template) {
+            const dict={'Cho tôi':'～をください・私にください','cái này':'これ','một':'1つ','tô':'どんぶり・椀'};
+            const rows=(lesson.words||[]).map(item=>{const p=itemParts(item);const meaning=p.m||dict[p.v]||'';return `<tr><td lang="vi" style="color:#e84361;font-weight:700">${fmt(p.v)}</td><td>${fmt(meaning)}</td><td>${speakButton(p.v)}</td></tr>`;}).join('');
+            const article=`<div class="date"><div class="date-main">🍓 ${fmt(lesson.date)}</div><div>ベトナム語の旅 🍓 今日の一期一語</div></div><h1>${fmt(lesson.title)}</h1><div class="intro"><p>屋台で注文するときに覚えておきたいのが、<strong lang="vi">Cho tôi</strong> という表現。</p><p>「～をください」「私にください」という意味で、注文を切り出すときに使える。</p><p>このページは、現在保存されている10月8日のタイトル・メイン単語・単語リストをもとに復旧した簡易版です。元の記事本文は保存データから確認できなかったため、未確認の文章や例文は追加していません。</p></div><hr class="divider"><h2>🍓 今日の一語</h2><div class="viet-card"><div class="viet-line" lang="vi">${fmt(lesson.mainWord||'Cho tôi')}</div><div class="translation">日本語訳：${fmt(lesson.mainMeaning||'～をください')}</div>${speakButton(lesson.mainWord||'Cho tôi')}</div><hr class="divider"><h2>📚 今日の単語一覧</h2><table><thead><tr><th>ベトナム語</th><th>日本語の意味</th><th>音声</th></tr></thead><tbody>${rows}</tbody></table><section class="step-box"><h2>🐾 今日の一歩</h2><p>屋台で注文するときの最初のひと言として、<span lang="vi">Cho tôi</span> を声に出して練習しよう。</p></section><section class="archive" aria-label="別の日のブログ"><h2>📅 別の日のブログ</h2><p>ほかの日のベトナム語日記も読んでみよう！🍓</p><div class="archive-links"></div><p class="archive-home"><a href="./index.html">🍓 トップページへ</a>　<a href="./words.html">📚 単語帳へ</a></p></section>`;
+            const articleOpen=template.indexOf('<article class="article">'); const articleClose=template.lastIndexOf('</article>');
+            if(articleOpen<0||articleClose<0) fail('10月12日のテンプレートに article が見つかりません。');
+            return (template.slice(0,articleOpen)+'<article class="article">\n'+article+'\n</article>'+template.slice(articleClose+'</article>'.length)).replace(/src=["'](?:\.\/)?site-banner\.jpg["']/gi,'src="./ichigoichigo-banner.png.PNG"');
+          }
+          function findDivBlock(html, className) {
+            const re=new RegExp(`<div\\b(?=[^>]*\\bclass=["'][^"']*\\b${className}\\b[^"']*["'])[^>]*>`,'i');
+            const m=re.exec(html); if(!m) return null;
+            const start=m.index; const tagRe=/<\/?div\b[^>]*>/gi; tagRe.lastIndex=start;
+            let depth=0, match;
+            while((match=tagRe.exec(html))) {
+              if(/^<div\b/i.test(match[0])) depth++;
+              else depth--;
+              if(depth===0) return {start,end:tagRe.lastIndex};
             }
-
-            for (const example of section.examples ?? []) {
-              sectionsHtml += exampleCard(example);
-            }
+            return null;
           }
-
-          // 8. 今日の一歩
-          let todayStepHtml = "";
-
-          if (input.todayStep) {
-            todayStepHtml = `
-              <div style="margin:25px 0;padding:15px 20px;background:#fff0f5;border-left:5px solid #d83d76;border-radius:8px;">
-                <h3 style="margin:0 0 8px 0;color:#d83d76;">🍓 今日の一歩🐾</h3>
-                <p style="margin:0;color:#2c3e50;line-height:1.7;font-weight:bold;">${formatText(input.todayStep)}</p>
-              </div>`;
+          function replaceDivBlock(html,className,inner) {
+            const b=findDivBlock(html,className); if(!b) return null;
+            return html.slice(0,b.start)+`<div class="${className}">\n${inner}\n</div>`+html.slice(b.end);
           }
-
-          // 9. 今日の一語
-          const mainVietnamese = input.vietnamese ?? input.mainWord ?? "";
-          const mainJapanese = input.translation ?? input.mainMeaning ?? "";
-
-          const mainWordHtml = `
-            <div class="viet-card" style="margin:15px 0;background:#fff;padding:15px;border-radius:8px;border:1px solid #eee;">
-              <div class="viet-line" lang="vi" style="font-weight:bold;font-size:1.2em;color:#e74c3c;">${formatText(mainVietnamese)}</div>
-              <div class="translation" style="margin:6px 0;color:#27ae60;font-weight:bold;">日本語訳：${formatText(mainJapanese)}</div>
-              ${speakButton(mainVietnamese)}
-            </div>`;
-
-          // 10. 単語一覧
-          let tableRows = "";
-
-          for (const word of input.words) {
-            const vn = Array.isArray(word) ? word[0] : word.v;
-            const jp = Array.isArray(word) ? word[1] : word.j;
-
-            tableRows += `
-              <tr>
-                <td style="color:#e74c3c;font-weight:bold;">${formatText(vn)}</td>
-                <td style="color:#2c3e50;">${formatText(jp)}</td>
-                <td>${speakButton(vn)}</td>
-              </tr>`;
+          function wordLabel(item) { const p=itemParts(item); return p.v; }
+          function archiveItems(lessons, files) {
+            return lessons.filter(l=>files.has(dateInfo(l.date).filename)).map(l=>{
+              const info=dateInfo(l.date); const words=(l.archiveWords||((l.words||[]).map(wordLabel))).filter(Boolean).slice(0,8).join(', ');
+              return `<a href="./${info.filename}" class="archive-item-link"><div class="archive-item-date">${fmt(l.date)}</div><div class="archive-item-title">${fmt(l.title)}</div><div class="archive-item-words">主要単語：${fmt(words)}</div></a>`;
+            }).join('\n');
           }
-
-          // 11. 関連語・実用表現
-          let extraWordsHtml = "";
-
-          if (Array.isArray(input.extraWords) && input.extraWords.length > 0) {
-            extraWordsHtml += `
-              <hr class="divider">
-              <h2>🗣️ 実生活で使える関連語・実用表現</h2>`;
-
-            for (const word of input.extraWords) {
-              const vn = Array.isArray(word) ? word[0] : word.v;
-              const jp = Array.isArray(word) ? word[1] : word.j;
-              const note =
-                !Array.isArray(word) && word.w ? word.w : "";
-
-              extraWordsHtml += `
-                <div class="viet-card" style="margin:15px 0;background:#fff;padding:15px;border-radius:8px;border:1px solid #eee;">
-                  <div class="viet-line" lang="vi" style="font-weight:bold;font-size:1.15em;color:#e74c3c;">${formatText(vn)}</div>
-                  <div class="translation" style="margin:6px 0;color:#27ae60;font-weight:bold;">日本語訳：${formatText(jp)}</div>
-                  ${speakButton(vn, "margin:6px 0 10px 0;")}
-                  ${note ? `<div style="margin-top:10px;padding:10px;background:#fdf2f4;border-radius:6px;color:#2c3e50;line-height:1.7;">${formatText(note)}</div>` : ""}
-                </div>`;
-            }
+          function syncRecentPage(file, lessons, files, changed) {
+            let html=fs.readFileSync(file,'utf8');
+            const sectionRe=/<section\b[^>]*class=["'][^"']*\barchive\b[^"']*["'][^>]*>[\s\S]*?<\/section>/gi;
+            const sections=[...html.matchAll(sectionRe)];
+            if(!sections.length) return;
+            const current=sections[0];
+            const recent=lessons.filter(l=>{const f=dateInfo(l.date).filename;return f!==file&&files.has(f);}).slice(0,3);
+            const inner=recent.map(l=>{const info=dateInfo(l.date);return `<a href="./${info.filename}" class="archive-item-link"><div class="archive-item-date">${fmt(l.date)}</div><div class="archive-item-title">${fmt(l.title)}</div></a>`;}).join('\n');
+            const updatedSection=replaceDivBlock(current[0],'archive-links',inner);
+            if(!updatedSection) return;
+            html=html.slice(0,current.index)+updatedSection+html.slice(current.index+current[0].length);
+            html=html.replace(/src=["'](?:\.\/)?site-banner\.jpg["']/gi,'src="./ichigoichigo-banner.png.PNG"');
+            writeIfChanged(file,html,changed);
           }
-
-          // 12. 最近のブログ一覧
-          function recentHtml(currentFilename) {
-            let html = '<ul style="list-style:none;padding:0;margin:15px 0;">';
-
-            for (const lesson of lessons.slice(0, 3)) {
-              const info = dateInfo(lesson.date);
-              const current = info.filename === currentFilename;
-
-              html += `
-                <li style="margin-bottom:12px;padding:12px;background:#fff;border:1px solid #ffe0e9;border-radius:8px;">
-                  <a href="./${info.filename}" style="text-decoration:none;color:#d83d76;font-weight:bold;display:block;">
-                    📅 ${formatText(lesson.date)}：${formatText(lesson.title)}
-                    ${current ? '<span style="font-size:.8em;background:#d83d76;color:#fff;padding:2px 6px;border-radius:4px;">この記事</span>' : ""}
-                  </a>
-                </li>`;
-            }
-
-            return html + "</ul>";
+          
+          const raw=fs.readFileSync('payload.json','utf8').trim();
+          let input;
+          try { input=JSON.parse(raw); } catch(e) { fail('JSONを読み込めません。入力内容を確認してください。'); }
+          if(Array.isArray(input)) { if(input.length!==1) fail('JSON配列を使う場合はレッスン1件だけにしてください。'); input=input[0]; }
+          if(!input||typeof input!=='object'||Array.isArray(input)) fail('JSONはオブジェクト形式で入力してください。');
+          const repairOnly=input.action==='repair' || input.mode==='repair';
+          if(!repairOnly) {
+            if(!input.date||!input.title) fail('date と title は必須です。');
+            dateInfo(input.date);
+            if(!Array.isArray(input.words)) fail('words は配列で入力してください。');
           }
-
-          // 13. レッスンページの作成・更新
-          const templatePath = "lesson-2026-10-12.html";
-
-          if (!fs.existsSync(target.filename) && !fs.existsSync(templatePath)) {
-            fail("新規ページ用テンプレートが見つかりません。");
+          const changed=new Set();
+          let lessons=getLessons();
+          mergeRestoreRecord(lessons);
+          if(!repairOnly) {
+            const normalized=dateInfo(input.date).date; input.date=normalized;
+            const idx=lessons.findIndex(x=>x.date===normalized);
+            if(idx>=0) lessons[idx]={...lessons[idx],...input}; else lessons.push(input);
           }
-
-          const pagePath = target.filename;
-          let page = fs.existsSync(pagePath)
-            ? fs.readFileSync(pagePath, "utf8")
-            : fs.readFileSync(templatePath, "utf8");
-
-          const articleRegex = /(<article class="article">)[\s\S]*?(<\/article>)/i;
-
-          if (!articleRegex.test(page)) {
-            fail(`${pagePath} に article 構造がありません。`);
+          lessons.sort((a,b)=>dateInfo(b.date).number-dateInfo(a.date).number);
+          writeIfChanged('lessons.js','const lessons = '+JSON.stringify(lessons,null,2)+';\n',changed);
+          
+          // 10月17日の保存済み完全版HTMLは手動で配置したものを必ず保護する。
+          if(!fs.existsSync('lesson-2026-10-17.html')) fail('保存済みの lesson-2026-10-17.html をリポジトリのルートにアップロードしてから実行してください。');
+          // 10月8日は本文が保存されていないため、lessons.jsに残る確定データだけで簡易ページを作る。
+          const oct8=lessons.find(x=>x.date==='2026年10月08日');
+          if(oct8&&!fs.existsSync('lesson-2026-10-08.html')) {
+            if(!fs.existsSync('lesson-2026-10-12.html')) fail('記事テンプレート lesson-2026-10-12.html がありません。');
+            const page=renderMinimalOct8(oct8,fs.readFileSync('lesson-2026-10-12.html','utf8'));
+            writeIfChanged('lesson-2026-10-08.html',page,changed);
           }
-
-          const articleHtml = `
-            <div class="date">
-              <div class="date-main">🍓 ${formatText(input.date)}</div>
-              <div>ベトナム語の旅 🍓 もっと一期一語</div>
-            </div>
-
-            <h1>🍓 ${formatText(input.title)}</h1>
-
-            <div class="intro">
-              ${sectionsHtml}
-              ${todayStepHtml}
-              <p style="text-align:center;font-weight:bold;color:#d83d76;font-size:18px;margin-top:20px;">🍓 一期一語 🍓</p>
-            </div>
-
-            <hr class="divider">
-            <h2>🍓 今日の一語</h2>
-            ${mainWordHtml}
-
-            <hr class="divider">
-            <h2>📚 今日の単語一覧</h2>
-            <table>
-              <thead>
-                <tr>
-                  <th>ベトナム語</th>
-                  <th>日本語の意味</th>
-                  <th>音声</th>
-                </tr>
-              </thead>
-              <tbody>${tableRows}</tbody>
-            </table>
-
-            ${extraWordsHtml}
-
-            <section class="archive" aria-label="最近のブログ">
-              <h2>📚 最近のブログ</h2>
-              <p>直近のベトナム語日記も読んでみよう！🍓</p>
-              ${recentHtml(pagePath)}
-              <div style="text-align:center;margin-top:15px;">
-                <a href="./archive.html" style="display:inline-block;padding:10px 20px;background:#d83d76;color:#fff;border-radius:12px;text-decoration:none;font-weight:bold;">📖 全てのブログ一覧を見る</a>
-              </div>
-              <p class="archive-home" style="text-align:center;margin-top:15px;">
-                <a href="./index.html">🍓 トップページへ</a>　
-                <a href="./words.html">📚 単語帳へ</a>
-              </p>
-            </section>`;
-
-          page = page.replace(articleRegex, `$1\n${articleHtml}\n$2`);
-          page = page.replace(
-            /<title>[\s\S]*?<\/title>/i,
-            `<title>🍓 ${formatText(input.title)}｜一期一語</title>`
-          );
-
-          fs.writeFileSync(pagePath, page, "utf8");
-
-          // 14. archive.html の安全な置換（入れ子 div の深さを正しくカウントするロジック）
-          const archivePath = "archive.html";
-
-          if (!fs.existsSync(archivePath)) {
-            fail("archive.html が見つかりません。");
+          
+          // 通常レッスンJSONの場合だけ、対象日の記事本文を作成・更新する。repairモードでは既存本文を触らない。
+          if(!repairOnly && input.preserveExistingPage!==true) {
+            const target=dateInfo(input.date); const pagePath=target.filename;
+            const templatePath=fs.existsSync(pagePath)?pagePath:'lesson-2026-10-12.html';
+            if(!fs.existsSync(templatePath)) fail('記事テンプレートが見つかりません: '+templatePath);
+            let page=fs.readFileSync(templatePath,'utf8');
+            const open=page.indexOf('<article class="article">'), close=page.lastIndexOf('</article>');
+            if(open<0||close<0) fail('記事テンプレートの article 構造を確認できません。');
+            page=page.slice(0,open)+'<article class="article">\n'+renderArticle(input)+'\n</article>'+page.slice(close+'</article>'.length);
+            page=page.replace(/<title>[\s\S]*?<\/title>/i,`<title>${fmt(input.title)}｜一期一語</title>`);
+            page=page.replace(/src=["'](?:\.\/)?site-banner\.jpg["']/gi,'src="./ichigoichigo-banner.png.PNG"');
+            writeIfChanged(pagePath,page,changed);
           }
-
-          let archive = fs.readFileSync(archivePath, "utf8");
-
-          let archiveItems = "";
-
-          for (const lesson of lessons) {
-            const info = dateInfo(lesson.date);
-
-            if (!fs.existsSync(info.filename)) {
-              console.warn("ページが存在しないため一覧から除外:", info.filename);
-              continue;
-            }
-
-            const words = (lesson.words ?? [])
-              .map(w => Array.isArray(w) ? w[0] : w.v)
-              .filter(Boolean)
-              .slice(0, 12)
-              .join(", ");
-
-            archiveItems += `
-              <a href="./${info.filename}" class="archive-item-link">
-                <div class="archive-item-date">${formatText(lesson.date)}</div>
-                <div class="archive-item-title">${formatText(lesson.title)}</div>
-                <div class="archive-item-words">主要単語：${formatText(words)}</div>
-              </a>\n`;
-          }
-
-          // 入れ子 div の深さを正しく数えて外側の .archive-links 全体だけを安全に置き換える関数
-          function replaceArchiveLinks(html, newInnerHtml) {
-            const targetClass = 'class="archive-links"';
-            const classIdx = html.indexOf(targetClass);
-            if (classIdx === -1) return null;
-
-            // クラス名から手前の <div まで遡る
-            const startIndex = html.lastIndexOf('<div', classIdx);
-            if (startIndex === -1) return null;
-
-            let depth = 0;
-            let i = startIndex;
-            let endIndex = -1;
-
-            while (i < html.length) {
-              // タグの始まりを簡易検出
-              if (html.startsWith('<div', i)) {
-                depth++;
-                i += 4;
-              } else if (html.startsWith('</div', i)) {
-                depth--;
-                i += 6;
-                if (depth === 0) {
-                  endIndex = i;
-                  break;
-                }
-              } else {
-                i++;
-              }
-            }
-
-            if (endIndex === -1) return null;
-
-            return (
-              html.substring(0, startIndex) +
-              `<div class="archive-links">\n${newInnerHtml}\n</div>` +
-              html.substring(endIndex)
-            );
-          }
-
-          const updatedArchive = replaceArchiveLinks(archive, archiveItems);
-          if (!updatedArchive) {
-            fail("archive.html 内の <div class=\"archive-links\"> が見つからないか、構造が不正です。");
-          }
-
-          fs.writeFileSync(archivePath, updatedArchive, "utf8");
-
-          // 15. words.html のスクリプト読み込み順序確認・補正（vocabulary.js が words-page.js より前に読み込まれているか）
-          const wordsHtmlPath = "words.html";
-          if (fs.existsSync(wordsHtmlPath)) {
-            let wordsHtml = fs.readFileSync(wordsHtmlPath, "utf8");
-            // vocabulary.js が含まれていなければ追加する、または正しい順序にする
-            if (!wordsHtml.includes("vocabulary.js")) {
-              wordsHtml = wordsHtml.replace(
-                /<script[^>]*src=["'][^"']*words-page\.js["'][^>]*><\/script>/i,
-                `<script src="./vocabulary.js"></script>\n  <script src="./words-page.js"></script>`
-              );
-              fs.writeFileSync(wordsHtmlPath, wordsHtml, "utf8");
-              console.log("words.html に vocabulary.js の読み込みを追加しました。");
-            }
-          }
-
-          // 16. サイトマップを実在するページに合わせて更新
-          const baseUrl = "https://tan15-15.github.io/ichigoichigo/";
-
-          const corePages = [
-            baseUrl,
-            baseUrl + "words.html",
-            baseUrl + "archive.html"
-          ];
-
-          const lessonPages = lessons
-            .map(lesson => dateInfo(lesson.date).filename)
-            .filter(filename => fs.existsSync(filename))
-            .map(filename => baseUrl + filename);
-
-          const sitemapUrls = [...new Set([...corePages, ...lessonPages])];
-
-          fs.writeFileSync(
-            "sitemap.txt",
-            sitemapUrls.join("\n") + "\n",
-            "utf8"
-          );
-
-          const xml = `<?xml version="1.0" encoding="UTF-8"?>
-          <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-          ${sitemapUrls.map(url => `  <url><loc>${escapeHtml(url)}</loc></url>`).join("\n")}
-          </urlset>
-          `;
-
-          fs.writeFileSync("sitemap.xml", xml, "utf8");
-
-          // 17. 変更したファイルだけを正確に指定してコミット対象にする
-          const changedFiles = [
-            "lessons.js",
-            pagePath,
-            "archive.html",
-            "vocabulary.js",
-            "words.html",
-            "sitemap.txt",
-            "sitemap.xml"
-          ];
-
-          const existingChangedFiles = changedFiles.filter(f => fs.existsSync(f));
-
-          fs.writeFileSync(
-            ".changed-files",
-            existingChangedFiles.join("\n") + "\n",
-            "utf8"
-          );
-
-          console.log("レッスンの生成・更新が完了しました。");
-          console.log("対象ページ:", pagePath);
-          console.log("更新ファイル一覧:", existingChangedFiles.join(", "));
+          
+          // vocabulary.js は旧単語帳の v/m/p/o/e/j 形式を維持し、既存の反対語・例文情報を消さずに追加する。
+          const vocabulary=buildVocabulary(lessons);
+          writeIfChanged('vocabulary.js','const vocabulary = '+JSON.stringify(vocabulary,null,2)+';\n',changed);
+          
+          // words.html は vocabulary.js → words-page.js の順で読み込む。
+          if(!fs.existsSync('words.html')) fail('words.html が見つかりません。');
+          let wordsHtml=fs.readFileSync('words.html','utf8');
+          wordsHtml=wordsHtml.replace(/\s*<script[^>]*src=["'][^"']*vocabulary\.js["'][^>]*><\/script>/gi,'');
+          const wp=/<script[^>]*src=["'][^"']*words-page\.js["'][^>]*><\/script>/i;
+          if(!wp.test(wordsHtml)) fail('words.html に words-page.js の読み込みがありません。');
+          wordsHtml=wordsHtml.replace(wp,'<script src="./vocabulary.js"></script>\n  <script src="./words-page.js"></script>');
+          writeIfChanged('words.html',wordsHtml,changed);
+          
+          // archive.html は実在する記事ページだけを日付降順で表示する。
+          if(!fs.existsSync('archive.html')) fail('archive.html が見つかりません。');
+          const pageFiles=new Set(fs.readdirSync('.').filter(f=>/^lesson-\d{4}-\d{2}-\d{2}\.html$/.test(f)));
+          let archive=fs.readFileSync('archive.html','utf8');
+          const items=archiveItems(lessons,pageFiles);
+          const replaced=replaceDivBlock(archive,'archive-links',items);
+          if(!replaced) fail('archive.html の archive-links を安全に特定できませんでした。');
+          archive=replaced.replace(/src=["'](?:\.\/)?site-banner\.jpg["']/gi,'src="./ichigoichigo-banner.png.PNG"');
+          writeIfChanged('archive.html',archive,changed);
+          
+          // 既存記事の「別の日のブログ」欄を、存在する最新3ページへ同期する。
+          for(const file of [...pageFiles]) syncRecentPage(file,lessons,pageFiles,changed);
+          
+          // 実在する記事ページだけをサイトマップに登録する。
+          const base='https://tan15-15.github.io/ichigoichigo/';
+          const urls=[base,base+'words.html',base+'archive.html',...lessons.map(l=>dateInfo(l.date).filename).filter(f=>pageFiles.has(f)).map(f=>base+f)];
+          const unique=[...new Set(urls)];
+          writeIfChanged('sitemap.txt',unique.join('\n')+'\n',changed);
+          const xml='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+unique.map(u=>`  <url><loc>${esc(u)}</loc></url>`).join('\n')+'\n</urlset>\n';
+          writeIfChanged('sitemap.xml',xml,changed);
+          
+          if(!changed.size) { console.log('変更はありません。'); fs.writeFileSync('.changed-files',''); }
+          else fs.writeFileSync('.changed-files',[...changed].join('\n')+'\n');
+          console.log('更新対象:',[...changed].join(', ')||'なし');
+          console.log('記事ページ数:',pageFiles.size,'／単語帳件数:',vocabulary.length);
           NODE
 
       - name: Run Builder Script
@@ -559,17 +298,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add --pathspec-from-file=.changed-files
-
+          if [ -s .changed-files ]; then
+            git add --pathspec-from-file=.changed-files
+          fi
           if git diff --cached --quiet; then
             echo "変更はありません"
           else
-            git commit -m "Add or update Vietnamese lesson, vocabulary, and archive"
+            git commit -m "Repair and synchronize Ichigo Ichigo lessons"
             git push
           fi
 
       - name: Clean temporary files
         if: always()
+        shell: bash
         run: |
           rm -f payload.json build-lesson.js .changed-files
