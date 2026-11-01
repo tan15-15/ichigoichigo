@@ -291,6 +291,69 @@ jobs:
           const xml='<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'+unique.map(u=>`  <url><loc>${esc(u)}</loc></url>`).join('\n')+'\n</urlset>\n';
           writeIfChanged('sitemap.xml',xml,changed);
           
+          // すべての記事の音声ボタンを、クリック委譲方式で確実に動かす。
+          // capture=true で既存の古いクリック処理より先に受け取り、二重再生を防ぐ。
+          const audioScript = `
+          <script id="ichigo-audio-delegation">
+          (function () {
+            if (window.__ichigoAudioDelegationInstalled) return;
+            window.__ichigoAudioDelegationInstalled = true;
+
+            document.addEventListener("click", function (event) {
+              const target = event.target;
+              if (!target || typeof target.closest !== "function") return;
+
+              const button = target.closest("button[data-speak]");
+              if (!button) return;
+
+              event.preventDefault();
+              event.stopPropagation();
+              event.stopImmediatePropagation();
+
+              const text = button.getAttribute("data-speak");
+              if (!text) return;
+
+              if (
+                !("speechSynthesis" in window) ||
+                !("SpeechSynthesisUtterance" in window)
+              ) {
+                alert("このブラウザでは音声読み上げに対応していません。");
+                return;
+              }
+
+              const synth = window.speechSynthesis;
+              synth.cancel();
+
+              const utterance = new SpeechSynthesisUtterance(text);
+              utterance.lang = "vi-VN";
+              utterance.rate = 0.78;
+              utterance.pitch = 1;
+              utterance.volume = 1;
+
+              const voices = synth.getVoices();
+              const vietnameseVoice = voices.find(function (voice) {
+                return voice.lang && voice.lang.toLowerCase().startsWith("vi");
+              });
+              if (vietnameseVoice) utterance.voice = vietnameseVoice;
+
+              synth.speak(utterance);
+            }, true);
+          })();
+          </script>`;
+
+          for (const file of pageFiles) {
+            let page = fs.readFileSync(file, 'utf8');
+            if (!page.includes('data-speak')) continue;
+
+            if (!page.includes('id="ichigo-audio-delegation"')) {
+              if (!/<\/body>/i.test(page)) {
+                fail(`${file}にbody終端がありません。音声処理は追加せず停止しました。`);
+              }
+              page = page.replace(/<\/body>/i, audioScript + '\n</body>');
+              writeIfChanged(file, page, changed);
+            }
+          }
+
           if(!changed.size) { console.log('変更はありません。'); fs.writeFileSync('.changed-files',''); }
           else fs.writeFileSync('.changed-files',[...changed].join('\n')+'\n');
           console.log('更新対象:',[...changed].join(', ')||'なし');
