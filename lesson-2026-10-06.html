@@ -190,5 +190,52 @@ button,input,select,textarea{font-family:"M PLUS Rounded 1c","Hiragino Maru Goth
 })();
 </script>
 
+
+<script id="ichigo-audio-delegation">
+(function () {
+  if (window.__ichigoAudioDelegationInstalled) return;
+  window.__ichigoAudioDelegationInstalled = true;
+
+  document.addEventListener("click", function (event) {
+    const target = event.target;
+    if (!target || typeof target.closest !== "function") return;
+
+    const button = target.closest("button[data-speak]");
+    if (!button) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    const text = button.getAttribute("data-speak");
+    if (!text) return;
+
+    if (
+      !("speechSynthesis" in window) ||
+      !("SpeechSynthesisUtterance" in window)
+    ) {
+      alert("このブラウザでは音声読み上げに対応していません。");
+      return;
+    }
+
+    const synth = window.speechSynthesis;
+    synth.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "vi-VN";
+    utterance.rate = 0.78;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    const voices = synth.getVoices();
+    const vietnameseVoice = voices.find(function (voice) {
+      return voice.lang && voice.lang.toLowerCase().startsWith("vi");
+    });
+    if (vietnameseVoice) utterance.voice = vietnameseVoice;
+
+    synth.speak(utterance);
+  }, true);
+})();
+</script>
 </body>
 </html>
