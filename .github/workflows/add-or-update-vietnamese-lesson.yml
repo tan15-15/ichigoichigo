@@ -206,40 +206,33 @@ jobs:
             html=html.replace(/src=["'](?:\.\/)?site-banner\.jpg["']/gi,'src="./ichigoichigo-banner.png.PNG"');
             writeIfChanged(file,html,changed);
           }
-                    function syncNavigationLinks(lessons, files, changed) {
+                              function syncNavigationLinks(lessons, files, changed, targetFile) {
+            if(!targetFile || !files.has(targetFile)) return;
             const ordered=lessons
               .map(lesson=>({lesson,info:dateInfo(lesson.date)}))
               .filter(item=>files.has(item.info.filename))
               .sort((a,b)=>a.info.number-b.info.number);
-
-            for(let i=0;i<ordered.length;i++) {
-              const file=ordered[i].info.filename;
-              let html=fs.readFileSync(file,'utf8');
-
-              const navRe=/<nav\b(?=[^>]*\bclass=["'][^"']*\bnav-buttons\b[^"']*["'])[^>]*>[\s\S]*?<\/nav>/i;
-              const match=navRe.exec(html);
-              if(!match) continue;
-
-              const openTag=match[0].match(/^<nav\b[^>]*>/i);
-              if(!openTag) continue;
-
-              const links=[];
-              if(i>0) {
-                const prev=ordered[i-1];
-                links.push(`<a href="./${prev.info.filename}" class="nav-btn">👈 前の記事 (${fmt(prev.lesson.date)})</a>`);
-              }
-
-              links.push('<a href="./" class="nav-btn">🏠 トップページへ戻る</a>');
-
-              if(i<ordered.length-1) {
-                const next=ordered[i+1];
-                links.push(`<a href="./${next.info.filename}" class="nav-btn">次の記事 (${fmt(next.lesson.date)}) 👉</a>`);
-              }
-
-              const updatedNav=openTag[0]+'\n    '+links.join('\n    ')+'\n  </nav>';
-              html=html.slice(0,match.index)+updatedNav+html.slice(match.index+match[0].length);
-              writeIfChanged(file,html,changed);
+            const i=ordered.findIndex(item=>item.info.filename===targetFile);
+            if(i<0) return;
+            let html=fs.readFileSync(targetFile,'utf8');
+            const navRe=/<nav\b(?=[^>]*\bclass=["'][^"']*\bnav-buttons\b[^"']*["'])[^>]*>[\s\S]*?<\/nav>/i;
+            const match=navRe.exec(html);
+            if(!match) return;
+            const openTag=match[0].match(/^<nav\b[^>]*>/i);
+            if(!openTag) return;
+            const links=[];
+            if(i>0) {
+              const prev=ordered[i-1];
+              links.push(`<a href="./${prev.info.filename}" class="nav-btn">👈 前の記事 (${fmt(prev.lesson.date)})</a>`);
             }
+            links.push('<a href="./" class="nav-btn">🏠 トップページへ戻る</a>');
+            if(i<ordered.length-1) {
+              const next=ordered[i+1];
+              links.push(`<a href="./${next.info.filename}" class="nav-btn">次の記事 (${fmt(next.lesson.date)}) 👉</a>`);
+            }
+            const updatedNav=openTag[0]+'\n    '+links.join('\n    ')+'\n  </nav>';
+            html=html.slice(0,match.index)+updatedNav+html.slice(match.index+match[0].length);
+            writeIfChanged(targetFile,html,changed);
           }
           const raw=fs.readFileSync('payload.json','utf8').trim();
           let input;
@@ -276,11 +269,13 @@ jobs:
             const page=renderMinimalOct8(oct8,fs.readFileSync('lesson-2026-10-12.html','utf8'));
             writeIfChanged('lesson-2026-10-08.html',page,changed);
           }
-          
+                    let newPageForNavigation=null;
           // 通常レッスンJSONの場合だけ、対象日の記事本文を作成・更新する。repairモードでは既存本文を触らない。
           if(!repairOnly && input.preserveExistingPage!==true) {
             const target=dateInfo(input.date); const pagePath=target.filename;
-            const templatePath=fs.existsSync(pagePath)?pagePath:'lesson-2026-10-12.html';
+                        const pageAlreadyExists=fs.existsSync(pagePath);
+                        const templatePath=pageAlreadyExists?pagePath:'lesson-2026-10-12.html';
+            if(!pageAlreadyExists) newPageForNavigation=pagePath;
             if(!fs.existsSync(templatePath)) fail('記事テンプレートが見つかりません: '+templatePath);
             let page=fs.readFileSync(templatePath,'utf8');
             const open=page.indexOf('<article class="article">'), close=page.lastIndexOf('</article>');
@@ -316,7 +311,7 @@ jobs:
           
           // 既存記事の「別の日のブログ」欄を、存在する最新3ページへ同期する。
           for(const file of [...pageFiles]) syncRecentPage(file,lessons,pageFiles,changed);
-          syncNavigationLinks(lessons,pageFiles,changed);
+                    if(newPageForNavigation) syncNavigationLinks(lessons,pageFiles,changed,newPageForNavigation);
           // 実在する記事ページだけをサイトマップに登録する。
           const base='https://tan15-15.github.io/ichigoichigo/';
           const urls=[base,base+'words.html',base+'archive.html',...lessons.map(l=>dateInfo(l.date).filename).filter(f=>pageFiles.has(f)).map(f=>base+f)];
