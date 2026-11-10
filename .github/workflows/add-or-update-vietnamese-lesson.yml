@@ -311,7 +311,7 @@ jobs:
           
           // 既存記事の「別の日のブログ」欄を、存在する最新3ページへ同期する。
           for(const file of [...pageFiles]) syncRecentPage(file,lessons,pageFiles,changed);
-                    if(newPageForNavigation) syncNavigationLinks(lessons,pageFiles,changed,newPageForNavigation);
+                              for(const file of [...pageFiles]) syncNavigationLinks(lessons,pageFiles,changed,file);
           // 実在する記事ページだけをサイトマップに登録する。
           const base='https://tan15-15.github.io/ichigoichigo/';
           const urls=[base,base+'words.html',base+'archive.html',...lessons.map(l=>dateInfo(l.date).filename).filter(f=>pageFiles.has(f)).map(f=>base+f)];
