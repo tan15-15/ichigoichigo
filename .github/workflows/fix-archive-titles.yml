@@ -1,0 +1,128 @@
+
+name: Fix Archive Titles
+
+on:
+  push:
+    paths:
+      - ".github/workflows/fix-archive-titles.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fix-titles:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fix lesson titles and archive
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const vm = require('vm');
+
+          const fixes = {
+            '2026年10月03日': '🍓 🍓 一期一語はじまります！',
+            '2026年10月04日': '🛵 毎朝のバイク麺活！看板もメニューもないお店で「いくら？」と聞く',
+            '2026年10月05日': '👶 お母さん、ゴを抱っこしてくれる？',
+            '2026年10月06日': '👶 4ヶ月のゴちゃんが寝た！音を立てたら即終了ミッション',
+            '2026年10月07日': '🍼 ゴちゃんと覚える基本の動詞と時制（飲む・食べる・眠い）',
+            '2026年10月09日': '🌅 ゴちゃん、まだ寝てるの？ 朝の様子を伺う一言',
+            '2026年10月12日': '🍓 🍓 vớiは英語のwithみたい！「〜といっしょに」を覚えよう',
+            '2026年10月13日': '🍓 🚿 脱衣所がない!? ゴちゃんのお風呂準備で覚えた xong',
+            '2026年10月15日': '🍓 🦟 ドアをすぐ閉めてもらえる？ベトナムの蚊とのエンドレスバトル',
+            '2026年10月16日': '🍓 🛵 右？左？妻よ、ナビを頼む！ベトナムのバイク道案内'
+          };
+
+          function fail(message) {
+            console.error(message);
+            process.exit(1);
+          }
+
+          const source = fs.readFileSync('lessons.js', 'utf8');
+          const sandbox = {};
+          vm.runInNewContext(source + '\nglobalThis.__lessons = lessons;', sandbox);
+
+          const lessons = sandbox.__lessons;
+          if (!Array.isArray(lessons)) fail('lessons.js の読み込みに失敗しました。');
+
+          for (const [date, title] of Object.entries(fixes)) {
+            const matches = lessons.filter(x => x.date === date);
+            if (matches.length !== 1) {
+              fail(date + ' の記事が1件だけ見つかりません。更新を中止しました。');
+            }
+            matches[0].title = title;
+          }
+
+          fs.writeFileSync(
+            'lessons.js',
+            'const lessons = ' + JSON.stringify(lessons, null, 2) + ';\n',
+            'utf8'
+          );
+
+          if (!fs.existsSync('archive.html')) fail('archive.html がありません。');
+
+          const files = new Set(
+            fs.readdirSync('.').filter(f => /^lesson-\d{4}-\d{2}-\d{2}\.html$/.test(f))
+          );
+
+          const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({
+            '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+          })[ch]);
+
+          const dateInfo = value => {
+            const m = String(value).match(/^(20\d{2})年(\d{2})月(\d{2})日$/);
+            if (!m) fail('日付形式が不正です: ' + value);
+            return {
+              filename: `lesson-${m[1]}-${m[2]}-${m[3]}.html`
+            };
+          };
+
+          const items = lessons
+            .filter(l => files.has(dateInfo(l.date).filename))
+            .map(l => {
+              const info = dateInfo(l.date);
+              const words = (l.archiveWords || (l.words || []).map(w =>
+                Array.isArray(w) ? w[0] : typeof w === 'string' ? w : w.v
+              )).filter(Boolean).slice(0, 8).join(', ');
+
+              return `<a href="./${info.filename}" class="archive-item-link"><div class="archive-item-date">${esc(l.date)}</div><div class="archive-item-title">${esc(l.title)}</div><div class="archive-item-words">主要単語：${esc(words)}</div></a>`;
+            }).join('\n');
+
+          let html = fs.readFileSync('archive.html', 'utf8');
+          const marker = /<div\b(?=[^>]*class=["'][^"']*\barchive-links\b[^"']*["'])[^>]*>/i;
+          const match = marker.exec(html);
+          if (!match) fail('archive-links が見つかりません。');
+
+          const tagRe = /<\/?div\b[^>]*>/gi;
+          tagRe.lastIndex = match.index;
+          let depth = 0;
+          let end = -1;
+          let tag;
+
+          while ((tag = tagRe.exec(html))) {
+            if (/^<div\b/i.test(tag[0])) depth++;
+            else depth--;
+            if (depth === 0) {
+              end = tagRe.lastIndex;
+              break;
+            }
+          }
+
+          if (end < 0) fail('archive-links の範囲を特定できません。');
+
+          html = html.slice(0, match.index)
+            + '<div class="archive-links">\n' + items + '\n</div>'
+            + html.slice(end);
+
+          fs.writeFileSync('archive.html', html, 'utf8');
+          console.log('10件のタイトルと記事一覧を修正しました。');
+          NODE
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lessons.js archive.html
+          git diff --cached --quiet || git commit -m "Fix October archive titles"
+          git push
